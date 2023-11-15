@@ -1,0 +1,258 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20130662",
+  "version": "640",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2013:0662: kernel security and bug fix update (Important)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2013:0662",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2013:0662",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2013-0871",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-0871",
+        "source": "CVE"
+      }
+    ],
+    "description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\nThis update fixes the following security issue:\n\n* A race condition was found in the way the Linux kernel's ptrace\nimplementation handled PTRACE_SETREGS requests when the debuggee was woken\ndue to a SIGKILL signal instead of being stopped. A local, unprivileged\nuser could use this flaw to escalate their privileges. (CVE-2013-0871,\nImportant)\n\nThis update also fixes the following bugs:\n\n* Previously, init scripts were unable to set the MAC address of the master\ninterface properly because it was overwritten by the first slave MAC\naddress. To avoid this problem, this update re-introduces the check for an\nunassigned MAC address before setting the MAC address of the first slave\ninterface as the MAC address of the master interface. (BZ#908735)\n\n* When using transparent proxy (TProxy) over IPv6, the kernel previously\ncreated neighbor entries for local interfaces and peers that were not\nreachable directly. This update corrects this problem and the kernel no\nlonger creates invalid neighbor entries. (BZ#909158)\n\n* Due to the incorrect validation of a pointer dereference in the\nd_validate() function, running a command such as ls or find on the\nMultiVersion File System (MVFS), used by IBM Rational ClearCase, for\nexample, could trigger a kernel panic. This update modifies d_validate() to\nverify the parent-child dentry relationship by searching through the\nparent's d_child list. The kernel no longer panics in this situation.\n(BZ#915582)\n\n* A previously backported patch introduced usage of the page_descs length\nfield but did not set the page data length for the FUSE page descriptor.\nThis code path can be exercised by a loopback device (pagecache_write_end)\nif used over FUSE. As a result, fuse_copy_page does not copy page data from\nthe page descriptor to the user-space request buffer and the user space can\nsee uninitialized data. This could previously lead to file system data\ncorruption. This problem has been fixed by setting the page_descs length\nprior to submitting the requests, and FUSE therefore provides correctly\ninitialized data. (BZ#916956)\n\nUsers should upgrade to these updated packages, which contain backported\npatches to resolve these issues. The system must be rebooted for this\nupdate to take effect.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Important",
+      "updated": {
+        "date": "2013-03-19"
+      },
+      "cve": [
+        {
+          "text": "CVE-2013-0871",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-0871",
+          "impact": "important",
+          "public": "20130215",
+          "cvss2": "6.2/AV:L/AC:H/Au:N/C:C/I:C/A:C"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/o:redhat:rhel_eus:6.3",
+          "cpe:/o:redhat:rhel_eus:6.3::computenode",
+          "cpe:/o:redhat:rhel_eus:6.3::server"
+        ]
+      },
+      "rights": "Copyright 2013 Red Hat, Inc.",
+      "issued": {
+        "date": "2013-03-19"
+      },
+      "bugzilla": [
+        {
+          "text": "CVE-2013-0871 kernel: race condition with PTRACE_SETREGS",
+          "href": "https://bugzilla.redhat.com/911937",
+          "id": "911937"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 6.3 EUS - Server and Compute Node Only"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterions": [
+              {
+                "test_ref": "oval:com.redhat.rhsa:tst:20130662025",
+                "comment": "kernel earlier than 0:2.6.32-279.23.1.el6 is currently running"
+              },
+              {
+                "test_ref": "oval:com.redhat.rhsa:tst:20130662026",
+                "comment": "kernel earlier than 0:2.6.32-279.23.1.el6 is set to boot up on next boot"
+              }
+            ]
+          },
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662001",
+                    "comment": "kernel is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842002",
+                    "comment": "kernel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662003",
+                    "comment": "kernel-bootwrapper is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842004",
+                    "comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662005",
+                    "comment": "kernel-debug is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842006",
+                    "comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662007",
+                    "comment": "kernel-debug-devel is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842008",
+                    "comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662009",
+                    "comment": "kernel-devel is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842010",
+                    "comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662011",
+                    "comment": "kernel-doc is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842012",
+                    "comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662013",
+                    "comment": "kernel-firmware is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842014",
+                    "comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662015",
+                    "comment": "kernel-headers is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842016",
+                    "comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662017",
+                    "comment": "kernel-kdump is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842018",
+                    "comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662019",
+                    "comment": "kernel-kdump-devel is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842020",
+                    "comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662021",
+                    "comment": "perf is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842022",
+                    "comment": "perf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130662023",
+                    "comment": "python-perf is earlier than 0:2.6.32-279.23.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111530024",
+                    "comment": "python-perf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
+            "comment": "Red Hat Enterprise Linux 6 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

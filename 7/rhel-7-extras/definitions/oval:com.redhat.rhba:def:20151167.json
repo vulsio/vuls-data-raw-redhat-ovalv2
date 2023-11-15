@@ -1,0 +1,219 @@
+{
+  "id": "oval:com.redhat.rhba:def:20151167",
+  "version": "642",
+  "class": "patch",
+  "metadata": {
+    "title": "RHBA-2015:1167: docker bug fix update (Moderate)",
+    "reference": [
+      {
+        "ref_id": "RHBA-2015:1167",
+        "ref_url": "https://access.redhat.com/errata/RHBA-2015:1167",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2015-3627",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-3627",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2015-3629",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-3629",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2015-3630",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-3630",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2015-3631",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-3631",
+        "source": "CVE"
+      }
+    ],
+    "description": "Docker is an open-source engine that automates the deployment of any application as a lightweight, portable, self-sufficient container that will run virtually anywhere.\n\nThis update fixes the following bugs:\n\n* Previously, if you had one image tagged in at least two repositories, running the \"docker rmi ID\" command untagged the image from just one repository and the other persisted. This bug has been fixed and \"docker rmi ID\" now untags all associated images. (BZ#1222784)\n\n* Previously, the docker service did not try to match short names against local fully qualified images names while doing a push. As a consequence, the push command reported that the image name could not be found and the user had to fully qualify the argument and execute the push again. This bug has been fixed and the docker service now tries to match short names against local images fully qualified with the default registry (those added with the \"--add-registry flag\"). Now, the user does not have to fully qualify the image name in order to push it to one of the default registries. (BZ#1218639)\n\n* During initialization of both the Docker client and daemon, the public Docker registry was resolved, in order to check whether it was secured or not. This happened regardless of the docker.io registry being blocked. Consequently, docker was attempting to resolve docker.io to an IP address any time a Docker client was run. This prolonged commands execution in environments without external DNS lookups. After this update, docker no longer checks whether the public Docker index is secure. As a result, no DNS lookups for docker.io are done unless a public Docker registry is enabled and a pull, push, or search operation is performed on it. (BZ#1224387)\n\n* The default handling of SELinux labeling did not work correctly and the docker service was unable to mount certain directories into containers. This bug has been fixed and mounting a directory into a container now executes successfully. (BZ#1209625)\n\n* Previously, the docker service was labeling shared volumes as private by default. As a consequence, other containers could not execute the content from them. With this update, the underlying source code has been fixed to label shared volumes correctly. As a result, shared volumes now work correctly with SELinux in enforcing mode. (BZ#1226320, BZ#1225549)\n\n* If a volume was specified with more than one object, the docker service did not perform relabeling. As a consequence, you could not, for example, mount a volume that is both read-only and needs relabeling at the same time. The labeling check has been fixed, and docker now relabels correctly in the described scenario. (BZ#1225556)\n\n* Previously, the docker service and SELinux were blocking relabels of the /usr directory, even if the user did not request relabeling. As a consequence, certain volume mounts of content in /usr were blocked and a container could not run. The check on relabeling has been fixed and volumes in /usr can now be mounted into a container successfully. (BZ#1230192)\n\nUsers of docker are advised to upgrade to these updated packages, which fix these bugs.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2015-06-23"
+      },
+      "cve": [
+        {
+          "text": "CVE-2015-3627",
+          "cwe": "CWE-22",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-3627",
+          "impact": "moderate",
+          "public": "20150507",
+          "cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:P/A:N"
+        },
+        {
+          "text": "CVE-2015-3629",
+          "cwe": "CWE-22",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-3629",
+          "impact": "moderate",
+          "public": "20150507",
+          "cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:P/A:N"
+        },
+        {
+          "text": "CVE-2015-3630",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-3630",
+          "impact": "moderate",
+          "public": "20150507",
+          "cvss2": "5.8/AV:N/AC:M/Au:N/C:P/I:P/A:N"
+        },
+        {
+          "text": "CVE-2015-3631",
+          "cwe": "CWE-642",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-3631",
+          "impact": "moderate",
+          "public": "20150507",
+          "cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:P/A:N"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:rhel_extras_other:7"
+        ]
+      },
+      "rights": "Copyright 2015 Red Hat, Inc.",
+      "issued": {
+        "date": "2015-06-23"
+      },
+      "bugzilla": [
+        {
+          "text": "symlink traversal on container respawn allows local privilege escalation",
+          "href": "https://bugzilla.redhat.com/1219058",
+          "id": "1219058"
+        },
+        {
+          "text": "insecure opening of file-descriptor 1 leading to privilege escalation",
+          "href": "https://bugzilla.redhat.com/1219061",
+          "id": "1219061"
+        },
+        {
+          "text": "Read/write proc paths allow host modification & information disclosure",
+          "href": "https://bugzilla.redhat.com/1219063",
+          "id": "1219063"
+        },
+        {
+          "text": "volume mounts allow LSM profile escalation",
+          "href": "https://bugzilla.redhat.com/1219065",
+          "id": "1219065"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 7 Extras"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151167001",
+                    "comment": "atomic is earlier than 0:0-0.40.gitf863afd.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151167002",
+                    "comment": "atomic is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151167003",
+                    "comment": "docker is earlier than 0:1.6.2-14.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20141977002",
+                    "comment": "docker is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151167005",
+                    "comment": "docker-logrotate is earlier than 0:1.6.2-14.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151167006",
+                    "comment": "docker-logrotate is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151167007",
+                    "comment": "docker-python is earlier than 0:1.0.0-53.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151167008",
+                    "comment": "docker-python is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151167009",
+                    "comment": "docker-selinux is earlier than 0:1.6.2-14.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151167010",
+                    "comment": "docker-selinux is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151167011",
+                    "comment": "python-websocket-client is earlier than 0:0.14.1-97.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151167012",
+                    "comment": "python-websocket-client is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20141977003",
+            "comment": "Red Hat Enterprise Linux 7 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20141977004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

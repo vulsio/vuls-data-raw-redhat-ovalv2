@@ -1,0 +1,192 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20131635",
+  "version": "646",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2013:1635: pacemaker security, bug fix, and enhancement update (Low)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2013:1635",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2013:1635",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2013-0281",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-0281",
+        "source": "CVE"
+      }
+    ],
+    "description": "Pacemaker is a high-availability cluster resource manager with a powerful\npolicy engine.\n\nA denial of service flaw was found in the way Pacemaker performed\nauthentication and processing of remote connections in certain\ncircumstances. When Pacemaker was configured to allow remote Cluster\nInformation Base (CIB) configuration or resource management, a remote\nattacker could use this flaw to cause Pacemaker to block indefinitely\n(preventing it from serving other requests). (CVE-2013-0281)\n\nNote: The default Pacemaker configuration in Red Hat Enterprise Linux 6 has\nthe remote CIB management functionality disabled.\n\nThe pacemaker package has been upgraded to upstream version 1.1.10, which\nprovides a number of bug fixes and enhancements over the previous version:\n\n* Pacemaker no longer assumes unknown cman nodes are safely stopped.\n\n* The core dump file now converts all exit codes into positive 'errno'\nvalues.\n\n* Pacemaker ensures a return to a stable state after too many fencing\nfailures, and initiates a shutdown if a node claimed to be fenced is still\nactive.\n\n* The crm_error tool adds the ability to list and print error symbols.\n\n* The crm_resource command allows individual resources to be reprobed, and\nimplements the \"--ban\" option for moving resources away from nodes.\nThe \"--clear\" option has replaced the \"--unmove\" option. Also, crm_resource\nnow supports OCF tracing when using the \"--force\" option.\n\n* The IPC mechanism restores the ability for members of the haclient group\nto connect to the cluster.\n\n* The Policy Engine daemon allows active nodes in the current membership to\nbe fenced without quorum.\n\n* Policy Engine now suppresses meaningless IDs when displaying anonymous\nclone status, supports maintenance mode for a single node, and correctly\nhandles the recovered resources before they are operated on.\n\n* XML configuration files are now checked for non-printing characters and\nreplaced with their octal equivalent when exporting XML text. Also, a more\nreliable buffer allocation strategy has been implemented to prevent\nlockups.\n\n(BZ#987355)\n\nAdditional bug fixes:\n\n* The \"crm_resource --move\" command was designed for atomic resources and\ncould not handle resources on clones, masters, or slaves present on\nmultiple nodes. Consequently, crm_resource could not obtain enough\ninformation to move a resource and did not perform any action. The \"--ban\"\nand \"--clear\" options have been added to allow the administrator to\ninstruct the cluster unambiguously. Clone, master, and slave resources can\nnow be navigated within the cluster as expected. (BZ#902407)\n\n* The hacluster user account did not have a user identification (UID) or\ngroup identification (GID) number reserved on the system. Thus, UID and GID\nvalues were picked randomly during the installation process. The UID and\nGID number 189 was reserved for hacluster and is now used consistently for\nall installations. (BZ#908450)\n\n* Certain clusters used node host names that did not match the output of\nthe \"uname -n\" command. Thus, the default node name used by the crm_standby\nand crm_failcount commands was incorrect and caused the cluster to ignore\nthe update by the administrator. The crm_node command is now used instead\nof the uname utility in helper scripts. As a result, the cluster behaves as\nexpected. (BZ#913093)\n\n* Due to incorrect return code handling, internal recovery logic of the\ncrm_mon utility was not executed when a configuration updated failed to\napply, leading to an assertion failure. Return codes are now checked\ncorrectly, and the recovery of an expected error state is now handled\ntransparently. (BZ#951371)\n\n* cman's automatic unfencing feature failed when combined with Pacemaker.\nSupport for automated unfencing in Pacemaker has been added, and the\nunwanted behavior no longer occurs. (BZ#996850)\n\nAll pacemaker users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues and add these\nenhancements.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Low",
+      "updated": {
+        "date": "2013-11-21"
+      },
+      "cve": [
+        {
+          "text": "CVE-2013-0281",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-0281",
+          "impact": "low",
+          "public": "20130214",
+          "cvss2": "2.6/AV:N/AC:H/Au:N/C:N/I:N/A:P"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/o:redhat:rhel_aus:6.4",
+          "cpe:/o:redhat:rhel_aus:6.4::server"
+        ]
+      },
+      "rights": "Copyright 2013 Red Hat, Inc.",
+      "issued": {
+        "date": "2013-11-20"
+      },
+      "bugzilla": [
+        {
+          "text": "CVE-2013-0281 pacemaker: remote DoS when CIB management is enabled caused by use of blocking sockets",
+          "href": "https://bugzilla.redhat.com/891922",
+          "id": "891922"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 6"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635001",
+                    "comment": "pacemaker is earlier than 0:1.1.10-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635002",
+                    "comment": "pacemaker is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635003",
+                    "comment": "pacemaker-cli is earlier than 0:1.1.10-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635004",
+                    "comment": "pacemaker-cli is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635005",
+                    "comment": "pacemaker-cluster-libs is earlier than 0:1.1.10-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635006",
+                    "comment": "pacemaker-cluster-libs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635007",
+                    "comment": "pacemaker-cts is earlier than 0:1.1.10-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635008",
+                    "comment": "pacemaker-cts is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635009",
+                    "comment": "pacemaker-doc is earlier than 0:1.1.10-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635010",
+                    "comment": "pacemaker-doc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635011",
+                    "comment": "pacemaker-libs is earlier than 0:1.1.10-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635012",
+                    "comment": "pacemaker-libs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635013",
+                    "comment": "pacemaker-libs-devel is earlier than 0:1.1.10-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635014",
+                    "comment": "pacemaker-libs-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635015",
+                    "comment": "pacemaker-remote is earlier than 0:1.1.10-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131635016",
+                    "comment": "pacemaker-remote is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
+            "comment": "Red Hat Enterprise Linux 6 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

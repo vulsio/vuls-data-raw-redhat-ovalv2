@@ -1,0 +1,201 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20150327",
+  "version": "642",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2015:0327: glibc security and bug fix update (Moderate)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2015:0327",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2015:0327",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2014-6040",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-6040",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2014-8121",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-8121",
+        "source": "CVE"
+      }
+    ],
+    "description": "The glibc packages provide the standard C libraries (libc), POSIX thread\nlibraries (libpthread), standard math libraries (libm), and the Name Server\nCaching Daemon (nscd) used by multiple programs on the system. Without\nthese libraries, the Linux system cannot function correctly.\n\nAn out-of-bounds read flaw was found in the way glibc's iconv() function\nconverted certain encoded data to UTF-8. An attacker able to make an\napplication call the iconv() function with a specially crafted argument\ncould use this flaw to crash that application. (CVE-2014-6040)\n\nIt was found that the files back end of Name Service Switch (NSS) did not\nisolate iteration over an entire database from key-based look-up API calls.\nAn application performing look-ups on a database while iterating over it\ncould enter an infinite loop, leading to a denial of service.\n(CVE-2014-8121)\n\nThis update also fixes the following bugs:\n\n* Due to problems with buffer extension and reallocation, the nscd daemon\nterminated unexpectedly with a segmentation fault when processing long\nnetgroup entries. With this update, the handling of long netgroup entries\nhas been corrected and nscd no longer crashes in the described scenario.\n(BZ#1138520)\n\n* If a file opened in append mode was truncated with the ftruncate()\nfunction, a subsequent ftell() call could incorrectly modify the file\noffset. This update ensures that ftell() modifies the stream state only\nwhen it is in append mode and the buffer for the stream is not empty.\n(BZ#1156331)\n\n* A defect in the C library headers caused builds with older compilers to\ngenerate incorrect code for the btowc() function in the older compatibility C++ standard library. Applications calling btowc() in the compatibility C++ standard library became unresponsive. With this update, the C library headers have been corrected, and the compatibility C++ standard library shipped with Red Hat Enterprise Linux has been rebuilt. Applications that rely on the compatibility C++ standard library no longer hang when calling btowc(). (BZ#1120490)\n\n* Previously, when using netgroups and the nscd daemon was set up to cache netgroup information, the sudo utility denied access to valid users. The bug in nscd has been fixed, and sudo now works in netgroups as\nexpected. (BZ#1080766)\n\nUsers of glibc are advised to upgrade to these updated packages, which fix these issues.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2015-03-05"
+      },
+      "cve": [
+        {
+          "text": "CVE-2014-6040",
+          "cwe": "CWE-119",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-6040",
+          "impact": "moderate",
+          "public": "20140828",
+          "cvss2": "2.1/AV:L/AC:L/Au:N/C:N/I:N/A:P"
+        },
+        {
+          "text": "CVE-2014-8121",
+          "cwe": "CWE-835",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-8121",
+          "impact": "low",
+          "public": "20150223",
+          "cvss2": "3.3/AV:A/AC:L/Au:N/C:N/I:N/A:P"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:rhel_extras_sap_eus:7.3",
+          "cpe:/a:redhat:rhel_extras_sap_hana_eus:7.3",
+          "cpe:/o:redhat:rhel_eus:7.3",
+          "cpe:/o:redhat:rhel_eus:7.3::computenode",
+          "cpe:/o:redhat:rhel_eus:7.3::server"
+        ]
+      },
+      "rights": "Copyright 2015 Red Hat, Inc.",
+      "issued": {
+        "date": "2015-03-05"
+      },
+      "bugzilla": [
+        {
+          "text": "CVE-2014-6040 glibc: crash in code page decoding functions (IBM933, IBM935, IBM937, IBM939, IBM1364)",
+          "href": "https://bugzilla.redhat.com/1135841",
+          "id": "1135841"
+        },
+        {
+          "text": "Unexpected closing of nss_files databases after lookups causes denial of service",
+          "href": "https://bugzilla.redhat.com/1165192",
+          "id": "1165192"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 7"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150327001",
+                    "comment": "glibc is earlier than 0:2.17-78.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141110002",
+                    "comment": "glibc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150327003",
+                    "comment": "glibc-common is earlier than 0:2.17-78.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141110004",
+                    "comment": "glibc-common is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150327005",
+                    "comment": "glibc-devel is earlier than 0:2.17-78.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141110006",
+                    "comment": "glibc-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150327007",
+                    "comment": "glibc-headers is earlier than 0:2.17-78.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141110008",
+                    "comment": "glibc-headers is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150327009",
+                    "comment": "glibc-static is earlier than 0:2.17-78.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141110010",
+                    "comment": "glibc-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150327011",
+                    "comment": "glibc-utils is earlier than 0:2.17-78.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141110012",
+                    "comment": "glibc-utils is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150327013",
+                    "comment": "nscd is earlier than 0:2.17-78.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141110014",
+                    "comment": "nscd is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20150364027",
+            "comment": "Red Hat Enterprise Linux 7 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20150364028",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

@@ -1,0 +1,442 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20152315",
+  "version": "653",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2015:2315: NetworkManager security, bug fix, and enhancement update (Moderate)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2015:2315",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2015:2315",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2015-0272",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-0272",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2015-2924",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-2924",
+        "source": "CVE"
+      }
+    ],
+    "description": "NetworkManager is a system network service that manages network devices\nand connections.\n\nIt was discovered that NetworkManager would set device MTUs based on MTU\nvalues received in IPv6 RAs (Router Advertisements), without sanity\nchecking the MTU value first. A remote attacker could exploit this flaw to\ncreate a denial of service attack, by sending a specially crafted IPv6 RA\npacket to disturb IPv6 communication. (CVE-2015-0272)\n\nA flaw was found in the way NetworkManager handled router advertisements.\nAn unprivileged user on a local network could use IPv6 Neighbor Discovery\nICMP to broadcast a non-route with a low hop limit, causing machines to\nlower the hop limit on existing IPv6 routes. If this limit is small enough,\nIPv6 packets would be dropped before reaching the final destination.\n(CVE-2015-2924)\n\nThe network-manager-applet and NetworkManager-libreswan packages have been\nupgraded to upstream versions 1.0.6, and provide a number of bug fixes and\nenhancements over the previous versions. (BZ#1177582, BZ#1243057)\n\nBugs:\n\n* It was not previously possible to set the Wi-Fi band to the \"a\" or \"bg\"\nvalues to lock to a specific frequency band. NetworkManager has been fixed,\nand it now sets the wpa_supplicant's \"freq_list\" option correctly, which\nenables proper Wi-Fi band locking. (BZ#1254461)\n\n* NetworkManager immediately failed activation of devices that did not have\na carrier early in the boot process. The legacy network.service then\nreported activation failure. Now, NetworkManager has a grace period during\nwhich it waits for the carrier to appear. Devices that have a carrier down\nfor a short time on system startup no longer cause the legacy\nnetwork.service to fail. (BZ#1079353)\n\n* NetworkManager brought down a team device if the teamd service managing\nit exited unexpectedly, and the team device was deactivated. Now,\nNetworkManager respawns the teamd instances that disappear and is able to\nrecover from a teamd failure avoiding disruption of the team device\noperation. (BZ#1145988)\n\n* NetworkManager did not send the FQDN DHCP option even if host name was\nset to FQDN. Consequently, Dynamic DNS (DDNS) setups failed to update the\nDNS records for clients running NetworkManager. Now, NetworkManager sends\nthe FQDN option with DHCP requests, and the DHCP server is able to create\nDNS records for such clients. (BZ#1212597)\n\n* The command-line client was not validating the vlan.flags property\ncorrectly, and a spurious warning message was displayed when the nmcli tool\nworked with VLAN connections. The validation routine has been fixed, and\nthe warning message no longer appears. (BZ#1244048)\n\n* NetworkManager did not propagate a media access control (MAC) address\nchange from a bonding interface to a VLAN interface on top of it.\nConsequently, a VLAN interface on top of a bond used an incorrect MAC\naddress. Now, NetworkManager synchronizes the addresses correctly.\n(BZ#1264322)\n\nEnhancements:\n\n* IPv6 Privacy extensions are now enabled by default. NetworkManager checks\nthe per-network configuration files, NetworkManager.conf, and then falls\nback to \"/proc/sys/net/ipv6/conf/default/use_tempaddr\" to determine and set\nIPv6 privacy settings at device activation. (BZ#1187525)\n\n* The NetworkManager command-line tool, nmcli, now allows setting the\nwake-on-lan property to 0 (\"none\", \"disable\", \"disabled\"). (BZ#1260584)\n\n* NetworkManager now provides information about metered connections.\n(BZ#1200452)\n\n* NetworkManager daemon and the connection editor now support setting the\nMaximum Transmission Unit (MTU) of a bond. It is now possible to change MTU\nof a bond interface in a GUI. (BZ#1177582, BZ#1177860)\n\n* NetworkManager daemon and the connection editor now support setting the\nMTU of a team, allowing to change MTU of a teaming interface. (BZ#1255927)\n\nNetworkManager users are advised to upgrade to these updated packages,\nwhich correct these issues and add these enhancements.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2015-11-19"
+      },
+      "cve": [
+        {
+          "text": "CVE-2015-0272",
+          "cwe": "CWE-20",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-0272",
+          "impact": "moderate",
+          "public": "20150223",
+          "cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:N/A:P"
+        },
+        {
+          "text": "CVE-2015-2924",
+          "cwe": "CWE-358",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-2924",
+          "impact": "low",
+          "public": "20150402",
+          "cvss2": "3.3/AV:A/AC:L/Au:N/C:N/I:N/A:P"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:rhel_extras:7",
+          "cpe:/a:redhat:rhel_extras_oracle_java:7",
+          "cpe:/a:redhat:rhel_extras_rt:7",
+          "cpe:/a:redhat:rhel_extras_sap:7",
+          "cpe:/a:redhat:rhel_extras_sap_hana:7",
+          "cpe:/o:redhat:enterprise_linux:7",
+          "cpe:/o:redhat:enterprise_linux:7::client",
+          "cpe:/o:redhat:enterprise_linux:7::computenode",
+          "cpe:/o:redhat:enterprise_linux:7::container",
+          "cpe:/o:redhat:enterprise_linux:7::containers",
+          "cpe:/o:redhat:enterprise_linux:7::server",
+          "cpe:/o:redhat:enterprise_linux:7::workstation"
+        ]
+      },
+      "rights": "Copyright 2015 Red Hat, Inc.",
+      "issued": {
+        "date": "2015-11-19"
+      },
+      "bugzilla": [
+        {
+          "text": "CVE-2015-0272 NetworkManager: remote DoS using IPv6 RA with bogus MTU",
+          "href": "https://bugzilla.redhat.com/1192132",
+          "id": "1192132"
+        },
+        {
+          "text": "CVE-2015-2924 NetworkManager: denial of service (DoS) attack against IPv6 network stacks due to improper handling of Router Advertisements",
+          "href": "https://bugzilla.redhat.com/1209902",
+          "id": "1209902"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 7"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315001",
+                    "comment": "ModemManager is earlier than 0:1.1.0-8.git20130913.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315002",
+                    "comment": "ModemManager is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315003",
+                    "comment": "ModemManager-devel is earlier than 0:1.1.0-8.git20130913.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315004",
+                    "comment": "ModemManager-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315005",
+                    "comment": "ModemManager-glib is earlier than 0:1.1.0-8.git20130913.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315006",
+                    "comment": "ModemManager-glib is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315007",
+                    "comment": "ModemManager-glib-devel is earlier than 0:1.1.0-8.git20130913.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315008",
+                    "comment": "ModemManager-glib-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315009",
+                    "comment": "ModemManager-vala is earlier than 0:1.1.0-8.git20130913.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315010",
+                    "comment": "ModemManager-vala is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315011",
+                    "comment": "libnm-gtk is earlier than 0:1.0.6-2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315012",
+                    "comment": "libnm-gtk is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315013",
+                    "comment": "libnm-gtk-devel is earlier than 0:1.0.6-2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315014",
+                    "comment": "libnm-gtk-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315015",
+                    "comment": "network-manager-applet is earlier than 0:1.0.6-2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315016",
+                    "comment": "network-manager-applet is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315017",
+                    "comment": "nm-connection-editor is earlier than 0:1.0.6-2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315018",
+                    "comment": "nm-connection-editor is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315019",
+                    "comment": "NetworkManager-libreswan is earlier than 0:1.0.6-3.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315020",
+                    "comment": "NetworkManager-libreswan is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315021",
+                    "comment": "NetworkManager-libreswan-gnome is earlier than 0:1.0.6-3.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315022",
+                    "comment": "NetworkManager-libreswan-gnome is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315023",
+                    "comment": "NetworkManager is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207002",
+                    "comment": "NetworkManager is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315025",
+                    "comment": "NetworkManager-adsl is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207004",
+                    "comment": "NetworkManager-adsl is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315027",
+                    "comment": "NetworkManager-bluetooth is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207006",
+                    "comment": "NetworkManager-bluetooth is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315029",
+                    "comment": "NetworkManager-config-routing-rules is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315030",
+                    "comment": "NetworkManager-config-routing-rules is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315031",
+                    "comment": "NetworkManager-config-server is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207008",
+                    "comment": "NetworkManager-config-server is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315033",
+                    "comment": "NetworkManager-devel is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315034",
+                    "comment": "NetworkManager-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315035",
+                    "comment": "NetworkManager-glib is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207012",
+                    "comment": "NetworkManager-glib is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315037",
+                    "comment": "NetworkManager-glib-devel is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207014",
+                    "comment": "NetworkManager-glib-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315039",
+                    "comment": "NetworkManager-libnm is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207016",
+                    "comment": "NetworkManager-libnm is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315041",
+                    "comment": "NetworkManager-libnm-devel is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207018",
+                    "comment": "NetworkManager-libnm-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315043",
+                    "comment": "NetworkManager-team is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207024",
+                    "comment": "NetworkManager-team is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315045",
+                    "comment": "NetworkManager-tui is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207026",
+                    "comment": "NetworkManager-tui is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315047",
+                    "comment": "NetworkManager-wifi is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207028",
+                    "comment": "NetworkManager-wifi is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20152315049",
+                    "comment": "NetworkManager-wwan is earlier than 1:1.0.6-27.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20183207030",
+                    "comment": "NetworkManager-wwan is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20150364027",
+            "comment": "Red Hat Enterprise Linux 7 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20150364028",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

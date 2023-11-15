@@ -1,0 +1,289 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20160024",
+  "version": "650",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2016:0024: kernel security and bug fix update (Important)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2016:0024",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2016:0024",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2015-5307",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-5307",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2015-8104",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-8104",
+        "source": "CVE"
+      }
+    ],
+    "description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\n* It was found that the x86 ISA (Instruction Set Architecture) is prone to\na denial of service attack inside a virtualized environment in the form of\nan infinite loop in the microcode due to the way (sequential) delivering of\nbenign exceptions such as #AC (alignment check exception) and #DB (debug\nexception) is handled. A privileged user inside a guest could use these\nflaws to create denial of service conditions on the host kernel.\n(CVE-2015-5307, CVE-2015-8104, Important)\n\nRed Hat would like to thank Ben Serebrin of Google Inc. for reporting the\nCVE-2015-5307 issue.\n\nThis update also fixes the following bugs:\n\n* When doing TSO/GSO in the presence of VLAN headers on a macvtap device,\nthe header offsets were incorrectly calculated. As a consequence, when 2\nguests on the same host communicated over a guest configured VLAN,\nperformance dropped to about 1 Mbps. A set of patches has been provided to\nfix this bug, and network performance with VLAN tags now works with optimal\nperformance. (BZ#1215914)\n\n* Prior to this update, TSO acceleration features have been removed from\nthe VLAN device which caused that VLAN performance on top of a virtio\ndevice was much lower than that of a virtio device itself. This update\nre-enables TSO acceleration features, and performance of VLAN devices on\ntop of a virtio device has thus been restored. (BZ#1240988)\n\n* With an IPv6 address on a bond and a slave failover, Unsolicited Neighbor\nAdvertisement (UNA) was previously sent using the link global IPv6 address\nas source address. The underlying source code has been patched, and, after\nthe failover in bonding, UNA is sent using both the corresponding link IPv6\naddress and global IPv6 address of bond0 and bond0.vlan. (BZ#1258480)\n\n* Previously, Human Interface Device (HID) would run a report on an\nunaligned buffer, which could cause a page fault interrupt and an oops when\nthe end of the report was read. This update fixes this bug by padding the\nend of the report with extra bytes, so the reading of the report never\ncrosses a page boundary. As a result, a page fault and subsequent oops no\nlonger occur. (BZ#1268202)\n\n* Inside hugetlb, region data structures were protected by a combination of\na memory map semaphore and a single hugetlb instance mutex. However, a\npage-fault scalability improvement backported to the kernel on previous\nreleases removed the single hugetlb instance mutex and introduced a new\nmutex table, making the locking combination insufficient, leading to\npossible race windows that could cause corruption and undefined behavior.\nThe problem could be seen for example with software mapping or re-mapping\nhugetlb areas with concurrent threads reading/writing to same areas causing\npage faults. This update fixes the problem by introducing now a required\nspinlock to the region tracking functions for proper serialization. The\nproblem only affects software using huge pages through hugetlb interface.\n(BZ#1274597)\n\n* Previously, VLAN stacked on the macvlan or macvtap device did not work\nfor devices that implement and use VLAN filters. As a consequence, macvtap\npassthrough mode failed to transfer VLAN packets over the be2net driver.\nThis update implements VLAN ndo calls to the macvlan driver to pass\nappropriate VLAN tag IDs to lower devices. As a result, macvtap transfers\nVLAN packets over be2net successfully. (BZ#1280205)\n\nAll kernel users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues. The system must be\nrebooted for this update to take effect.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Important",
+      "updated": {
+        "date": "2016-01-12"
+      },
+      "cve": [
+        {
+          "text": "CVE-2015-5307",
+          "cwe": "CWE-835",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-5307",
+          "impact": "important",
+          "public": "20151110",
+          "cvss2": "5.2/AV:A/AC:M/Au:S/C:N/I:N/A:C"
+        },
+        {
+          "text": "CVE-2015-8104",
+          "cwe": "CWE-835",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-8104",
+          "impact": "important",
+          "public": "20151110",
+          "cvss2": "5.2/AV:A/AC:M/Au:S/C:N/I:N/A:C"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/o:redhat:rhel_tus:6.6",
+          "cpe:/o:redhat:rhel_tus:6.6::server"
+        ]
+      },
+      "rights": "Copyright 2016 Red Hat, Inc.",
+      "issued": {
+        "date": "2016-01-12"
+      },
+      "bugzilla": [
+        {
+          "text": "guest to host DoS by triggering an infinite loop in microcode via #AC exception",
+          "href": "https://bugzilla.redhat.com/1277172",
+          "id": "1277172"
+        },
+        {
+          "text": "CVE-2015-8104 virt: guest to host DoS by triggering an infinite loop in microcode via #DB exception",
+          "href": "https://bugzilla.redhat.com/1278496",
+          "id": "1278496"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 6.6 Extended Update Support"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterions": [
+              {
+                "test_ref": "oval:com.redhat.rhsa:tst:20160024027",
+                "comment": "kernel earlier than 0:2.6.32-504.40.1.el6 is currently running"
+              },
+              {
+                "test_ref": "oval:com.redhat.rhsa:tst:20160024028",
+                "comment": "kernel earlier than 0:2.6.32-504.40.1.el6 is set to boot up on next boot"
+              }
+            ]
+          },
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024001",
+                    "comment": "kernel is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842002",
+                    "comment": "kernel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024003",
+                    "comment": "kernel-abi-whitelists is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20131645004",
+                    "comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024005",
+                    "comment": "kernel-bootwrapper is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842004",
+                    "comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024007",
+                    "comment": "kernel-debug is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842006",
+                    "comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024009",
+                    "comment": "kernel-debug-devel is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842008",
+                    "comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024011",
+                    "comment": "kernel-devel is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842010",
+                    "comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024013",
+                    "comment": "kernel-doc is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842012",
+                    "comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024015",
+                    "comment": "kernel-firmware is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842014",
+                    "comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024017",
+                    "comment": "kernel-headers is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842016",
+                    "comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024019",
+                    "comment": "kernel-kdump is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842018",
+                    "comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024021",
+                    "comment": "kernel-kdump-devel is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842020",
+                    "comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024023",
+                    "comment": "perf is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842022",
+                    "comment": "perf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20160024025",
+                    "comment": "python-perf is earlier than 0:2.6.32-504.40.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111530024",
+                    "comment": "python-perf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
+            "comment": "Red Hat Enterprise Linux 6 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

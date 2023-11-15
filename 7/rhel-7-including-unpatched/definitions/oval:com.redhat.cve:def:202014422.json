@@ -1,0 +1,129 @@
+{
+  "id": "oval:com.redhat.cve:def:202014422",
+  "version": "636",
+  "class": "vulnerability",
+  "metadata": {
+    "title": "CVE-2020-14422 python: DoS via inefficiency in IPv{4,6}Interface classes (moderate)",
+    "reference": [
+      {
+        "ref_id": "CVE-2020-14422",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2020-14422",
+        "source": "CVE"
+      }
+    ],
+    "description": "DOCUMENTATION: A vulnerability was found in the way the ipaddress python module computes hash values in the IPv4Interface and IPv6Interface classes. This flaw allows an attacker to create many dictionary entries, due to the performance of a dictionary containing the IPv4Interface or IPv6Interface objects, possibly resulting in a denial of service. The highest threat from this vulnerability is to system availability. \n            STATEMENT: In Red Hat Enterprise Linux, python3 includes the ipaddress module by default, while for python2 a separate package, python-ipaddress, needs to be installed for the module to be used. Moreover, the ipaddress module is included in other packages as well, like python-pip.\n            MITIGATION: As a short term solution, if your application is using the IPv4Interface/IPv6Interface classes as keys of a dictionary, it is possible to patch the __hash__ method of those classes to not be constant.\n```\nIPv4Interface.__hash__ = lambda self: hash((self._ip, self._prefixlen, int(self.network.network_address)))\nIPv6Interface.__hash__ = lambda self: hash((self._ip, self._prefixlen, int(self.network.network_address)))\n```",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2021-06-29"
+      },
+      "cve": [
+        {
+          "text": "CVE-2020-14422",
+          "cvss3": "5.9/CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cwe": "CWE-400",
+          "href": "https://access.redhat.com/security/cve/CVE-2020-14422",
+          "impact": "moderate",
+          "public": "20200618"
+        }
+      ],
+      "affected": {
+        "resolution": [
+          {
+            "state": "Will not fix",
+            "component": [
+              "python-ipaddress",
+              "python-pip",
+              "python3-pip"
+            ]
+          }
+        ]
+      },
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:rhel_extras:7",
+          "cpe:/a:redhat:rhel_extras_oracle_java:7",
+          "cpe:/a:redhat:rhel_extras_rt:7",
+          "cpe:/a:redhat:rhel_extras_sap:7",
+          "cpe:/a:redhat:rhel_extras_sap_hana:7",
+          "cpe:/o:redhat:enterprise_linux:7",
+          "cpe:/o:redhat:enterprise_linux:7::client",
+          "cpe:/o:redhat:enterprise_linux:7::computenode",
+          "cpe:/o:redhat:enterprise_linux:7::container",
+          "cpe:/o:redhat:enterprise_linux:7::containers",
+          "cpe:/o:redhat:enterprise_linux:7::server",
+          "cpe:/o:redhat:enterprise_linux:7::workstation"
+        ]
+      },
+      "issued": {}
+    },
+    "affected": {}
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201820225003",
+                    "comment": "python-pip is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201820225004",
+                    "comment": "python-pip is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202014422003",
+                    "comment": "python-ipaddress is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202014422004",
+                    "comment": "python-ipaddress is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201820225001",
+                    "comment": "python3-pip is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201820225002",
+                    "comment": "python3-pip is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.cve:tst:20042779005",
+            "comment": "Red Hat Enterprise Linux 7 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.cve:tst:20042779006",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

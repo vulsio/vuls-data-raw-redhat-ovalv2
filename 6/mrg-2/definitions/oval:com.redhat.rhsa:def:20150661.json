@@ -1,0 +1,279 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20150661",
+  "version": "644",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2015:0661: qpid-cpp security and bug fix update (Moderate)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2015:0661",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2015:0661",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2015-0203",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-0203",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2015-0223",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-0223",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2015-0224",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-0224",
+        "source": "CVE"
+      }
+    ],
+    "description": "Red Hat Enterprise MRG (Messaging, Realtime, and Grid) is a next-generation\nIT infrastructure for enterprise computing. MRG offers increased\nperformance, reliability, interoperability, and faster computing for\nenterprise customers.\n\nThe Qpid packages provide a message broker daemon that receives, stores and\nroutes messages using the open AMQP messaging protocol along with run-time\nlibraries for AMQP client applications developed using Qpid C++. Clients\nexchange messages with an AMQP message broker using the AMQP protocol.\n\nIt was discovered that the Qpid daemon (qpidd) did not restrict access to\nanonymous users when the ANONYMOUS mechanism was disallowed.\n(CVE-2015-0223)\n\nMultiple flaws were found in the way the Qpid daemon (qpidd) processed\ncertain protocol sequences. An unauthenticated attacker able to send a\nspecially crafted protocol sequence set could use these flaws to crash\nqpidd. (CVE-2015-0203, CVE-2015-0224)\n\nRed Hat would like to thank the Apache Software Foundation for reporting\nthe CVE-2015-0203 issue. Upstream acknowledges G. Geshev from MWR Labs as\nthe original reporter.\n\nThis update also fixes the following bug:\n\n* Prior to this update, because message purging was performed on a timer\nthread, large purge events could have caused all other timer tasks to be\ndelayed. Because heartbeats were also driven by a timer on this thread,\nthis could have resulted in clients timing out because they were not\nreceiving heartbeats. The fix moves expired message purging from the timer\nthread to a worker thread, which allow long-running expired message purges\nto not affect timer tasks such as the heartbeat timer. (BZ#1142833)\n\nAll users of Red Hat Enterprise MRG Messaging 2.5 for Red Hat Enterprise\nLinux 6 are advised to upgrade to these updated packages, which correct\nthese issues.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2015-03-09"
+      },
+      "cve": [
+        {
+          "text": "CVE-2015-0203",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-0203",
+          "impact": "moderate",
+          "public": "20150113",
+          "cvss2": "2.9/AV:A/AC:M/Au:N/C:N/I:N/A:P"
+        },
+        {
+          "text": "CVE-2015-0223",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-0223",
+          "impact": "moderate",
+          "public": "20150127",
+          "cvss2": "5.8/AV:A/AC:L/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2015-0224",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-0224",
+          "impact": "moderate",
+          "public": "20150127",
+          "cvss2": "2.9/AV:A/AC:M/Au:N/C:N/I:N/A:P"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:enterprise_mrg:2",
+          "cpe:/a:redhat:enterprise_mrg:2:computenode:el6",
+          "cpe:/a:redhat:enterprise_mrg:2:server:el6"
+        ]
+      },
+      "rights": "Copyright 2015 Red Hat, Inc.",
+      "issued": {
+        "date": "2015-03-09"
+      },
+      "bugzilla": [
+        {
+          "text": "3 qpidd DoS issues in AMQP 0-10 protocol handling",
+          "href": "https://bugzilla.redhat.com/1181721",
+          "id": "1181721"
+        },
+        {
+          "text": "CVE-2015-0224 qpid-cpp: AMQP 0-10 protocol sequence-set maximal range DoS (incomplete CVE-2015-0203 fix)",
+          "href": "https://bugzilla.redhat.com/1186302",
+          "id": "1186302"
+        },
+        {
+          "text": "CVE-2015-0223 qpid-cpp: anonymous access to qpidd cannot be prevented",
+          "href": "https://bugzilla.redhat.com/1186308",
+          "id": "1186308"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise MRG 2"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661001",
+                    "comment": "qpid-cpp-client is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279022",
+                    "comment": "qpid-cpp-client is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661003",
+                    "comment": "qpid-cpp-client-devel is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528028",
+                    "comment": "qpid-cpp-client-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661005",
+                    "comment": "qpid-cpp-client-devel-docs is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528030",
+                    "comment": "qpid-cpp-client-devel-docs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661007",
+                    "comment": "qpid-cpp-client-rdma is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528032",
+                    "comment": "qpid-cpp-client-rdma is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661009",
+                    "comment": "qpid-cpp-client-ssl is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279030",
+                    "comment": "qpid-cpp-client-ssl is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661011",
+                    "comment": "qpid-cpp-server is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279032",
+                    "comment": "qpid-cpp-server is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661013",
+                    "comment": "qpid-cpp-server-cluster is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528034",
+                    "comment": "qpid-cpp-server-cluster is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661015",
+                    "comment": "qpid-cpp-server-devel is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528036",
+                    "comment": "qpid-cpp-server-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661017",
+                    "comment": "qpid-cpp-server-rdma is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528038",
+                    "comment": "qpid-cpp-server-rdma is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661019",
+                    "comment": "qpid-cpp-server-ssl is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279040",
+                    "comment": "qpid-cpp-server-ssl is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661021",
+                    "comment": "qpid-cpp-server-store is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528040",
+                    "comment": "qpid-cpp-server-store is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150661023",
+                    "comment": "qpid-cpp-server-xml is earlier than 0:0.18-38.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528042",
+                    "comment": "qpid-cpp-server-xml is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20120496021",
+            "comment": "Red Hat Enterprise Linux 6 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20120496022",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

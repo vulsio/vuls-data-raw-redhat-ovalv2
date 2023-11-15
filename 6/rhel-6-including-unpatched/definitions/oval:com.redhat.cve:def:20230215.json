@@ -1,0 +1,141 @@
+{
+  "id": "oval:com.redhat.cve:def:20230215",
+  "version": "636",
+  "class": "vulnerability",
+  "metadata": {
+    "title": "use-after-free following BIO_new_NDEF (moderate)",
+    "reference": [
+      {
+        "ref_id": "CVE-2023-0215",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2023-0215",
+        "source": "CVE"
+      }
+    ],
+    "description": "DOCUMENTATION: A use-after-free vulnerability was found in OpenSSL's BIO_new_NDEF function. The public API function BIO_new_NDEF is a helper function used for streaming ASN.1 data via a BIO. It is primarily used internally by OpenSSL to support the SMIME, CMS, and PKCS7 streaming capabilities, but it may also be called directly by end-user applications. The function receives a BIO from the caller, prepends a new BIO_f_asn1 filter BIO onto the front of it to form a BIO chain, and then returns the new head of the BIO chain to the caller. Under certain conditions. For example, if a CMS recipient public key is invalid, the new filter BIO is freed, and the function returns a NULL result indicating a failure. However, in this case, the BIO chain is not properly cleaned up, and the BIO passed by the caller still retains internal pointers to the previously freed filter BIO. If the caller then calls BIO_pop() on the BIO, a use-after-free will occur, possibly resulting in a crash. \n            STATEMENT: This vulnerability has been rated as having a moderate impact in alignment with upstream. See the security advisory linked in external references.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2023-09-27"
+      },
+      "cve": [
+        {
+          "text": "CVE-2023-0215",
+          "cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cwe": "CWE-416",
+          "href": "https://access.redhat.com/security/cve/CVE-2023-0215",
+          "impact": "moderate",
+          "public": "20230207"
+        }
+      ],
+      "affected": {
+        "resolution": [
+          {
+            "state": "Out of support scope",
+            "component": [
+              "openssl",
+              "openssl-devel",
+              "openssl-perl",
+              "openssl-static"
+            ]
+          }
+        ]
+      },
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:rhel_extras:6",
+          "cpe:/a:redhat:rhel_extras_hpn:6",
+          "cpe:/a:redhat:rhel_extras_oracle_java:6",
+          "cpe:/a:redhat:rhel_extras_sap:6",
+          "cpe:/a:redhat:rhel_extras_sap_hana:6",
+          "cpe:/o:redhat:enterprise_linux:6",
+          "cpe:/o:redhat:enterprise_linux:6::client",
+          "cpe:/o:redhat:enterprise_linux:6::computenode",
+          "cpe:/o:redhat:enterprise_linux:6::server",
+          "cpe:/o:redhat:enterprise_linux:6::workstation"
+        ]
+      },
+      "issued": {}
+    },
+    "affected": {}
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20111473001",
+                    "comment": "openssl is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20111473002",
+                    "comment": "openssl is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20111473007",
+                    "comment": "openssl-static is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20111473008",
+                    "comment": "openssl-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20111473005",
+                    "comment": "openssl-perl is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20111473006",
+                    "comment": "openssl-perl is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20111473009",
+                    "comment": "openssl-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20111473010",
+                    "comment": "openssl-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.cve:tst:20022439069",
+            "comment": "Red Hat Enterprise Linux 6 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.cve:tst:20022439070",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

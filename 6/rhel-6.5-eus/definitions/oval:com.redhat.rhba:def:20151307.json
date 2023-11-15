@@ -1,0 +1,129 @@
+{
+  "id": "oval:com.redhat.rhba:def:20151307",
+  "version": "639",
+  "class": "patch",
+  "metadata": {
+    "title": "RHBA-2015:1307: netcf bug fix update (Moderate)",
+    "reference": [
+      {
+        "ref_id": "RHBA-2015:1307",
+        "ref_url": "https://access.redhat.com/errata/RHBA-2015:1307",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2014-8119",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-8119",
+        "source": "CVE"
+      }
+    ],
+    "description": "The netcf packages contain a library for modifying the network configuration of a system. Network configuration is expressed in a platform-independent XML format, which netcf translates into changes to the system's \"native\" network configuration files.\n\nThis update fixes the following bugs:\n\n* Previously, when the XML configuration for an interface enabled dynamic host configuration protocol (DHCP) for IPv6, the netcf library erroneously set the variable named \"DHCPV6\" in the ifcfg configuration file instead of \"DHCPV6C\". The underlying source code has been patched, and netcf now passes the correct \"DHCPV6C\" option to ifcfg. (BZ#1113978)\n\n* Prior to this update, when requested to configure an interface with an IPv4 netmask of 255.255.255.255, the netcf library logged an error as the\ninterface configuration was rejected. This update fixes the netmask for the 32-bit interface prefix, and netcf now configures IPv4 interfaces successfully. (BZ#1116314) \n\n* Due to a parsing error, the ifcfg files with comments starting anywhere beyond column 1 or multiple variables on a single line caused the netcf library to generate errors when attempting to list host interfaces. The parsing error has been fixed, and any tool using netcf now lists active interfaces as expected. (BZ#1208897) \n\n* When multiple static IPv6 addresses were specified in an interface configuration, an extra set of quotes appeared in the IPV6ADDR_SECONDARIES entry in the generated configuration file. This update removes extraneous single quotes from IPV6ADDR_SECONDARIES, thus fixing this bug. (BZ#1208894)\n\n* Due to a denial of a service flaw in the netcf library, a specially crafted interface name previously caused applications using netcf, such as the libvirt daemon, to terminate unexpectedly. An upstream patch has been applied to fix this bug, and applications using netcf no longer crash in the aforementioned situation. (BZ#1165966) \n\nUsers of netcf are advised to upgrade to these updated packages, which fix these bugs.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2015-07-22"
+      },
+      "cve": [
+        {
+          "text": "CVE-2014-8119",
+          "cwe": "CWE-643->CWE-476",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-8119",
+          "impact": "moderate",
+          "public": "20150330",
+          "cvss2": "4.0/AV:N/AC:L/Au:S/C:N/I:N/A:P"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/o:redhat:rhel_eus:6.5",
+          "cpe:/o:redhat:rhel_eus:6.5::computenode",
+          "cpe:/o:redhat:rhel_eus:6.5::server"
+        ]
+      },
+      "rights": "Copyright 2015 Red Hat, Inc.",
+      "issued": {
+        "date": "2015-07-22"
+      },
+      "bugzilla": [
+        {
+          "text": "augeas path expression injection via interface name",
+          "href": "https://bugzilla.redhat.com/1172176",
+          "id": "1172176"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 6"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151307001",
+                    "comment": "netcf is earlier than 0:0.2.4-3.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151307002",
+                    "comment": "netcf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151307003",
+                    "comment": "netcf-devel is earlier than 0:0.2.4-3.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151307004",
+                    "comment": "netcf-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151307005",
+                    "comment": "netcf-libs is earlier than 0:0.2.4-3.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhba:tst:20151307006",
+                    "comment": "netcf-libs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
+            "comment": "Red Hat Enterprise Linux 6 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "id": "oval:com.redhat.cve:def:201914379",
+  "version": "636",
+  "class": "vulnerability",
+  "metadata": {
+    "title": "default typing mishandling leading to remote code execution (moderate)",
+    "reference": [
+      {
+        "ref_id": "CVE-2019-14379",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2019-14379",
+        "source": "CVE"
+      }
+    ],
+    "description": "DOCUMENTATION: A flaw was discovered in FasterXML jackson-databind, where it would permit polymorphic deserialization of malicious objects using the ehcache and logback JNDI gadgets when used in conjunction with polymorphic type handling methods such as `enableDefaultTyping()` or when @JsonTypeInfo is using `Id.CLASS` or `Id.MINIMAL_CLASS` or in any other way which ObjectMapper.readValue might instantiate objects from unsafe sources. An attacker could use this flaw to execute arbitrary code. \n            STATEMENT: While OpenShift Container Platform's elasticsearch plugins do ship the vulnerable component, it doesn't do any of the unsafe things described in https://access.redhat.com/solutions/3279231. We may update the jackson-databind dependency in a future release.\n\nSimilarly, Satellite 6 does not enable polymorphic unmarshmalling, which is a required configuration for the vulnerability to be used. We may update the jackson-databind dependency in a future release.\n\nRed Hat OpenStack Platform ships OpenDaylight, which contains the vulnerable jackson-databind. However, OpenDaylight does not expose jackson-databind in a way that would make it vulnerable, lowering the impact of the vulnerability for OpenDaylight. As such, Red Hat will not be providing a fix for OpenDaylight at this time.\n            MITIGATION: The following conditions are needed for an exploit, we recommend avoiding all if possible\n* Deserialization from sources you do not control\n* `enableDefaultTyping()`\n* `@JsonTypeInfo using `id.CLASS` or `id.MINIMAL_CLASS`",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2023-09-07"
+      },
+      "cve": [
+        {
+          "text": "CVE-2019-14379",
+          "cvss3": "9.8/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cwe": "CWE-502",
+          "href": "https://access.redhat.com/security/cve/CVE-2019-14379",
+          "impact": "moderate",
+          "public": "20190723"
+        }
+      ],
+      "affected": {
+        "resolution": [
+          {
+            "state": "Out of support scope",
+            "component": [
+              "openshift-elasticsearch-plugin"
+            ]
+          },
+          {
+            "state": "Will not fix",
+            "component": [
+              "elasticsearch-cloud-kubernetes"
+            ]
+          }
+        ]
+      },
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:openshift:3.9",
+          "cpe:/a:redhat:openshift:3.9::el7"
+        ]
+      },
+      "issued": {}
+    },
+    "affected": {}
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201715095003",
+                    "comment": "openshift-elasticsearch-plugin is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201715095004",
+                    "comment": "openshift-elasticsearch-plugin is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201715095001",
+                    "comment": "elasticsearch-cloud-kubernetes is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201715095002",
+                    "comment": "elasticsearch-cloud-kubernetes is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.cve:tst:201715095005",
+            "comment": "Red Hat Enterprise Linux 7 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.cve:tst:201715095006",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

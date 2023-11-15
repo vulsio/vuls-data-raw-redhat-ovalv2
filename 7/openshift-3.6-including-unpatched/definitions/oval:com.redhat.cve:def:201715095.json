@@ -1,0 +1,79 @@
+{
+  "id": "oval:com.redhat.cve:def:201715095",
+  "version": "636",
+  "class": "vulnerability",
+  "metadata": {
+    "title": "CVE-2017-15095 jackson-databind: Unsafe deserialization due to incomplete black list (incomplete fix for CVE-2017-7525) (important)",
+    "reference": [
+      {
+        "ref_id": "CVE-2017-15095",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2017-15095",
+        "source": "CVE"
+      }
+    ],
+    "description": "DOCUMENTATION: A deserialization flaw was discovered in the jackson-databind which could allow an unauthenticated user to perform code execution by sending the maliciously crafted input to the readValue method of the ObjectMapper. This issue extends the previous flaw CVE-2017-7525 by blacklisting more classes that could be used maliciously.\n            STATEMENT: This issue affects the versions of jackson-databind (in Satellite 6.0 and 6.1) and candlepin (which embeds a copy of jackson-databind in Satellite 6.2) as shipped with Red Hat Satellite 6.x. However the affected code is NOT used at this time:\n\nCandlepin currently uses the default type resolution configuration for the ObjectMappers it creates/uses. Nowhere in candlepin do we enable global polymorphic deserialization via enableDefaultTyping(...), therefore based on the documentation sited BZ 1462702 , candlepin should not be affected.\n\nHowever as the vulnerable software ships with the product we have marked them as vulnerable to ensure the issue is tracked.\n\nJBoss EAP 7.x only uses the vulnerable Jackson Databind library for marshalling and unmarshalling of JSON objects passed to JAX-RS webservices. Some advise about how to remain safe when using JAX-RS webservices on JBoss EAP 7.x is available here: \n\nhttps://access.redhat.com/solutions/3279231\n            MITIGATION: Mitigation to this problem is to not trigger polymorphic desrialization globally by using: objectMapper.enableDefaultTyping() and rather use @JsonTypeInfo on the class property to explicitly define the type information. For more information on this issue please refer to https://www.github.com/mbechler/marshalsec/blob/master/marshalsec.pdf?raw=true",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Important",
+      "updated": {
+        "date": "2021-02-17"
+      },
+      "cve": [
+        {
+          "text": "CVE-2017-15095",
+          "cvss3": "8.1/CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cwe": "CWE-184",
+          "href": "https://access.redhat.com/security/cve/CVE-2017-15095",
+          "impact": "important",
+          "public": "20171102"
+        }
+      ],
+      "affected": {
+        "resolution": [
+          {
+            "state": "Affected",
+            "component": [
+              "openshift-elasticsearch-plugin"
+            ]
+          }
+        ]
+      },
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:openshift:3.6",
+          "cpe:/a:redhat:openshift:3.6::el7"
+        ]
+      },
+      "issued": {}
+    },
+    "affected": {}
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.cve:tst:201715095003",
+            "comment": "Red Hat Enterprise Linux 7 is installed"
+          },
+          {
+            "test_ref": "oval:com.redhat.cve:tst:201715095001",
+            "comment": "openshift-elasticsearch-plugin is installed"
+          },
+          {
+            "test_ref": "oval:com.redhat.cve:tst:201715095002",
+            "comment": "openshift-elasticsearch-plugin is signed with Red Hat redhatrelease2 key"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.cve:tst:201715095004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

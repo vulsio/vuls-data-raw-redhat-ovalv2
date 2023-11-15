@@ -1,0 +1,302 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20151139",
+  "version": "640",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2015:1139: kernel-rt security, bug fix, and enhancement update (Important)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2015:1139",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2015:1139",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2014-9420",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-9420",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2014-9529",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-9529",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2014-9584",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-9584",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2015-1573",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-1573",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2015-1593",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-1593",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2015-1805",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-1805",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2015-2830",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-2830",
+        "source": "CVE"
+      }
+    ],
+    "description": "The kernel-rt packages contain the Linux kernel, the core of any Linux\noperating system.\n\n* It was found that the Linux kernel's implementation of vectored pipe read\nand write functionality did not take into account the I/O vectors that were\nalready processed when retrying after a failed atomic access operation,\npotentially resulting in memory corruption due to an I/O vector array\noverrun. A local, unprivileged user could use this flaw to crash the system\nor, potentially, escalate their privileges on the system. (CVE-2015-1805,\nImportant)\n\n* A race condition flaw was found in the way the Linux kernel keys\nmanagement subsystem performed key garbage collection. A local attacker\ncould attempt accessing a key while it was being garbage collected, which\nwould cause the system to crash. (CVE-2014-9529, Moderate)\n\n* A flaw was found in the way the Linux kernel's 32-bit emulation\nimplementation handled forking or closing of a task with an 'int80' entry.\nA local user could potentially use this flaw to escalate their privileges\non the system. (CVE-2015-2830, Low)\n\n* It was found that the Linux kernel's ISO file system implementation did\nnot correctly limit the traversal of Rock Ridge extension Continuation\nEntries (CE). An attacker with physical access to the system could use this\nflaw to trigger an infinite loop in the kernel, resulting in a denial of\nservice. (CVE-2014-9420, Low)\n\n* An information leak flaw was found in the way the Linux kernel's ISO9660\nfile system implementation accessed data on an ISO9660 image with RockRidge\nExtension Reference (ER) records. An attacker with physical access to the\nsystem could use this flaw to disclose up to 255 bytes of kernel memory.\n(CVE-2014-9584, Low)\n\n* A flaw was found in the way the nft_flush_table() function of the Linux\nkernel's netfilter tables implementation flushed rules that were\nreferencing deleted chains. A local user who has the CAP_NET_ADMIN\ncapability could use this flaw to crash the system. (CVE-2015-1573, Low)\n\n* An integer overflow flaw was found in the way the Linux kernel randomized\nthe stack for processes on certain 64-bit architecture systems, such as\nx86-64, causing the stack entropy to be reduced by four. (CVE-2015-1593,\nLow)\n\nRed Hat would like to thank Carl Henrik Lunde for reporting CVE-2014-9420\nand CVE-2014-9584. The security impact of CVE-2015-1805 was discovered by\nRed Hat.\n\nThe kernel-rt packages have been upgraded to version 3.10.0-229.7.2, which\nprovides a number of bug fixes and enhancements over the previous version,\nincluding:\n\n* storvsc: get rid of overly verbose warning messages\n* storvsc: force discovery of LUNs that may have been removed\n* storvsc: in responce to a scan event, scan the hos\n* storvsc: NULL pointer dereference fix\n* futex: Mention key referencing differences between shared and private\nfutexes\n* futex: Ensure get_futex_key_refs() always implies a barrier\n* kernel module: set nx before marking module MODULE_STATE_COMING\n* kernel module: Clean up ro/nx after early module load failures\n* btrfs: make xattr replace operations atomic\n* megaraid_sas: revert: Add release date and update driver version\n* radeon: fix kernel segfault in hwmonitor\n\n(BZ#1223955)\n\nBug fix:\n\n* There is an XFS optimization that depended on a spinlock to disable\npreemption using the preempt_disable() function. When CONFIG_PREEMPT_RT is\nenabled on realtime kernels, spinlocks do not disable preemption while\nheld, so the XFS critical section was not protected from preemption.\nSystems on the Realtime kernel-rt could lock up in this XFS optimization\nwhen a task that locked all the counters was then preempted by a realtime\ntask, causing all callers of that lock to block indefinitely. This update\ndisables the optimization when building a kernel with\nCONFIG_PREEMPT_RT_FULL enabled. (BZ#1223955)\n\nAll kernel-rt users are advised to upgrade to these updated packages, which\ncorrect these issues and add these enhancements. The system must be\nrebooted for this update to take effect.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Important",
+      "updated": {
+        "date": "2015-06-23"
+      },
+      "cve": [
+        {
+          "text": "CVE-2014-9420",
+          "cwe": "CWE-835",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-9420",
+          "impact": "low",
+          "public": "20141215",
+          "cvss2": "4.7/AV:L/AC:M/Au:N/C:N/I:N/A:C"
+        },
+        {
+          "text": "CVE-2014-9529",
+          "cwe": "CWE-416",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-9529",
+          "impact": "moderate",
+          "public": "20141229",
+          "cvss2": "4.9/AV:L/AC:L/Au:N/C:N/I:N/A:C"
+        },
+        {
+          "text": "CVE-2014-9584",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-9584",
+          "impact": "low",
+          "public": "20150107",
+          "cvss2": "1.9/AV:L/AC:M/Au:N/C:P/I:N/A:N"
+        },
+        {
+          "text": "CVE-2015-1573",
+          "cwe": "CWE-416",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-1573",
+          "impact": "low",
+          "public": "20150116",
+          "cvss2": "2.4/AV:L/AC:H/Au:S/C:P/I:P/A:N"
+        },
+        {
+          "text": "CVE-2015-1593",
+          "cwe": "CWE-190",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-1593",
+          "impact": "low",
+          "public": "20150213",
+          "cvss2": "1.9/AV:L/AC:M/Au:N/C:P/I:N/A:N"
+        },
+        {
+          "text": "CVE-2015-1805",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-1805",
+          "impact": "important",
+          "public": "20150602",
+          "cvss2": "6.9/AV:L/AC:M/Au:N/C:C/I:C/A:C"
+        },
+        {
+          "text": "CVE-2015-2830",
+          "cwe": "CWE-393",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-2830",
+          "impact": "low",
+          "public": "20150401",
+          "cvss2": "1.9/AV:L/AC:M/Au:N/C:N/I:P/A:N"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:rhel_extras_sap_eus:7.7",
+          "cpe:/a:redhat:rhel_extras_sap_hana_eus:7.7",
+          "cpe:/o:redhat:rhel_eus:7.7",
+          "cpe:/o:redhat:rhel_eus:7.7::computenode",
+          "cpe:/o:redhat:rhel_eus:7.7::server"
+        ]
+      },
+      "rights": "Copyright 2015 Red Hat, Inc.",
+      "issued": {
+        "date": "2015-06-23"
+      },
+      "bugzilla": [
+        {
+          "text": "infinite loop in CE record entries",
+          "href": "https://bugzilla.redhat.com/1175235",
+          "id": "1175235"
+        },
+        {
+          "text": "CVE-2014-9529 kernel: use-after-free during key garbage collection",
+          "href": "https://bugzilla.redhat.com/1179813",
+          "id": "1179813"
+        },
+        {
+          "text": "unchecked printing of ER records",
+          "href": "https://bugzilla.redhat.com/1180119",
+          "id": "1180119"
+        },
+        {
+          "text": "CVE-2015-1573 kernel: panic while flushing nftables rules that reference deleted chains.",
+          "href": "https://bugzilla.redhat.com/1190966",
+          "id": "1190966"
+        },
+        {
+          "text": "CVE-2015-1593 kernel: Linux stack ASLR implementation Integer overflow",
+          "href": "https://bugzilla.redhat.com/1192519",
+          "id": "1192519"
+        },
+        {
+          "text": "iovec overrun leading to memory corruption",
+          "href": "https://bugzilla.redhat.com/1202855",
+          "id": "1202855"
+        },
+        {
+          "text": "CVE-2015-2830 kernel: int80 fork from 64-bit tasks mishandling",
+          "href": "https://bugzilla.redhat.com/1208598",
+          "id": "1208598"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 7"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterions": [
+              {
+                "test_ref": "oval:com.redhat.rhsa:tst:20151137031",
+                "comment": "kernel-rt earlier than 0:3.10.0-229.7.2.rt56.141.6.el7_1 is currently running"
+              },
+              {
+                "test_ref": "oval:com.redhat.rhsa:tst:20151139016",
+                "comment": "kernel-rt earlier than 0:3.10.0-229.7.2.rt56.141.6.el7_1 is set to boot up on next boot"
+              }
+            ]
+          },
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20151139001",
+                    "comment": "kernel-rt is earlier than 0:3.10.0-229.7.2.rt56.141.6.el7_1"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150727002",
+                    "comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20151139003",
+                    "comment": "kernel-rt-debug is earlier than 0:3.10.0-229.7.2.rt56.141.6.el7_1"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150727004",
+                    "comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20151139005",
+                    "comment": "kernel-rt-debug-devel is earlier than 0:3.10.0-229.7.2.rt56.141.6.el7_1"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150727006",
+                    "comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20151139007",
+                    "comment": "kernel-rt-devel is earlier than 0:3.10.0-229.7.2.rt56.141.6.el7_1"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150727008",
+                    "comment": "kernel-rt-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20151139009",
+                    "comment": "kernel-rt-doc is earlier than 0:3.10.0-229.7.2.rt56.141.6.el7_1"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150727010",
+                    "comment": "kernel-rt-doc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20151139011",
+                    "comment": "kernel-rt-trace is earlier than 0:3.10.0-229.7.2.rt56.141.6.el7_1"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150727012",
+                    "comment": "kernel-rt-trace is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20151139013",
+                    "comment": "kernel-rt-trace-devel is earlier than 0:3.10.0-229.7.2.rt56.141.6.el7_1"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150727014",
+                    "comment": "kernel-rt-trace-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20150364027",
+            "comment": "Red Hat Enterprise Linux 7 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20150364028",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

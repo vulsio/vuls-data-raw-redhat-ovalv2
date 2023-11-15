@@ -1,0 +1,630 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20130562",
+  "version": "638",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2013:0562: Red Hat Enterprise MRG Messaging 2.3 security update (Moderate)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2013:0562",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2013:0562",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2012-4446",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2012-4446",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2012-4458",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2012-4458",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2012-4459",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2012-4459",
+        "source": "CVE"
+      }
+    ],
+    "description": "Red Hat Enterprise MRG (Messaging, Realtime, and Grid) is a next-generation\nIT infrastructure for enterprise computing. MRG offers increased\nperformance, reliability, interoperability, and faster computing for\nenterprise customers.\n\nMRG Messaging is a high-speed reliable messaging distribution for Linux\nbased on AMQP (Advanced Message Queuing Protocol), an open protocol\nstandard for enterprise messaging that is designed to make mission critical\nmessaging widely available as a standard service, and to make enterprise\nmessaging interoperable across platforms, programming languages, and\nvendors. MRG Messaging includes an AMQP 0-10 messaging broker; AMQP 0-10\nclient libraries for C++, Java JMS, and Python; as well as persistence\nlibraries and management tools.\n\nIt was found that the Apache Qpid daemon (qpidd) treated AMQP connections\nwith the federation_tag attribute set as a broker-to-broker connection,\nrather than a client-to-server connection. This resulted in the source user\nID of messages not being checked. A client that can establish an AMQP\nconnection with the broker could use this flaw to bypass intended\nauthentication. For Condor users, if condor-aviary is installed, this flaw\ncould be used to submit jobs that would run as any user (except root, as\nCondor does not run jobs as root). (CVE-2012-4446)\n\nIt was found that the AMQP type decoder in qpidd allowed arbitrary data\ntypes in certain messages. A remote attacker could use this flaw to send a\nmessage containing an excessively large amount of data, causing qpidd to\nallocate a large amount of memory. qpidd would then be killed by the Out of\nMemory killer (denial of service). (CVE-2012-4458)\n\nAn integer overflow flaw, leading to an out-of-bounds read, was found in\nthe Qpid qpid::framing::Buffer::checkAvailable() function. An\nunauthenticated, remote attacker could send a specially-crafted message to\nQpid, causing it to crash. (CVE-2012-4459)\n\nThe CVE-2012-4446, CVE-2012-4458, and CVE-2012-4459 issues were discovered\nby Florian Weimer of the Red Hat Product Security Team.\n\nThis update also fixes several bugs and adds enhancements. Documentation\nfor these changes will be available shortly from the Technical Notes\ndocument linked to in the References section.\n\nAll users of the Messaging capabilities of Red Hat Enterprise MRG are\nadvised to upgrade to these updated packages, which resolve these issues,\nand fix the bugs and add the enhancements noted in the Red Hat Enterprise\nMRG 2 Technical Notes. After installing the updated packages, stop the\ncluster by either running \"service qpidd stop\" on all nodes, or\n\"qpid-cluster --all-stop\" on any one of the cluster nodes. Once stopped,\nrestart the cluster with \"service qpidd start\" on all nodes for the update\nto take effect.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2013-03-06"
+      },
+      "cve": [
+        {
+          "text": "CVE-2012-4446",
+          "href": "https://access.redhat.com/security/cve/CVE-2012-4446",
+          "impact": "moderate",
+          "public": "20130306",
+          "cvss2": "5.8/AV:N/AC:M/Au:N/C:P/I:P/A:N"
+        },
+        {
+          "text": "CVE-2012-4458",
+          "href": "https://access.redhat.com/security/cve/CVE-2012-4458",
+          "impact": "moderate",
+          "public": "20130305",
+          "cvss2": "5.0/AV:N/AC:L/Au:N/C:N/I:N/A:P"
+        },
+        {
+          "text": "CVE-2012-4459",
+          "href": "https://access.redhat.com/security/cve/CVE-2012-4459",
+          "impact": "moderate",
+          "public": "20130305",
+          "cvss2": "5.0/AV:N/AC:L/Au:N/C:N/I:N/A:P"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:enterprise_mrg:2",
+          "cpe:/a:redhat:enterprise_mrg:2:computenode:el6",
+          "cpe:/a:redhat:enterprise_mrg:2:server:el6"
+        ]
+      },
+      "rights": "Copyright 2013 Red Hat, Inc.",
+      "issued": {
+        "date": "2013-03-06"
+      },
+      "bugzilla": [
+        {
+          "text": "qpid authentication bypass",
+          "href": "https://bugzilla.redhat.com/851355",
+          "id": "851355"
+        },
+        {
+          "text": "long arrays of zero-width types cause a denial of service",
+          "href": "https://bugzilla.redhat.com/861234",
+          "id": "861234"
+        },
+        {
+          "text": "checkAvailable() wraparound",
+          "href": "https://bugzilla.redhat.com/861241",
+          "id": "861241"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise MRG 2"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562001",
+                    "comment": "python-saslwrapper is earlier than 0:0.18-1.el6_3"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562002",
+                    "comment": "python-saslwrapper is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562003",
+                    "comment": "ruby-saslwrapper is earlier than 0:0.18-1.el6_3"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562004",
+                    "comment": "ruby-saslwrapper is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562005",
+                    "comment": "saslwrapper is earlier than 0:0.18-1.el6_3"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562006",
+                    "comment": "saslwrapper is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562007",
+                    "comment": "saslwrapper-devel is earlier than 0:0.18-1.el6_3"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562008",
+                    "comment": "saslwrapper-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562009",
+                    "comment": "python-qpid is earlier than 0:0.18-4.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562010",
+                    "comment": "python-qpid is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562011",
+                    "comment": "mrg-release is earlier than 0:2.3.0-1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279002",
+                    "comment": "mrg-release is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562013",
+                    "comment": "qpid-tests is earlier than 0:0.18-2.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562014",
+                    "comment": "qpid-tests is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562015",
+                    "comment": "cumin-messaging is earlier than 0:0.1.1-2.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562016",
+                    "comment": "cumin-messaging is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279045",
+                    "comment": "xqilla is earlier than 0:2.2.3-8.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279046",
+                    "comment": "xqilla is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279047",
+                    "comment": "xqilla-devel is earlier than 0:2.2.3-8.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279048",
+                    "comment": "xqilla-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279049",
+                    "comment": "xqilla-doc is earlier than 0:2.2.3-8.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279050",
+                    "comment": "xqilla-doc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279051",
+                    "comment": "xerces-c is earlier than 0:3.0.1-20.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279052",
+                    "comment": "xerces-c is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279053",
+                    "comment": "xerces-c-devel is earlier than 0:3.0.1-20.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279054",
+                    "comment": "xerces-c-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279055",
+                    "comment": "xerces-c-doc is earlier than 0:3.0.1-20.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279056",
+                    "comment": "xerces-c-doc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121281115",
+                    "comment": "rubygems is earlier than 0:1.8.16-1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121281116",
+                    "comment": "rubygems is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121281113",
+                    "comment": "rubygem-rake is earlier than 0:0.8.7-2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121281114",
+                    "comment": "rubygem-rake is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562033",
+                    "comment": "qpid-java-client is earlier than 0:0.18-7.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528002",
+                    "comment": "qpid-java-client is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562035",
+                    "comment": "qpid-java-common is earlier than 0:0.18-7.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528004",
+                    "comment": "qpid-java-common is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562037",
+                    "comment": "qpid-java-example is earlier than 0:0.18-7.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528006",
+                    "comment": "qpid-java-example is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562039",
+                    "comment": "qpid-jca is earlier than 0:0.18-8.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528008",
+                    "comment": "qpid-jca is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562041",
+                    "comment": "qpid-jca-xarecovery is earlier than 0:0.18-8.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528010",
+                    "comment": "qpid-jca-xarecovery is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562043",
+                    "comment": "qpid-cpp-client is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279022",
+                    "comment": "qpid-cpp-client is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562045",
+                    "comment": "qpid-cpp-client-devel is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528028",
+                    "comment": "qpid-cpp-client-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562047",
+                    "comment": "qpid-cpp-client-devel-docs is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528030",
+                    "comment": "qpid-cpp-client-devel-docs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562049",
+                    "comment": "qpid-cpp-client-rdma is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528032",
+                    "comment": "qpid-cpp-client-rdma is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562051",
+                    "comment": "qpid-cpp-client-ssl is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279030",
+                    "comment": "qpid-cpp-client-ssl is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562053",
+                    "comment": "qpid-cpp-server is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279032",
+                    "comment": "qpid-cpp-server is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562055",
+                    "comment": "qpid-cpp-server-cluster is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528034",
+                    "comment": "qpid-cpp-server-cluster is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562057",
+                    "comment": "qpid-cpp-server-devel is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528036",
+                    "comment": "qpid-cpp-server-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562059",
+                    "comment": "qpid-cpp-server-rdma is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528038",
+                    "comment": "qpid-cpp-server-rdma is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562061",
+                    "comment": "qpid-cpp-server-ssl is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279040",
+                    "comment": "qpid-cpp-server-ssl is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562063",
+                    "comment": "qpid-cpp-server-store is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528040",
+                    "comment": "qpid-cpp-server-store is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562065",
+                    "comment": "qpid-cpp-server-xml is earlier than 0:0.18-14.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528042",
+                    "comment": "qpid-cpp-server-xml is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562067",
+                    "comment": "qpid-tools is earlier than 0:0.18-8.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562068",
+                    "comment": "qpid-tools is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562069",
+                    "comment": "python-qpid-qmf is earlier than 0:0.18-15.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279004",
+                    "comment": "python-qpid-qmf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562071",
+                    "comment": "qpid-qmf is earlier than 0:0.18-15.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279006",
+                    "comment": "qpid-qmf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562073",
+                    "comment": "qpid-qmf-devel is earlier than 0:0.18-15.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120528044",
+                    "comment": "qpid-qmf-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562075",
+                    "comment": "ruby-qpid-qmf is earlier than 0:0.18-15.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20121279010",
+                    "comment": "ruby-qpid-qmf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562077",
+                    "comment": "rhm-docs is earlier than 0:0.18-2.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20130562078",
+                    "comment": "rhm-docs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20120496021",
+            "comment": "Red Hat Enterprise Linux 6 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20120496022",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

@@ -1,0 +1,715 @@
+{
+  "id": "oval:com.redhat.cve:def:202028367",
+  "version": "636",
+  "class": "vulnerability",
+  "metadata": {
+    "title": "improper validation of cgo flags can lead to code execution at build time (moderate)",
+    "reference": [
+      {
+        "ref_id": "CVE-2020-28367",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2020-28367",
+        "source": "CVE"
+      }
+    ],
+    "description": "DOCUMENTATION: An input validation vulnerability was found in Go. If cgo is specified in a Go file, it is possible to bypass the validation of arguments to the gcc compiler. This flaw allows an attacker to create a malicious repository that can execute arbitrary code when downloaded and run via `go get` or `go build` while building a Go project. The highest threat from this vulnerability is to confidentiality and integrity as well as system availability. \n            STATEMENT: While the OpenShift Container Platform (OCP), Red Hat OpenShift Jaeger (RHOSJ),  OpenShift Service Mesh (OSSM), and OpenShift Virtualization all contain RPMs and containers that are compiled with a vulnerable version of Go, the vulnerability is specific to the building of the Go code itself. Using `go get` or `go build` and as such, the relevant components have been marked as not affected.\n\nAdditionally, only the main RPMs and containers for OCP, RHOSJ, OSSM, and OpenShift Virtualization are represented due to the large volume of not affected components.\n\nRed Hat Ceph Storage 3 ships the vulnerable version of go, and an attacker building go code on RHCS 3 could potentially exploit this vulnerability.\n            MITIGATION: If it's possible to confirm that the go project being built does not rely on any cgo code in the included dependencies, the env variable CGO_ENABLED=0 can be specified when using either `go get` or `go build`.  \n\nFor example:\n    CGO_ENABLED=0 go get github.com/someproject\n\nThis will not stop the files being downloaded but will stop any automatic complication of the cgo code, including inlined in the go file and separate .c files.  Of course, this will only be effective if cgo is not relied upon in a given dependency and may not be appropriate in all scenarios.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2023-08-30"
+      },
+      "cve": [
+        {
+          "text": "CVE-2020-28367",
+          "cvss3": "7.5/CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "cwe": "CWE-20",
+          "href": "https://access.redhat.com/security/cve/CVE-2020-28367",
+          "impact": "moderate",
+          "public": "20201112"
+        }
+      ],
+      "affected": {
+        "resolution": [
+          {
+            "state": "Out of support scope",
+            "component": [
+              "cpp",
+              "gcc",
+              "gcc-c++",
+              "gcc-gfortran",
+              "gcc-gnat",
+              "gcc-go",
+              "gcc-objc",
+              "gcc-objc++",
+              "gcc-plugin-devel",
+              "golang",
+              "golang-bin",
+              "golang-docs",
+              "golang-misc",
+              "golang-src",
+              "golang-tests",
+              "libasan",
+              "libasan-static",
+              "libatomic",
+              "libatomic-static",
+              "libgcc",
+              "libgfortran",
+              "libgfortran-static",
+              "libgnat",
+              "libgnat-devel",
+              "libgnat-static",
+              "libgo",
+              "libgo-devel",
+              "libgo-static",
+              "libgomp",
+              "libitm",
+              "libitm-devel",
+              "libitm-static",
+              "libmudflap",
+              "libmudflap-devel",
+              "libmudflap-static",
+              "libobjc",
+              "libquadmath",
+              "libquadmath-devel",
+              "libquadmath-static",
+              "libstdc++",
+              "libstdc++-devel",
+              "libstdc++-docs",
+              "libstdc++-static",
+              "libtsan",
+              "libtsan-static"
+            ]
+          }
+        ]
+      },
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:rhel_extras:7",
+          "cpe:/a:redhat:rhel_extras_oracle_java:7",
+          "cpe:/a:redhat:rhel_extras_rt:7",
+          "cpe:/a:redhat:rhel_extras_sap:7",
+          "cpe:/a:redhat:rhel_extras_sap_hana:7",
+          "cpe:/o:redhat:enterprise_linux:7",
+          "cpe:/o:redhat:enterprise_linux:7::client",
+          "cpe:/o:redhat:enterprise_linux:7::computenode",
+          "cpe:/o:redhat:enterprise_linux:7::server",
+          "cpe:/o:redhat:enterprise_linux:7::workstation"
+        ]
+      },
+      "issued": {}
+    },
+    "affected": {}
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044001",
+                    "comment": "libgomp is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044002",
+                    "comment": "libgomp is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044009",
+                    "comment": "libgfortran is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044010",
+                    "comment": "libgfortran is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044021",
+                    "comment": "libgnat is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044022",
+                    "comment": "libgnat is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044059",
+                    "comment": "libasan-static is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044060",
+                    "comment": "libasan-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044073",
+                    "comment": "libtsan-static is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044074",
+                    "comment": "libtsan-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097001",
+                    "comment": "golang-docs is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097002",
+                    "comment": "golang-docs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044045",
+                    "comment": "libquadmath is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044046",
+                    "comment": "libquadmath is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044069",
+                    "comment": "libstdc++-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044070",
+                    "comment": "libstdc++-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097007",
+                    "comment": "golang-misc is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097008",
+                    "comment": "golang-misc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044025",
+                    "comment": "libatomic-static is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044026",
+                    "comment": "libatomic-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044019",
+                    "comment": "libgo-static is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044020",
+                    "comment": "libgo-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044027",
+                    "comment": "gcc-c++ is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044028",
+                    "comment": "gcc-c++ is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044005",
+                    "comment": "libobjc is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044006",
+                    "comment": "libobjc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097011",
+                    "comment": "golang-bin is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097012",
+                    "comment": "golang-bin is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044011",
+                    "comment": "libitm-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044012",
+                    "comment": "libitm-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044049",
+                    "comment": "libitm-static is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044050",
+                    "comment": "libitm-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044035",
+                    "comment": "libgnat-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044036",
+                    "comment": "libgnat-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044015",
+                    "comment": "gcc-objc is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044016",
+                    "comment": "gcc-objc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044051",
+                    "comment": "libquadmath-static is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044052",
+                    "comment": "libquadmath-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044003",
+                    "comment": "libgo-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044004",
+                    "comment": "libgo-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044063",
+                    "comment": "libgo is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044064",
+                    "comment": "libgo is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044055",
+                    "comment": "libstdc++ is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044056",
+                    "comment": "libstdc++ is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044039",
+                    "comment": "libasan is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044040",
+                    "comment": "libasan is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044065",
+                    "comment": "libquadmath-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044066",
+                    "comment": "libquadmath-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044067",
+                    "comment": "libgcc is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044068",
+                    "comment": "libgcc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044017",
+                    "comment": "libmudflap is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044018",
+                    "comment": "libmudflap is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044057",
+                    "comment": "libitm is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044058",
+                    "comment": "libitm is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044033",
+                    "comment": "libgnat-static is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044034",
+                    "comment": "libgnat-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044043",
+                    "comment": "gcc-go is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044044",
+                    "comment": "gcc-go is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044007",
+                    "comment": "libgfortran-static is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044008",
+                    "comment": "libgfortran-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044071",
+                    "comment": "gcc-objc++ is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044072",
+                    "comment": "gcc-objc++ is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044075",
+                    "comment": "libstdc++-static is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044076",
+                    "comment": "libstdc++-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044047",
+                    "comment": "libmudflap-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044048",
+                    "comment": "libmudflap-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044037",
+                    "comment": "cpp is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044038",
+                    "comment": "cpp is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044079",
+                    "comment": "gcc-plugin-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044080",
+                    "comment": "gcc-plugin-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044041",
+                    "comment": "libtsan is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044042",
+                    "comment": "libtsan is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044023",
+                    "comment": "libstdc++-docs is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044024",
+                    "comment": "libstdc++-docs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044031",
+                    "comment": "gcc is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044032",
+                    "comment": "gcc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097003",
+                    "comment": "golang-src is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097004",
+                    "comment": "golang-src is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044053",
+                    "comment": "gcc-gnat is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044054",
+                    "comment": "gcc-gnat is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044061",
+                    "comment": "libmudflap-static is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044062",
+                    "comment": "libmudflap-static is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097005",
+                    "comment": "golang-tests is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097006",
+                    "comment": "golang-tests is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044077",
+                    "comment": "libatomic is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044078",
+                    "comment": "libatomic is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097009",
+                    "comment": "golang is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20171000097010",
+                    "comment": "golang is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044029",
+                    "comment": "gcc-gfortran is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:20145044030",
+                    "comment": "gcc-gfortran is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.cve:tst:20042779005",
+            "comment": "Red Hat Enterprise Linux 7 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.cve:tst:20042779006",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

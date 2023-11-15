@@ -1,0 +1,186 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20141552",
+  "version": "638",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2014:1552: openssh security, bug fix, and enhancement update (Moderate)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2014:1552",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2014:1552",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2014-2532",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-2532",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2014-2653",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-2653",
+        "source": "CVE"
+      }
+    ],
+    "description": "OpenSSH is OpenBSD's SSH (Secure Shell) protocol implementation.\nThese packages include the core files necessary for both the OpenSSH client\nand server.\n\nIt was discovered that OpenSSH clients did not correctly verify DNS SSHFP\nrecords. A malicious server could use this flaw to force a connecting\nclient to skip the DNS SSHFP record check and require the user to perform\nmanual host verification of the DNS SSHFP record. (CVE-2014-2653)\n\nIt was found that OpenSSH did not properly handle certain AcceptEnv\nparameter values with wildcard characters. A remote attacker could use this\nflaw to bypass intended environment variable restrictions. (CVE-2014-2532)\n\nThis update also fixes the following bugs:\n\n* Based on the SP800-131A information security standard, the generation of\na digital signature using the Digital Signature Algorithm (DSA) with the\nkey size of 1024 bits and RSA with the key size of less than 2048 bits is\ndisallowed after the year 2013. After this update, ssh-keygen no longer\ngenerates keys with less than 2048 bits in FIPS mode. However, the sshd\nservice accepts keys of size 1024 bits as well as larger keys for\ncompatibility reasons. (BZ#993580)\n\n* Previously, the openssh utility incorrectly set the oom_adj value to -17\nfor all of its children processes. This behavior was incorrect because the\nchildren processes were supposed to have this value set to 0. This update\napplies a patch to fix this bug and oom_adj is now properly set to 0 for\nall children processes as expected. (BZ#1010429)\n\n* Previously, if the sshd service failed to verify the checksum of an\ninstalled FIPS module using the fipscheck library, the information about\nthis failure was only provided at the standard error output of sshd. As a\nconsequence, the user could not notice this message and be uninformed when\na system had not been properly configured for FIPS mode. To fix this bug,\nthis behavior has been changed and sshd now sends such messages via the\nsyslog service. (BZ#1020803)\n\n* When keys provided by the pkcs11 library were removed from the ssh agent\nusing the \"ssh-add -e\" command, the user was prompted to enter a PIN.\nWith this update, a patch has been applied to allow the user to remove the\nkeys provided by pkcs11 without the PIN. (BZ#1042519)\n\nIn addition, this update adds the following enhancements:\n\n* With this update, ControlPersist has been added to OpenSSH. The option in\nconjunction with the ControlMaster configuration directive specifies that\nthe master connection remains open in the background after the initial\nclient connection has been closed. (BZ#953088)\n\n* When the sshd daemon is configured to force the internal SFTP session,\nand the user attempts to use a connection other than SFTP, the appropriate\nmessage is logged to the /var/log/secure file. (BZ#997377)\n\n* Support for Elliptic Curve Cryptography modes for key exchange (ECDH) and\nhost user keys (ECDSA) as specified by RFC5656 has been added to the\nopenssh packages. However, they are not enabled by default and the user has\nto enable them manually. For more information on how to configure ECDSA and\nECDH with OpenSSH, see: https://access.redhat.com/solutions/711953\n(BZ#1028335)\n\nAll openssh users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues and add these\nenhancements.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2014-10-14"
+      },
+      "cve": [
+        {
+          "text": "CVE-2014-2532",
+          "cwe": "CWE-138",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-2532",
+          "impact": "low",
+          "public": "20140315",
+          "cvss2": "2.1/AV:N/AC:H/Au:S/C:N/I:P/A:N"
+        },
+        {
+          "text": "CVE-2014-2653",
+          "cwe": "CWE-287",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-2653",
+          "impact": "moderate",
+          "public": "20140324",
+          "cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:P/A:N"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/o:redhat:rhel_eus:6.5",
+          "cpe:/o:redhat:rhel_eus:6.5::computenode",
+          "cpe:/o:redhat:rhel_eus:6.5::server"
+        ]
+      },
+      "rights": "Copyright 2014 Red Hat, Inc.",
+      "issued": {
+        "date": "2014-10-13"
+      },
+      "bugzilla": [
+        {
+          "text": "CVE-2014-2532 openssh: AcceptEnv environment restriction bypass flaw",
+          "href": "https://bugzilla.redhat.com/1077843",
+          "id": "1077843"
+        },
+        {
+          "text": "CVE-2014-2653 openssh: failure to check DNS SSHFP records in certain scenarios",
+          "href": "https://bugzilla.redhat.com/1081338",
+          "id": "1081338"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 6"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141552001",
+                    "comment": "openssh is earlier than 0:5.3p1-104.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120884002",
+                    "comment": "openssh is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141552003",
+                    "comment": "openssh-askpass is earlier than 0:5.3p1-104.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120884004",
+                    "comment": "openssh-askpass is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141552005",
+                    "comment": "openssh-clients is earlier than 0:5.3p1-104.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120884006",
+                    "comment": "openssh-clients is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141552007",
+                    "comment": "openssh-ldap is earlier than 0:5.3p1-104.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120884008",
+                    "comment": "openssh-ldap is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141552009",
+                    "comment": "openssh-server is earlier than 0:5.3p1-104.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120884010",
+                    "comment": "openssh-server is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20141552011",
+                    "comment": "pam_ssh_agent_auth is earlier than 0:0.9.3-104.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20120884012",
+                    "comment": "pam_ssh_agent_auth is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
+            "comment": "Red Hat Enterprise Linux 6 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

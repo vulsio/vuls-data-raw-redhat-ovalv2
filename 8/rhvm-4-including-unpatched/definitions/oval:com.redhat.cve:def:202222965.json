@@ -1,0 +1,79 @@
+{
+  "id": "oval:com.redhat.cve:def:202222965",
+  "version": "636",
+  "class": "vulnerability",
+  "metadata": {
+    "title": "RCE via Data Binding on JDK 9+ (low)",
+    "reference": [
+      {
+        "ref_id": "CVE-2022-22965",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2022-22965",
+        "source": "CVE"
+      }
+    ],
+    "description": "DOCUMENTATION: A flaw was found in Spring Framework, specifically within two modules called Spring MVC and Spring WebFlux, (transitively affected from Spring Beans), using parameter data binding. This flaw allows an attacker to pass specially-constructed malicious requests to certain parameters and possibly gain access to normally-restricted functionality within the Java Virtual Machine. \n            STATEMENT: The reporter of this flaw provided a proof-of-concept that relied on Apache Tomcat; it accessed the classloader and changed logging properties to place a web shell in Tomcat's root directory, and was able to call various commands subsequently.\n\nThere are several conditions required to achieve this exploit:\n-Java 9 or newer version\n-Apache Tomcat as the Servlet container\n-packaged as WAR file\n-spring-webmvc or spring-webflux dependency\n-no protections in place against malicious data bindings (ex: WebDataBinder allow list)\n\nThere may be other exploit paths than this, possibly not utilizing Tomcat.\n            MITIGATION: For those who are not able to upgrade affected Spring classes to the fixed versions, there is a workaround customers can implement for their applications, via setting disallowed fields on the data binder, and denying various iterations of the string \"class.*\" \n\nFor full implementation details, see Spring's early announcement post in the \"suggested workarounds\" section: https://spring.io/blog/2022/03/31/spring-framework-rce-early-announcement#suggested-workarounds",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Low",
+      "updated": {
+        "date": "2023-06-16"
+      },
+      "cve": [
+        {
+          "text": "CVE-2022-22965",
+          "cvss3": "8.1/CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cwe": "CWE-94",
+          "href": "https://access.redhat.com/security/cve/CVE-2022-22965",
+          "impact": "low",
+          "public": "20220330"
+        }
+      ],
+      "affected": {
+        "resolution": [
+          {
+            "state": "Will not fix",
+            "component": [
+              "rhvm-dependencies"
+            ]
+          }
+        ]
+      },
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:rhev_manager:4.4",
+          "cpe:/a:redhat:rhev_manager:4.4:el8"
+        ]
+      },
+      "issued": {}
+    },
+    "affected": {}
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.cve:tst:20166341003",
+            "comment": "Red Hat Enterprise Linux 8 is installed"
+          },
+          {
+            "test_ref": "oval:com.redhat.cve:tst:202222965001",
+            "comment": "rhvm-dependencies is installed"
+          },
+          {
+            "test_ref": "oval:com.redhat.cve:tst:202222965002",
+            "comment": "rhvm-dependencies is signed with Red Hat redhatrelease2 key"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.cve:tst:20166341004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

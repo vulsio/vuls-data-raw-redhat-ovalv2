@@ -1,0 +1,385 @@
+{
+  "id": "oval:com.redhat.cve:def:20201700",
+  "version": "636",
+  "class": "vulnerability",
+  "metadata": {
+    "title": "connection leak in the RGW Beast front-end permits a DoS against the RGW server (moderate)",
+    "reference": [
+      {
+        "ref_id": "CVE-2020-1700",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2020-1700",
+        "source": "CVE"
+      }
+    ],
+    "description": "DOCUMENTATION: A flaw was found in the way the Ceph RGW Beast front-end handles unexpected disconnects. An authenticated attacker can abuse this flaw by making multiple disconnect attempts resulting in a permanent leak of a socket connection by radosgw. This flaw could lead to a denial of service condition by pile up of CLOSE_WAIT sockets, eventually leading to the exhaustion of available resources, preventing legitimate users from connecting to the system. \n            STATEMENT: * Red Hat Ceph Storage 3 is not affected by this flaw, as beast is unsupported in the product.\n* Red Hat Ceph Storage 4 is not affected by this flaw, as it is shipping patched version of ceph.\n* Red Hat Openshift Container Storage 4.2 is affected by this flaw, as it is using the affected version of ceph.\n* Red Hat OpenStack Platform 13 included some Ceph components at release for in order to support ppc64le. The version provided in the OpenStack repositories is outdated and customers are expected to be using versions provided in Ceph repositories now. Red Hat OpenStack Platform 13 operators should verify they are using Ceph repositories which are up to date and unaffected by this vulnerability.\n* Red Hat Enterprise Linux 7 is not affected by this flaw, as it ships an old version of the code which does not include the vulnerable code.\n* Red Hat Enterprise Linux 8 is not affected by this flaw, as only libcephfs-devel component is shipped and it does include the vulnerable code.\n            MITIGATION: If Beast front end is in use, switch to CivetWeb to mitigate the issue. The following is an example of the /etc/ceph/ceph.conf file:\n\n<snip>\n...\n[client.rgw.node1]\nrgw frontends = civetweb\n...\n</snip>",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2023-07-07"
+      },
+      "cve": [
+        {
+          "text": "CVE-2020-1700",
+          "cvss3": "6.5/CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cwe": "CWE-400",
+          "href": "https://access.redhat.com/security/cve/CVE-2020-1700",
+          "impact": "moderate",
+          "public": "20200131:1655"
+        }
+      ],
+      "affected": {
+        "resolution": [
+          {
+            "state": "Out of support scope",
+            "component": [
+              "ceph",
+              "ceph-base",
+              "ceph-common",
+              "ceph-fuse",
+              "ceph-mds",
+              "ceph-mon",
+              "ceph-osd",
+              "ceph-radosgw",
+              "ceph-selinux",
+              "ceph-test",
+              "libcephfs1",
+              "libcephfs1-devel",
+              "librados2",
+              "librados2-devel",
+              "librbd1",
+              "librbd1-devel",
+              "librgw2",
+              "librgw2-devel",
+              "python-cephfs",
+              "python-rados",
+              "python-rbd",
+              "rbd-mirror"
+            ]
+          }
+        ]
+      },
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:ceph_storage:2",
+          "cpe:/a:redhat:ceph_storage:2::el7"
+        ]
+      },
+      "issued": {}
+    },
+    "affected": {}
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684005",
+                    "comment": "ceph-mon is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684006",
+                    "comment": "ceph-mon is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684039",
+                    "comment": "ceph-common is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684040",
+                    "comment": "ceph-common is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684031",
+                    "comment": "ceph-radosgw is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684032",
+                    "comment": "ceph-radosgw is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684029",
+                    "comment": "ceph-selinux is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684030",
+                    "comment": "ceph-selinux is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684007",
+                    "comment": "librbd1 is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684008",
+                    "comment": "librbd1 is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684021",
+                    "comment": "librados2 is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684022",
+                    "comment": "librados2 is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684001",
+                    "comment": "ceph-mds is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684002",
+                    "comment": "ceph-mds is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684019",
+                    "comment": "ceph is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684020",
+                    "comment": "ceph is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684011",
+                    "comment": "ceph-test is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684012",
+                    "comment": "ceph-test is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684041",
+                    "comment": "ceph-osd is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684042",
+                    "comment": "ceph-osd is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684003",
+                    "comment": "librbd1-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684004",
+                    "comment": "librbd1-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684009",
+                    "comment": "python-rbd is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684010",
+                    "comment": "python-rbd is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684015",
+                    "comment": "libcephfs1 is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684016",
+                    "comment": "libcephfs1 is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684027",
+                    "comment": "libcephfs1-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684028",
+                    "comment": "libcephfs1-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684033",
+                    "comment": "python-rados is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684034",
+                    "comment": "python-rados is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684023",
+                    "comment": "python-cephfs is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684024",
+                    "comment": "python-cephfs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684013",
+                    "comment": "ceph-base is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684014",
+                    "comment": "ceph-base is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684035",
+                    "comment": "librgw2-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684036",
+                    "comment": "librgw2-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684037",
+                    "comment": "ceph-fuse is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684038",
+                    "comment": "ceph-fuse is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684043",
+                    "comment": "librados2-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684044",
+                    "comment": "librados2-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684025",
+                    "comment": "librgw2 is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684026",
+                    "comment": "librgw2 is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684017",
+                    "comment": "rbd-mirror is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:201812684018",
+                    "comment": "rbd-mirror is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.cve:tst:20137459003",
+            "comment": "Red Hat Enterprise Linux 7 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.cve:tst:20137459004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

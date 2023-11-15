@@ -1,0 +1,297 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20150987",
+  "version": "659",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2015:0987: kernel security and bug fix update (Important)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2015:0987",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2015:0987",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2015-3331",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-3331",
+        "source": "CVE"
+      }
+    ],
+    "description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\n* A buffer overflow flaw was found in the way the Linux kernel's Intel\nAES-NI instructions optimized version of the RFC4106 GCM mode decryption\nfunctionality handled fragmented packets. A remote attacker could use this\nflaw to crash, or potentially escalate their privileges on, a system over a\nconnection with an active AEC-GCM mode IPSec security association.\n(CVE-2015-3331, Important)\n\nThis update also fixes the following bugs:\n\n* Previously, the kernel audit subsystem did not correctly track file path\nnames which could lead to empty, or \"(null)\" path names in the PATH audit\nrecords. This update fixes the bug by correctly tracking file path names\nand displaying the names in the audit PATH records. (BZ#1197746)\n\n* Due to a change in the internal representation of field types,\nAUDIT_LOGINUID set to -1 (4294967295) by the audit API was asymmetrically\nconverted to an AUDIT_LOGINUID_SET field with a value of 0, unrecognized by\nan older audit API. To fix this bug, the kernel takes note about the way\nthe rule has been formulated and reports the rule in the originally given\nform. As a result, older versions of audit provide a report as expected, in\nthe AUDIT_LOGINUID field type form, whereas the newer versions can migrate\nto the new AUDIT_LOGINUID_SET filed type. (BZ#1197748)\n\n* The GFS2 file system \"Splice Read\" operation, which is used for the\nsendfile() function, was not properly allocating a required multi-block\nreservation structure in memory. Consequently, when the GFS2 block\nallocator was called to assign blocks of data, it attempted to dereference\nthe structure, which resulted in a kernel panic. With this update, \"Splice\nread\" operation properly allocates the necessary reservation structure in\nmemory prior to calling the block allocator, and sendfile() thus works\nproperly for GFS2. (BZ#1201256)\n\n* Moving an Open vSwitch (OVS) internal vport to a different net name space\nand subsequently deleting that name space led to a kernel panic. This bug\nhas been fixed by removing the OVS internal vport at net name space\ndeletion. (BZ#1202357)\n\n* Previously, the kernel audit subsystem was not correctly handling file\nand directory moves, leading to audit records that did not match the audit\nfile watches. This fix correctly handles moves such that the audit file\nwatches work correctly. (BZ#1202358)\n\n* Due to a regression, the crypto adapter could not be set online. A patch\nhas been provided that fixes the device registration process so that the\ndevice can be used also before the registration process is completed, thus\nfixing this bug. (BZ#1205300)\n\n* Due to incorrect calculation for entropy during the entropy addition, the\namount of entropy in the /dev/random file could be overestimated.\nThe formula for the entropy addition has been changed, thus fixing this\nbug. (BZ#1211288)\n\n* Previously, the ansi_cprng and drbg utilities did not obey the call\nconvention and returned the positive value on success instead of the\ncorrect value of zero. Consequently, Internet Protocol Security (IPsec)\nterminated unexpectedly when ansi_cprng or drbg were used. With this\nupdate, ansi_cprng and drbg have been changed to return zero on success,\nand IPsec now functions correctly. (BZ#1211487)\n\n* Due to a failure to clear the timestamp flag when reusing a tx descriptor\nin the mlx4_en driver, programs that did not request a hardware timestamp\npacket on their sent data received it anyway, resulting in unexpected\nbehavior in certain applications. With this update, when reusing the tx\ndescriptor in the mlx4_en driver in the aforementioned situation, the\nhardware timestamp flag is cleared, and applications now behave as\nexpected. (BZ#1209240)\n\nAll kernel users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues. The system must be\nrebooted for this update to take effect.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Important",
+      "updated": {
+        "date": "2015-05-12"
+      },
+      "cve": [
+        {
+          "text": "CVE-2015-3331",
+          "cwe": "CWE-120",
+          "href": "https://access.redhat.com/security/cve/CVE-2015-3331",
+          "impact": "important",
+          "public": "20150312",
+          "cvss2": "7.1/AV:N/AC:H/Au:S/C:C/I:C/A:C"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/o:redhat:rhel_aus:7.2",
+          "cpe:/o:redhat:rhel_aus:7.2::server"
+        ]
+      },
+      "rights": "Copyright 2015 Red Hat, Inc.",
+      "issued": {
+        "date": "2015-05-12"
+      },
+      "bugzilla": [
+        {
+          "text": "CVE-2015-3331 Kernel: crypto: buffer overruns in RFC4106 implementation using AESNI",
+          "href": "https://bugzilla.redhat.com/1213322",
+          "id": "1213322"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 7"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterions": [
+              {
+                "test_ref": "oval:com.redhat.rhsa:tst:20150981015",
+                "comment": "kernel earlier than 0:3.10.0-229.4.2.el7 is currently running"
+              },
+              {
+                "test_ref": "oval:com.redhat.rhsa:tst:20150987032",
+                "comment": "kernel earlier than 0:3.10.0-229.4.2.el7 is set to boot up on next boot"
+              }
+            ]
+          },
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987001",
+                    "comment": "kernel is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678002",
+                    "comment": "kernel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987003",
+                    "comment": "kernel-abi-whitelists is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678004",
+                    "comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987005",
+                    "comment": "kernel-bootwrapper is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678006",
+                    "comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987007",
+                    "comment": "kernel-debug is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678008",
+                    "comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987009",
+                    "comment": "kernel-debug-devel is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678010",
+                    "comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987011",
+                    "comment": "kernel-devel is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678012",
+                    "comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987013",
+                    "comment": "kernel-doc is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678014",
+                    "comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987015",
+                    "comment": "kernel-headers is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678016",
+                    "comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987017",
+                    "comment": "kernel-kdump is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678018",
+                    "comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987019",
+                    "comment": "kernel-kdump-devel is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678020",
+                    "comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987021",
+                    "comment": "kernel-tools is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678022",
+                    "comment": "kernel-tools is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987023",
+                    "comment": "kernel-tools-libs is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678024",
+                    "comment": "kernel-tools-libs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987025",
+                    "comment": "kernel-tools-libs-devel is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678026",
+                    "comment": "kernel-tools-libs-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987027",
+                    "comment": "perf is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678028",
+                    "comment": "perf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20150987029",
+                    "comment": "python-perf is earlier than 0:3.10.0-229.4.2.el7"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140678030",
+                    "comment": "python-perf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20150364027",
+            "comment": "Red Hat Enterprise Linux 7 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20150364028",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

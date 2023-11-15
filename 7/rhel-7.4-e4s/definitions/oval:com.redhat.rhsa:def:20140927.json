@@ -1,0 +1,441 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20140927",
+  "version": "646",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2014:0927: qemu-kvm security and bug fix update (Moderate)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2014:0927",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2014:0927",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2013-4148",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-4148",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2013-4149",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-4149",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2013-4150",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-4150",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2013-4151",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-4151",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2013-4527",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-4527",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2013-4529",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-4529",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2013-4535",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-4535",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2013-4536",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-4536",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2013-4541",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-4541",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2013-4542",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-4542",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2013-6399",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-6399",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2014-0182",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-0182",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2014-0222",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-0222",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2014-0223",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-0223",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2014-3461",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-3461",
+        "source": "CVE"
+      }
+    ],
+    "description": "KVM (Kernel-based Virtual Machine) is a full virtualization solution for\nLinux on AMD64 and Intel 64 systems. The qemu-kvm package provides the\nuser-space component for running virtual machines using KVM.\n\nTwo integer overflow flaws were found in the QEMU block driver for QCOW\nversion 1 disk images. A user able to alter the QEMU disk image files\nloaded by a guest could use either of these flaws to corrupt QEMU process\nmemory on the host, which could potentially result in arbitrary code\nexecution on the host with the privileges of the QEMU process.\n(CVE-2014-0222, CVE-2014-0223)\n\nMultiple buffer overflow, input validation, and out-of-bounds write flaws\nwere found in the way virtio, virtio-net, virtio-scsi, usb, and hpet\ndrivers of QEMU handled state loading after migration. A user able to alter\nthe savevm data (either on the disk or over the wire during migration)\ncould use either of these flaws to corrupt QEMU process memory on the\n(destination) host, which could potentially result in arbitrary code\nexecution on the host with the privileges of the QEMU process.\n(CVE-2013-4148, CVE-2013-4149, CVE-2013-4150, CVE-2013-4151, CVE-2013-4527,\nCVE-2013-4529, CVE-2013-4535, CVE-2013-4536, CVE-2013-4541, CVE-2013-4542,\nCVE-2013-6399, CVE-2014-0182, CVE-2014-3461)\n\nThese issues were discovered by Michael S. Tsirkin, Anthony Liguori and\nMichael Roth of Red Hat: CVE-2013-4148, CVE-2013-4149, CVE-2013-4150,\nCVE-2013-4151, CVE-2013-4527, CVE-2013-4529, CVE-2013-4535, CVE-2013-4536,\nCVE-2013-4541, CVE-2013-4542, CVE-2013-6399, CVE-2014-0182, and\nCVE-2014-3461.\n\nThis update also fixes the following bugs:\n\n* Previously, QEMU did not free pre-allocated zero clusters correctly and\nthe clusters under some circumstances leaked. With this update,\npre-allocated zero clusters are freed appropriately and the cluster leaks\nno longer occur. (BZ#1110188)\n\n* Prior to this update, the QEMU command interface did not properly handle\nresizing of cache memory during guest migration, causing QEMU to terminate\nunexpectedly with a segmentation fault and QEMU to fail. This update fixes\nthe related code and QEMU no longer crashes in the described situation.\n(BZ#1110191)\n\n* Previously, when a guest device was hot unplugged, QEMU correctly removed\nthe corresponding file descriptor watch but did not re-create it after the\ndevice was re-connected. As a consequence, the guest became unable to\nreceive any data from the host over this device. With this update, the file\ndescriptor's watch is re-created and the guest in the above scenario can\ncommunicate with the host as expected. (BZ#1110219)\n\n* Previously, the QEMU migration code did not account for the gaps caused\nby hot unplugged devices and thus expected more memory to be transferred\nduring migrations. As a consequence, guest migration failed to complete\nafter multiple devices were hot unplugged. In addition, the migration info\ntext displayed erroneous values for the \"remaining ram\" item. With this\nupdate, QEMU calculates memory after a device has been unplugged correctly,\nand any subsequent guest migrations proceed as expected. (BZ#1110189)\n\nAll qemu-kvm users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues. After installing this\nupdate, shut down all running virtual machines. Once all virtual machines\nhave shut down, start them again for this update to take effect.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2014-07-23"
+      },
+      "cve": [
+        {
+          "text": "CVE-2013-4148",
+          "cwe": "CWE-681->CWE-119",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-4148",
+          "impact": "moderate",
+          "public": "20131203",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2013-4149",
+          "cwe": "CWE-787",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-4149",
+          "impact": "moderate",
+          "public": "20131203",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2013-4150",
+          "cwe": "CWE-20->CWE-787",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-4150",
+          "impact": "moderate",
+          "public": "20131203",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2013-4151",
+          "cwe": "CWE-787",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-4151",
+          "impact": "moderate",
+          "public": "20131203",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2013-4527",
+          "cwe": "CWE-119",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-4527",
+          "impact": "moderate",
+          "public": "20131203",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2013-4529",
+          "cwe": "CWE-119",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-4529",
+          "impact": "moderate",
+          "public": "20131203",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2013-4535",
+          "cwe": "CWE-119",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-4535",
+          "impact": "moderate",
+          "public": "20131203",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2013-4536",
+          "cwe": "CWE-119",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-4536",
+          "impact": "moderate",
+          "public": "20131203",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2013-4541",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-4541",
+          "impact": "moderate",
+          "public": "20131203",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2013-4542",
+          "cwe": "CWE-119",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-4542",
+          "impact": "moderate",
+          "public": "20131203",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2013-6399",
+          "cwe": "CWE-119",
+          "href": "https://access.redhat.com/security/cve/CVE-2013-6399",
+          "impact": "moderate",
+          "public": "20131203",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2014-0182",
+          "cwe": "CWE-787",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-0182",
+          "impact": "moderate",
+          "public": "20140417",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2014-0222",
+          "cwe": "CWE-190->CWE-119",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-0222",
+          "impact": "moderate",
+          "public": "20140512",
+          "cvss2": "4.3/AV:A/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2014-0223",
+          "cwe": "CWE-190->CWE-119",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-0223",
+          "impact": "moderate",
+          "public": "20140512",
+          "cvss2": "4.3/AV:A/AC:H/Au:N/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2014-3461",
+          "cwe": "CWE-190->CWE-122",
+          "href": "https://access.redhat.com/security/cve/CVE-2014-3461",
+          "impact": "moderate",
+          "public": "20140512",
+          "cvss2": "3.7/AV:L/AC:H/Au:N/C:P/I:P/A:P"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:rhel_extras_sap_e4s:7.4",
+          "cpe:/a:redhat:rhel_extras_sap_hana_e4s:7.4",
+          "cpe:/o:redhat:rhel_e4s:7.4",
+          "cpe:/o:redhat:rhel_e4s:7.4::server"
+        ]
+      },
+      "rights": "Copyright 2014 Red Hat, Inc.",
+      "issued": {
+        "date": "2014-07-23"
+      },
+      "bugzilla": [
+        {
+          "text": "buffer overflow on invalid state load",
+          "href": "https://bugzilla.redhat.com/1066334",
+          "id": "1066334"
+        },
+        {
+          "text": "out-of-bounds buffer write on load",
+          "href": "https://bugzilla.redhat.com/1066337",
+          "id": "1066337"
+        },
+        {
+          "text": "out-of-bounds buffer write on invalid state load",
+          "href": "https://bugzilla.redhat.com/1066340",
+          "id": "1066340"
+        },
+        {
+          "text": "out-of-bounds buffer write on invalid state load",
+          "href": "https://bugzilla.redhat.com/1066342",
+          "id": "1066342"
+        },
+        {
+          "text": "buffer overrun on invalid state load",
+          "href": "https://bugzilla.redhat.com/1066347",
+          "id": "1066347"
+        },
+        {
+          "text": "buffer overrun on invalid state load",
+          "href": "https://bugzilla.redhat.com/1066353",
+          "id": "1066353"
+        },
+        {
+          "text": "buffer overrun on incoming migration",
+          "href": "https://bugzilla.redhat.com/1066361",
+          "id": "1066361"
+        },
+        {
+          "text": "buffer overrun on invalid state load",
+          "href": "https://bugzilla.redhat.com/1066382",
+          "id": "1066382"
+        },
+        {
+          "text": "insufficient sanity checking of setup_index+setup_len in post_load",
+          "href": "https://bugzilla.redhat.com/1066384",
+          "id": "1066384"
+        },
+        {
+          "text": "insufficient validation of num_sg when mapping",
+          "href": "https://bugzilla.redhat.com/1066401",
+          "id": "1066401"
+        },
+        {
+          "text": "out-of-bounds buffer write on state load with invalid config_len",
+          "href": "https://bugzilla.redhat.com/1088986",
+          "id": "1088986"
+        },
+        {
+          "text": "CVE-2014-3461 Qemu: usb: fix up post load checks",
+          "href": "https://bugzilla.redhat.com/1096821",
+          "id": "1096821"
+        },
+        {
+          "text": "validate L2 table size to avoid integer overflows",
+          "href": "https://bugzilla.redhat.com/1097216",
+          "id": "1097216"
+        },
+        {
+          "text": "validate image size to avoid out-of-bounds memory access",
+          "href": "https://bugzilla.redhat.com/1097222",
+          "id": "1097222"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 7"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140927001",
+                    "comment": "libcacard is earlier than 10:1.5.3-60.el7_0.5"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140704002",
+                    "comment": "libcacard is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140927003",
+                    "comment": "libcacard-devel is earlier than 10:1.5.3-60.el7_0.5"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140704004",
+                    "comment": "libcacard-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140927005",
+                    "comment": "libcacard-tools is earlier than 10:1.5.3-60.el7_0.5"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140704006",
+                    "comment": "libcacard-tools is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140927007",
+                    "comment": "qemu-guest-agent is earlier than 10:1.5.3-60.el7_0.5"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140704008",
+                    "comment": "qemu-guest-agent is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140927009",
+                    "comment": "qemu-img is earlier than 10:1.5.3-60.el7_0.5"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140704010",
+                    "comment": "qemu-img is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140927011",
+                    "comment": "qemu-kvm is earlier than 10:1.5.3-60.el7_0.5"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140704012",
+                    "comment": "qemu-kvm is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140927013",
+                    "comment": "qemu-kvm-common is earlier than 10:1.5.3-60.el7_0.5"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140704014",
+                    "comment": "qemu-kvm-common is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140927015",
+                    "comment": "qemu-kvm-tools is earlier than 10:1.5.3-60.el7_0.5"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20140704016",
+                    "comment": "qemu-kvm-tools is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20150364027",
+            "comment": "Red Hat Enterprise Linux 7 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20150364028",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

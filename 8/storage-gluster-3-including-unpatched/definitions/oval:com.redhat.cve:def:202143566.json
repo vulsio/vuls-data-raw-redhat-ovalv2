@@ -1,0 +1,387 @@
+{
+  "id": "oval:com.redhat.cve:def:202143566",
+  "version": "636",
+  "class": "vulnerability",
+  "metadata": {
+    "title": "CVE-2021-43566 samba: Symlink race error can allow directory creation outside of the exported share (low)",
+    "reference": [
+      {
+        "ref_id": "CVE-2021-43566",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2021-43566",
+        "source": "CVE"
+      }
+    ],
+    "description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: All versions of Samba prior to 4.13.16 are vulnerable to a malicious client using an SMB1 or NFS race to allow a directory to be created in an area of the server file system not exported under the share definition. Note that SMB1 has to be enabled, or the share also available via NFS in order for this attack to succeed. \n            \n            MITIGATION: Do not enable SMB1 (please note SMB1 is disabled by default in Samba from version 4.11.0 and onwards). This prevents the creation of symbolic links via SMB1. If SMB1 must be enabled for backwards compatibility then add the parameter:\n\nunix extensions = no\n\nto the [global] section of your smb.conf and restart smbd. This prevents SMB1 clients from creating symlinks on the exported file system.\n\nHowever, if the same region of the file system is also exported using NFS, NFS clients can create symlinks that potentially can also hit the race condition. For non-patched versions of Samba we recommend only exporting areas of the file system by either SMB2 or NFS, not both.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Low",
+      "updated": {
+        "date": "2023-03-21"
+      },
+      "cve": [
+        {
+          "text": "CVE-2021-43566",
+          "cvss3": "2.6/CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:U/C:L/I:N/A:N",
+          "cwe": "CWE-362",
+          "href": "https://access.redhat.com/security/cve/CVE-2021-43566",
+          "impact": "low",
+          "public": "20220110"
+        }
+      ],
+      "affected": {
+        "resolution": [
+          {
+            "state": "Affected",
+            "component": [
+              "ctdb",
+              "libsmbclient",
+              "libsmbclient-devel",
+              "libwbclient",
+              "libwbclient-devel",
+              "python3-samba",
+              "samba",
+              "samba-client",
+              "samba-client-libs",
+              "samba-common",
+              "samba-common-libs",
+              "samba-common-tools",
+              "samba-debugsource",
+              "samba-devel",
+              "samba-krb5-printing",
+              "samba-libs",
+              "samba-pidl",
+              "samba-vfs-glusterfs",
+              "samba-winbind",
+              "samba-winbind-clients",
+              "samba-winbind-krb5-locator",
+              "samba-winbind-modules"
+            ]
+          }
+        ]
+      },
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:storage:3.5",
+          "cpe:/a:redhat:storage:3.5:nfs:el8",
+          "cpe:/a:redhat:storage:3.5:samba:el8",
+          "cpe:/a:redhat:storage:3.5:server:el8"
+        ]
+      },
+      "issued": {}
+    },
+    "affected": {}
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251043",
+                    "comment": "samba-winbind is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251044",
+                    "comment": "samba-winbind is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251007",
+                    "comment": "libsmbclient-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251008",
+                    "comment": "libsmbclient-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251029",
+                    "comment": "libwbclient-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251030",
+                    "comment": "libwbclient-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251023",
+                    "comment": "samba-common-libs is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251024",
+                    "comment": "samba-common-libs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251009",
+                    "comment": "samba-pidl is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251010",
+                    "comment": "samba-pidl is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251033",
+                    "comment": "samba-client-libs is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251034",
+                    "comment": "samba-client-libs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251017",
+                    "comment": "samba-client is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251018",
+                    "comment": "samba-client is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251027",
+                    "comment": "ctdb is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251028",
+                    "comment": "ctdb is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251025",
+                    "comment": "samba-common is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251026",
+                    "comment": "samba-common is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251001",
+                    "comment": "samba-libs is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251002",
+                    "comment": "samba-libs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251005",
+                    "comment": "samba-devel is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251006",
+                    "comment": "samba-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251013",
+                    "comment": "samba-vfs-glusterfs is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251014",
+                    "comment": "samba-vfs-glusterfs is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251003",
+                    "comment": "samba-winbind-modules is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251004",
+                    "comment": "samba-winbind-modules is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251019",
+                    "comment": "samba-common-tools is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251020",
+                    "comment": "samba-common-tools is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251035",
+                    "comment": "python3-samba is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251036",
+                    "comment": "python3-samba is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251041",
+                    "comment": "samba is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251042",
+                    "comment": "samba is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251011",
+                    "comment": "samba-winbind-krb5-locator is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251012",
+                    "comment": "samba-winbind-krb5-locator is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251037",
+                    "comment": "samba-debugsource is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251038",
+                    "comment": "samba-debugsource is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251039",
+                    "comment": "libsmbclient is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251040",
+                    "comment": "libsmbclient is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251031",
+                    "comment": "samba-winbind-clients is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251032",
+                    "comment": "samba-winbind-clients is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251021",
+                    "comment": "samba-krb5-printing is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251022",
+                    "comment": "samba-krb5-printing is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251015",
+                    "comment": "libwbclient is installed"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.cve:tst:202120251016",
+                    "comment": "libwbclient is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.cve:tst:201718638003",
+            "comment": "Red Hat Enterprise Linux 8 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.cve:tst:201718638004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

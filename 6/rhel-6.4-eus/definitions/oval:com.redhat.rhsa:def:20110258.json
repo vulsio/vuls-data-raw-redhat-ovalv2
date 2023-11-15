@@ -1,0 +1,240 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20110258",
+  "version": "642",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2011:0258: subversion security update (Moderate)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2011:0258",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2011:0258",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2010-3315",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2010-3315",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2010-4539",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2010-4539",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2010-4644",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2010-4644",
+        "source": "CVE"
+      }
+    ],
+    "description": "Subversion (SVN) is a concurrent version control system which enables one\nor more users to collaborate in developing and maintaining a hierarchy of\nfiles and directories while keeping a history of all changes. The\nmod_dav_svn module is used with the Apache HTTP Server to allow access to\nSubversion repositories via HTTP.\n\nAn access restriction bypass flaw was found in the mod_dav_svn module. If\nthe SVNPathAuthz directive was set to \"short_circuit\", certain access rules\nwere not enforced, possibly allowing sensitive repository data to be leaked\nto remote users. Note that SVNPathAuthz is set to \"On\" by default.\n(CVE-2010-3315)\n\nA server-side memory leak was found in the Subversion server. If a\nmalicious, remote user performed \"svn blame\" or \"svn log\" operations on\ncertain repository files, it could cause the Subversion server to consume\na large amount of system memory. (CVE-2010-4644)\n\nA NULL pointer dereference flaw was found in the way the mod_dav_svn module\nprocessed certain requests. If a malicious, remote user issued a certain\ntype of request to display a collection of Subversion repositories on a\nhost that has the SVNListParentPath directive enabled, it could cause the\nhttpd process serving the request to crash. Note that SVNListParentPath is\nnot enabled by default. (CVE-2010-4539)\n\nAll Subversion users should upgrade to these updated packages, which\ncontain backported patches to correct these issues. After installing the\nupdated packages, the Subversion server must be restarted for the update\nto take effect: restart httpd if you are using mod_dav_svn, or restart\nsvnserve if it is used.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2011-02-15"
+      },
+      "cve": [
+        {
+          "text": "CVE-2010-3315",
+          "href": "https://access.redhat.com/security/cve/CVE-2010-3315",
+          "impact": "moderate",
+          "public": "20101004",
+          "cvss2": "6.5/AV:N/AC:L/Au:S/C:P/I:P/A:P"
+        },
+        {
+          "text": "CVE-2010-4539",
+          "href": "https://access.redhat.com/security/cve/CVE-2010-4539",
+          "impact": "low",
+          "public": "20101126",
+          "cvss2": "3.5/AV:N/AC:M/Au:S/C:N/I:N/A:P"
+        },
+        {
+          "text": "CVE-2010-4644",
+          "href": "https://access.redhat.com/security/cve/CVE-2010-4644",
+          "impact": "moderate",
+          "public": "20101104",
+          "cvss2": "4.0/AV:N/AC:L/Au:S/C:N/I:N/A:P"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/o:redhat:rhel_eus:6.4",
+          "cpe:/o:redhat:rhel_eus:6.4::computenode",
+          "cpe:/o:redhat:rhel_eus:6.4::server"
+        ]
+      },
+      "rights": "Copyright 2011 Red Hat, Inc.",
+      "issued": {
+        "date": "2011-02-15"
+      },
+      "bugzilla": [
+        {
+          "text": "CVE-2010-3315 Subversion: Access restriction bypass by checkout of the root of the repository",
+          "href": "https://bugzilla.redhat.com/640317",
+          "id": "640317"
+        },
+        {
+          "text": "CVE-2010-4539 Subversion (mod_dav_svn): DoS (crash) by processing certain requests to display all available repositories to a web browser",
+          "href": "https://bugzilla.redhat.com/667407",
+          "id": "667407"
+        },
+        {
+          "text": "CVE-2010-4644 Subversion: DoS (memory consumption) by processing blame or log -g requests on certain files",
+          "href": "https://bugzilla.redhat.com/667763",
+          "id": "667763"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 6"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258001",
+                    "comment": "mod_dav_svn is earlier than 0:1.6.11-2.el6_0.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258002",
+                    "comment": "mod_dav_svn is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258003",
+                    "comment": "subversion is earlier than 0:1.6.11-2.el6_0.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258004",
+                    "comment": "subversion is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258005",
+                    "comment": "subversion-devel is earlier than 0:1.6.11-2.el6_0.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258006",
+                    "comment": "subversion-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258007",
+                    "comment": "subversion-gnome is earlier than 0:1.6.11-2.el6_0.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258008",
+                    "comment": "subversion-gnome is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258009",
+                    "comment": "subversion-javahl is earlier than 0:1.6.11-2.el6_0.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258010",
+                    "comment": "subversion-javahl is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258011",
+                    "comment": "subversion-kde is earlier than 0:1.6.11-2.el6_0.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258012",
+                    "comment": "subversion-kde is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258013",
+                    "comment": "subversion-perl is earlier than 0:1.6.11-2.el6_0.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258014",
+                    "comment": "subversion-perl is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258015",
+                    "comment": "subversion-ruby is earlier than 0:1.6.11-2.el6_0.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258016",
+                    "comment": "subversion-ruby is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258017",
+                    "comment": "subversion-svn2cl is earlier than 0:1.6.11-2.el6_0.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110258018",
+                    "comment": "subversion-svn2cl is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
+            "comment": "Red Hat Enterprise Linux 6 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

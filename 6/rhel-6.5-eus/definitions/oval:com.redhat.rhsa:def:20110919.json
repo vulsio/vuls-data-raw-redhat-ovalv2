@@ -1,0 +1,146 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20110919",
+  "version": "642",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2011:0919: qemu-kvm security and bug fix update (Important)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2011:0919",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2011:0919",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2011-2212",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2011-2212",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2011-2512",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2011-2512",
+        "source": "CVE"
+      }
+    ],
+    "description": "KVM (Kernel-based Virtual Machine) is a full virtualization solution for\nLinux on AMD64 and Intel 64 systems. qemu-kvm is the user-space component\nfor running virtual machines using KVM.\n\nIt was found that the virtio subsystem in qemu-kvm did not properly\nvalidate virtqueue in and out requests from the guest. A privileged guest\nuser could use this flaw to trigger a buffer overflow, allowing them to\ncrash the guest (denial of service) or, possibly, escalate their privileges\non the host. (CVE-2011-2212)\n\nIt was found that the virtio_queue_notify() function in qemu-kvm did not\nperform sufficient input validation on the value later used as an index\ninto the array of virtqueues. An unprivileged guest user could use this\nflaw to crash the guest (denial of service) or, possibly, escalate their\nprivileges on the host. (CVE-2011-2512)\n\nRed Hat would like to thank Nelson Elhage for reporting CVE-2011-2212.\n\nThis update also fixes the following bug:\n\n* A bug was found in the way vhost (in qemu-kvm) set up mappings with the\nhost kernel's vhost module. This could result in the host kernel's vhost\nmodule not having a complete view of a guest system's memory, if that guest\nhad more than 4 GB of memory. Consequently, hot plugging a vhost-net\nnetwork device and restarting the guest may have resulted in that device no\nlonger working. (BZ#701771)\n\nAll users of qemu-kvm should upgrade to these updated packages, which\ncontain backported patches to resolve these issues. After installing this\nupdate, shut down all running virtual machines. Once all virtual machines\nhave shut down, start them again for this update to take effect.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Important",
+      "updated": {
+        "date": "2011-07-05"
+      },
+      "cve": [
+        {
+          "text": "CVE-2011-2212",
+          "cwe": "CWE-119",
+          "href": "https://access.redhat.com/security/cve/CVE-2011-2212",
+          "impact": "important",
+          "public": "20110705",
+          "cvss2": "7.4/AV:A/AC:M/Au:S/C:C/I:C/A:C"
+        },
+        {
+          "text": "CVE-2011-2512",
+          "href": "https://access.redhat.com/security/cve/CVE-2011-2512",
+          "impact": "important",
+          "public": "20110508",
+          "cvss2": "6.5/AV:A/AC:H/Au:S/C:C/I:C/A:C"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/o:redhat:rhel_eus:6.5",
+          "cpe:/o:redhat:rhel_eus:6.5::computenode",
+          "cpe:/o:redhat:rhel_eus:6.5::server"
+        ]
+      },
+      "rights": "Copyright 2011 Red Hat, Inc.",
+      "issued": {
+        "date": "2011-07-05"
+      },
+      "bugzilla": [
+        {
+          "text": "too-large indirect descriptor buffer overflow",
+          "href": "https://bugzilla.redhat.com/713589",
+          "id": "713589"
+        },
+        {
+          "text": "CVE-2011-2512 qemu-kvm: OOB memory access caused by negative vq notifies",
+          "href": "https://bugzilla.redhat.com/717399",
+          "id": "717399"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 6"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110919001",
+                    "comment": "qemu-img is earlier than 2:0.12.1.2-2.160.el6_1.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110345002",
+                    "comment": "qemu-img is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110919003",
+                    "comment": "qemu-kvm is earlier than 2:0.12.1.2-2.160.el6_1.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110345004",
+                    "comment": "qemu-kvm is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110919005",
+                    "comment": "qemu-kvm-tools is earlier than 2:0.12.1.2-2.160.el6_1.2"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20110345006",
+                    "comment": "qemu-kvm-tools is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
+            "comment": "Red Hat Enterprise Linux 6 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

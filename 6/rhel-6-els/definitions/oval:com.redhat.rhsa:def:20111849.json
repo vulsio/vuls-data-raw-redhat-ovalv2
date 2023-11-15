@@ -1,0 +1,286 @@
+{
+  "id": "oval:com.redhat.rhsa:def:20111849",
+  "version": "637",
+  "class": "patch",
+  "metadata": {
+    "title": "RHSA-2011:1849: kernel security and bug fix update (Important)",
+    "reference": [
+      {
+        "ref_id": "RHSA-2011:1849",
+        "ref_url": "https://access.redhat.com/errata/RHSA-2011:1849",
+        "source": "RHSA"
+      },
+      {
+        "ref_id": "CVE-2011-4127",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2011-4127",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "CVE-2011-4621",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2011-4621",
+        "source": "CVE"
+      }
+    ],
+    "description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\nSecurity fix:\n\n* Using the SG_IO IOCTL to issue SCSI requests to partitions or LVM volumes\nresulted in the requests being passed to the underlying block device. If a\nprivileged user only had access to a single partition or LVM volume, they\ncould use this flaw to bypass those restrictions and gain read and write\naccess (and be able to issue other SCSI commands) to the entire block\ndevice.\n\nIn KVM (Kernel-based Virtual Machine) environments using raw format virtio\ndisks backed by a partition or LVM volume, a privileged guest user could\nbypass intended restrictions and issue read and write requests (and other\nSCSI commands) on the host, and possibly access the data of other guests\nthat reside on the same underlying block device. Partition-based and\nLVM-based storage pools are not used by default. Refer to Red Hat Bugzilla\nbug 752375 for further details and a mitigation script for users who cannot\napply this update immediately. (CVE-2011-4127, Important)\n\nBug fixes:\n\n* Previously, idle load balancer kick requests from other CPUs could be\nserviced without first receiving an inter-processor interrupt (IPI). This\ncould have led to a deadlock. (BZ#750459)\n\n* This update fixes a performance regression that may have caused processes\n(including KVM guests) to hang for a number of seconds. (BZ#751403)\n\n* When md_raid1_unplug_device() was called while holding a spinlock, under\ncertain device failure conditions, it was possible for the lock to be\nrequested again, deeper in the call chain, causing a deadlock. Now,\nmd_raid1_unplug_device() is no longer called while holding a spinlock.\n(BZ#755545)\n\n* In hpet_next_event(), an interrupt could have occurred between the read\nand write of the HPET (High Performance Event Timer) and the value of\nHPET_COUNTER was then beyond that being written to the comparator\n(HPET_Tn_CMP). Consequently, the timers were overdue for up to several\nminutes. Now, a comparison is performed between the value of the counter\nand the comparator in the HPET code. If the counter is beyond the\ncomparator, the \"-ETIME\" error code is returned. (BZ#756426)\n\n* Index allocation in the virtio-blk module was based on a monotonically\nincreasing variable \"index\". Consequently, released indexes were not reused\nand after a period of time, no new were available. Now, virtio-blk uses the\nida API to allocate indexes. (BZ#756427)\n\n* A bug related to Context Caching existed in the Intel IOMMU support\nmodule. On some newer Intel systems, the Context Cache mode has changed\nfrom previous hardware versions, potentially exposing a Context coherency\nrace. The bug was exposed when performing a series of hot plug and unplug\noperations of a Virtual Function network device which was immediately\nconfigured into the network stack, i.e., successfully performed dynamic\nhost configuration protocol (DHCP). When the coherency race occurred, the\nassigned device would not work properly in the guest virtual machine. With\nthis update, the Context coherency is corrected and the race and\npotentially resulting device assignment failure no longer occurs.\n(BZ#757671)\n\n* The align_va_addr kernel parameter was ignored if secondary CPUs were\ninitialized. This happened because the parameter settings were overridden\nduring the initialization of secondary CPUs. Also, the align_va_addr\nparameter documentation contained incorrect parameter arguments. With this\nupdate, the underlying code has been modified to prevent the overriding and\nthe documentation has been updated. This update also removes the unused\ncode introduced by the patch for BZ#739456. (BZ#758028)\n\n* Dell systems based on a future Intel processor with graphics acceleration\nrequired the selection of the install system with basic video driver\ninstallation option. This update removes this requirement. (BZ#758513)",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Important",
+      "updated": {
+        "date": "2011-12-22"
+      },
+      "cve": [
+        {
+          "text": "CVE-2011-4127",
+          "cwe": "CWE-284",
+          "href": "https://access.redhat.com/security/cve/CVE-2011-4127",
+          "impact": "important",
+          "public": "20111222",
+          "cvss2": "7.4/AV:A/AC:M/Au:S/C:C/I:C/A:C"
+        },
+        {
+          "text": "CVE-2011-4621",
+          "href": "https://access.redhat.com/security/cve/CVE-2011-4621",
+          "impact": "moderate",
+          "public": "20101121",
+          "cvss2": "4.7/AV:L/AC:M/Au:N/C:N/I:N/A:C"
+        }
+      ],
+      "affected": {},
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:rhel_extras:6",
+          "cpe:/a:redhat:rhel_extras_hpn:6",
+          "cpe:/a:redhat:rhel_extras_oracle_java:6",
+          "cpe:/a:redhat:rhel_extras_sap:6",
+          "cpe:/a:redhat:rhel_extras_sap_els:6",
+          "cpe:/a:redhat:rhel_extras_sap_hana:6",
+          "cpe:/a:redhat:rhel_extras_sap_hana_els:6",
+          "cpe:/o:redhat:enterprise_linux:6",
+          "cpe:/o:redhat:enterprise_linux:6::client",
+          "cpe:/o:redhat:enterprise_linux:6::computenode",
+          "cpe:/o:redhat:enterprise_linux:6::server",
+          "cpe:/o:redhat:enterprise_linux:6::workstation",
+          "cpe:/o:redhat:rhel_els:6"
+        ]
+      },
+      "rights": "Copyright 2011 Red Hat, Inc.",
+      "issued": {
+        "date": "2011-12-22"
+      },
+      "bugzilla": [
+        {
+          "text": "CVE-2011-4127 kernel: possible privilege escalation via SG_IO ioctl",
+          "href": "https://bugzilla.redhat.com/752375",
+          "id": "752375"
+        },
+        {
+          "text": "tight loop and no preemption can cause system stall",
+          "href": "https://bugzilla.redhat.com/769711",
+          "id": "769711"
+        }
+      ]
+    },
+    "affected": {
+      "family": "unix",
+      "platform": [
+        "Red Hat Enterprise Linux 6"
+      ]
+    }
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterias": [
+          {
+            "operator": "OR",
+            "criterions": [
+              {
+                "test_ref": "oval:com.redhat.rhsa:tst:20111849025",
+                "comment": "kernel earlier than 0:2.6.32-220.2.1.el6 is currently running"
+              },
+              {
+                "test_ref": "oval:com.redhat.rhsa:tst:20111849026",
+                "comment": "kernel earlier than 0:2.6.32-220.2.1.el6 is set to boot up on next boot"
+              }
+            ]
+          },
+          {
+            "operator": "OR",
+            "criterias": [
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849001",
+                    "comment": "kernel is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842002",
+                    "comment": "kernel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849003",
+                    "comment": "kernel-bootwrapper is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842004",
+                    "comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849005",
+                    "comment": "kernel-debug is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842006",
+                    "comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849007",
+                    "comment": "kernel-debug-devel is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842008",
+                    "comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849009",
+                    "comment": "kernel-devel is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842010",
+                    "comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849011",
+                    "comment": "kernel-doc is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842012",
+                    "comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849013",
+                    "comment": "kernel-firmware is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842014",
+                    "comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849015",
+                    "comment": "kernel-headers is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842016",
+                    "comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849017",
+                    "comment": "kernel-kdump is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842018",
+                    "comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849019",
+                    "comment": "kernel-kdump-devel is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842020",
+                    "comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849021",
+                    "comment": "perf is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20100842022",
+                    "comment": "perf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              },
+              {
+                "operator": "AND",
+                "criterions": [
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111849023",
+                    "comment": "python-perf is earlier than 0:2.6.32-220.2.1.el6"
+                  },
+                  {
+                    "test_ref": "oval:com.redhat.rhsa:tst:20111530024",
+                    "comment": "python-perf is signed with Red Hat redhatrelease2 key"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
+            "comment": "Red Hat Enterprise Linux 6 is installed"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

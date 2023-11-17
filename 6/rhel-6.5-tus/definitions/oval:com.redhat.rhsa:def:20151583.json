@@ -1,271 +1,271 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20151583",
-  "version": "645",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2015:1583: kernel security and bug fix update (Moderate)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2015:1583",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2015:1583",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2015-3636",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-3636",
-        "source": "CVE"
-      }
-    ],
-    "description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\n* It was found that the Linux kernel's ping socket implementation did not\nproperly handle socket unhashing during spurious disconnects, which could\nlead to a use-after-free flaw. On x86-64 architecture systems, a local user\nable to create ping sockets could use this flaw to crash the system.\nOn non-x86-64 architecture systems, a local user able to create ping\nsockets could use this flaw to escalate their privileges on the system.\n(CVE-2015-3636, Moderate)\n\nThis update also fixes the following bugs:\n\n* Previously, the bridge device did not propagate VLAN information to its\nports and Generic Receive Offload (GRO) information to devices that sit on\ntop. This resulted in lower receive performance of VLANs over bridge\ndevices because GRO was not enabled. An attempt to resolve this problem was\nmade with BZ#858198 by introducing a patch that allows VLANs to be\nregistered with the participating bridge ports and adds GRO to the bridge\ndevice feature set, however, that attempt introduced a number of\nregressions, which broke the vast majority of stacked setups involving\nbridge devices and VLANs. This update reverts the patch provided by\nBZ#858198 and removes support for this capability. (BZ#1131697)\n\n* The backlog data could previously not be consumed when the\naudit_log_start() function was running even if audit_log_start() called the\nwait_for_auditd() function to consume it. As only auditd could consume the\nbacklog data, audit_log_start() terminated unexpectedly. Consequently, the\nsystem became unresponsive until the backlog timeout was up again.\nWith this update, audit_log_start() no longer terminates and the system\nshuts down and reboots gracefully in a timely manner. (BZ#1140490)\n\n* This update introduces a set of patches with a new VLAN model to conform\nto upstream standards. In addition, this set of patches fixes other issues\nsuch as transmission of Internet Control Message Protocol (ICMP) fragments.\n(BZ#1173560)\n\n* Due to a bug in the audit code, a kernel panic occurred in the\ntasklist_lock variable if SELinux was in permissive or enforcing mode.\nA patch has been applied to fix this bug, and the operating system now\ncontinues to work normally. (BZ#1236103)\n\n* If a server returned an empty or malformed READDIR response, the NFS\nclient could previously terminate unexpectedly while attempting to decode\nthat response. This update uses the response size to determine if existing\npages of data are available for decoding, and the client only decodes the\nresponses if they exist. As a result, the NFS client no longer attempts to\ndecode pages of data that may not exist, and the aforementioned crash is\nthus avoided. (BZ#1232133)\n\n* Previously, if a slave device had a receive handler registered, then an\nerror unwind of bonding device enslave function became broken, which led to\na kernel oops. This update detaches the slave in the unwind path, and the\naforementioned oops no longer occurs. (BZ#1222482)\n\n* Due to bad memory or memory corruption, an isolated BUG_ON(mm->nr_ptes)\nwas sometimes reported, indicating that not all the page tables allocated\ncould be found and freed when the exit_mmap() function cleared the user\naddress space. As a consequence, a kernel panic occurred. To fix this bug,\nthe BUG_ON() function has been replaced by WARN_ON(), which prevents the\nkernel from panicking in the aforementioned situation. (BZ#1235930)\n\nAll kernel users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues. The system must be\nrebooted for this update to take effect.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Moderate",
-      "updated": {
-        "date": "2015-08-11"
-      },
-      "cve": [
-        {
-          "text": "CVE-2015-3636",
-          "cwe": "CWE-416",
-          "href": "https://access.redhat.com/security/cve/CVE-2015-3636",
-          "impact": "moderate",
-          "public": "20150502",
-          "cvss2": "6.0/AV:L/AC:H/Au:S/C:C/I:C/A:C"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/o:redhat:rhel_tus:6.5",
-          "cpe:/o:redhat:rhel_tus:6.5::server"
-        ]
-      },
-      "rights": "Copyright 2015 Red Hat, Inc.",
-      "issued": {
-        "date": "2015-08-11"
-      },
-      "bugzilla": [
-        {
-          "text": "CVE-2015-3636 kernel: ping sockets: use-after-free leading to local privilege escalation",
-          "href": "https://bugzilla.redhat.com/1218074",
-          "id": "1218074"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Enterprise Linux 6.5 Extended Update Support"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterions": [
-              {
-                "test_ref": "oval:com.redhat.rhsa:tst:20151583027",
-                "comment": "kernel earlier than 0:2.6.32-431.61.2.el6 is currently running"
-              },
-              {
-                "test_ref": "oval:com.redhat.rhsa:tst:20151583028",
-                "comment": "kernel earlier than 0:2.6.32-431.61.2.el6 is set to boot up on next boot"
-              }
-            ]
-          },
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583001",
-                    "comment": "kernel is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842002",
-                    "comment": "kernel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583003",
-                    "comment": "kernel-abi-whitelists is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131645004",
-                    "comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583005",
-                    "comment": "kernel-bootwrapper is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842004",
-                    "comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583007",
-                    "comment": "kernel-debug is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842006",
-                    "comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583009",
-                    "comment": "kernel-debug-devel is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842008",
-                    "comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583011",
-                    "comment": "kernel-devel is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842010",
-                    "comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583013",
-                    "comment": "kernel-doc is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842012",
-                    "comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583015",
-                    "comment": "kernel-firmware is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842014",
-                    "comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583017",
-                    "comment": "kernel-headers is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842016",
-                    "comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583019",
-                    "comment": "kernel-kdump is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842018",
-                    "comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583021",
-                    "comment": "kernel-kdump-devel is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842020",
-                    "comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583023",
-                    "comment": "perf is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842022",
-                    "comment": "perf is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151583025",
-                    "comment": "python-perf is earlier than 0:2.6.32-431.61.2.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111530024",
-                    "comment": "python-perf is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
-            "comment": "Red Hat Enterprise Linux 6 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20151583",
+	"version": "645",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2015:1583: kernel security and bug fix update (Moderate)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2015:1583",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2015:1583",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2015-3636",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2015-3636",
+				"source": "CVE"
+			}
+		],
+		"description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\n* It was found that the Linux kernel's ping socket implementation did not\nproperly handle socket unhashing during spurious disconnects, which could\nlead to a use-after-free flaw. On x86-64 architecture systems, a local user\nable to create ping sockets could use this flaw to crash the system.\nOn non-x86-64 architecture systems, a local user able to create ping\nsockets could use this flaw to escalate their privileges on the system.\n(CVE-2015-3636, Moderate)\n\nThis update also fixes the following bugs:\n\n* Previously, the bridge device did not propagate VLAN information to its\nports and Generic Receive Offload (GRO) information to devices that sit on\ntop. This resulted in lower receive performance of VLANs over bridge\ndevices because GRO was not enabled. An attempt to resolve this problem was\nmade with BZ#858198 by introducing a patch that allows VLANs to be\nregistered with the participating bridge ports and adds GRO to the bridge\ndevice feature set, however, that attempt introduced a number of\nregressions, which broke the vast majority of stacked setups involving\nbridge devices and VLANs. This update reverts the patch provided by\nBZ#858198 and removes support for this capability. (BZ#1131697)\n\n* The backlog data could previously not be consumed when the\naudit_log_start() function was running even if audit_log_start() called the\nwait_for_auditd() function to consume it. As only auditd could consume the\nbacklog data, audit_log_start() terminated unexpectedly. Consequently, the\nsystem became unresponsive until the backlog timeout was up again.\nWith this update, audit_log_start() no longer terminates and the system\nshuts down and reboots gracefully in a timely manner. (BZ#1140490)\n\n* This update introduces a set of patches with a new VLAN model to conform\nto upstream standards. In addition, this set of patches fixes other issues\nsuch as transmission of Internet Control Message Protocol (ICMP) fragments.\n(BZ#1173560)\n\n* Due to a bug in the audit code, a kernel panic occurred in the\ntasklist_lock variable if SELinux was in permissive or enforcing mode.\nA patch has been applied to fix this bug, and the operating system now\ncontinues to work normally. (BZ#1236103)\n\n* If a server returned an empty or malformed READDIR response, the NFS\nclient could previously terminate unexpectedly while attempting to decode\nthat response. This update uses the response size to determine if existing\npages of data are available for decoding, and the client only decodes the\nresponses if they exist. As a result, the NFS client no longer attempts to\ndecode pages of data that may not exist, and the aforementioned crash is\nthus avoided. (BZ#1232133)\n\n* Previously, if a slave device had a receive handler registered, then an\nerror unwind of bonding device enslave function became broken, which led to\na kernel oops. This update detaches the slave in the unwind path, and the\naforementioned oops no longer occurs. (BZ#1222482)\n\n* Due to bad memory or memory corruption, an isolated BUG_ON(mm->nr_ptes)\nwas sometimes reported, indicating that not all the page tables allocated\ncould be found and freed when the exit_mmap() function cleared the user\naddress space. As a consequence, a kernel panic occurred. To fix this bug,\nthe BUG_ON() function has been replaced by WARN_ON(), which prevents the\nkernel from panicking in the aforementioned situation. (BZ#1235930)\n\nAll kernel users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues. The system must be\nrebooted for this update to take effect.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2015-08-11"
+			},
+			"cve": [
+				{
+					"text": "CVE-2015-3636",
+					"cwe": "CWE-416",
+					"href": "https://access.redhat.com/security/cve/CVE-2015-3636",
+					"impact": "moderate",
+					"public": "20150502",
+					"cvss2": "6.0/AV:L/AC:H/Au:S/C:C/I:C/A:C"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:redhat:rhel_tus:6.5",
+					"cpe:/o:redhat:rhel_tus:6.5::server"
+				]
+			},
+			"rights": "Copyright 2015 Red Hat, Inc.",
+			"issued": {
+				"date": "2015-08-11"
+			},
+			"bugzilla": [
+				{
+					"text": "CVE-2015-3636 kernel: ping sockets: use-after-free leading to local privilege escalation",
+					"href": "https://bugzilla.redhat.com/1218074",
+					"id": "1218074"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 6.5 Extended Update Support"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterions": [
+							{
+								"test_ref": "oval:com.redhat.rhsa:tst:20151583027",
+								"comment": "kernel earlier than 0:2.6.32-431.61.2.el6 is currently running"
+							},
+							{
+								"test_ref": "oval:com.redhat.rhsa:tst:20151583028",
+								"comment": "kernel earlier than 0:2.6.32-431.61.2.el6 is set to boot up on next boot"
+							}
+						]
+					},
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583001",
+										"comment": "kernel is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842002",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583003",
+										"comment": "kernel-abi-whitelists is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131645004",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583005",
+										"comment": "kernel-bootwrapper is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842004",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583007",
+										"comment": "kernel-debug is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842006",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583009",
+										"comment": "kernel-debug-devel is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842008",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583011",
+										"comment": "kernel-devel is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842010",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583013",
+										"comment": "kernel-doc is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842012",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583015",
+										"comment": "kernel-firmware is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842014",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583017",
+										"comment": "kernel-headers is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842016",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583019",
+										"comment": "kernel-kdump is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842018",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583021",
+										"comment": "kernel-kdump-devel is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842020",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583023",
+										"comment": "perf is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842022",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151583025",
+										"comment": "python-perf is earlier than 0:2.6.32-431.61.2.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111530024",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20111656003",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20111656004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

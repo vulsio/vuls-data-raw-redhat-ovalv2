@@ -1,331 +1,331 @@
 {
-  "id": "oval:com.redhat.cve:def:201919337",
-  "version": "636",
-  "class": "vulnerability",
-  "metadata": {
-    "title": "CVE-2019-19337 ceph: denial of service in RGW daemon (moderate)",
-    "reference": [
-      {
-        "ref_id": "CVE-2019-19337",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2019-19337",
-        "source": "CVE"
-      }
-    ],
-    "description": "DOCUMENTATION: A flaw was found in the way the Ceph RADOS Gateway daemon handles S3 requests. An authenticated attacker can abuse this flaw by causing a remote denial of service by sending a specially crafted HTTP Content-Length header to the Ceph RADOS Gateway server. \n            STATEMENT: This flaw only affects Red Hat Ceph Storage 3, upstream versions of ceph are not affected.\n\nThe ceph package distributed by Red Hat Enterprise Linux 7 and 8 are not affected by this issue, as it doesn't ship any server-side library.\n\nRed Hat OpenStack now consumes fixes directly from the base ceph channels . Therefore the ceph package provided by Red Hat OpenStack 13 has been marked as 'will not fix'.\n            MITIGATION: 1. By default system will use /etc/init.d/ceph-radosgw, stop this service by\n~]# /etc/init.d/ceph-radosgw stop\n\n2. Create systemd service, and change command line parameters according to the environment where Ceph radosgw is running.\n\n~]# cat /usr/lib/systemd/system/ceph-rgw.service\n[Unit]\nDescription=Ceph RGW daemon\n\n[Service]\nType=forking\nExecStart=/bin/radosgw -n client.rgw.$(HOSTNAME REDACTED)\nRestart=on-abnormal\nRestartSec=1s\n\n[Install]\nWantedBy=multi-user.target\n\n3. Run systemd service 'ceph-rgw.service'\n\nCaveat: It still takes +1-2 sec to get service back online. After applying above mentioned mitigation, the malicious IP can be blocked by a firewall rule if there are continuous attempts to launch remote denial of service. This mitigation is of limited use if the attack is launched from multiple IPs. It is recommended to limit the exposure of ceph RGW server to known clients.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Moderate",
-      "updated": {
-        "date": "2021-02-16"
-      },
-      "cve": [
-        {
-          "text": "CVE-2019-19337",
-          "cvss3": "6.5/CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
-          "cwe": "CWE-20",
-          "href": "https://access.redhat.com/security/cve/CVE-2019-19337",
-          "impact": "moderate",
-          "public": "20191219:1707"
-        }
-      ],
-      "affected": {
-        "resolution": [
-          {
-            "state": "Will not fix",
-            "component": [
-              "ceph-common",
-              "ceph-fuse",
-              "libcephfs-devel",
-              "libcephfs2",
-              "librados-devel",
-              "librados2",
-              "libradosstriper-devel",
-              "libradosstriper1",
-              "librbd-devel",
-              "librbd1",
-              "librgw-devel",
-              "librgw2",
-              "python-ceph-compat",
-              "python-cephfs",
-              "python-rados",
-              "python-rbd",
-              "python-rgw",
-              "rados-objclass-devel"
-            ]
-          }
-        ]
-      },
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:openstack-optools:13",
-          "cpe:/a:redhat:openstack-optools:13::el7",
-          "cpe:/a:redhat:openstack:13",
-          "cpe:/a:redhat:openstack:13::el7"
-        ]
-      },
-      "issued": {}
-    },
-    "affected": {}
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128001",
-                    "comment": "ceph-fuse is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128002",
-                    "comment": "ceph-fuse is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128003",
-                    "comment": "librados-devel is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128004",
-                    "comment": "librados-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128005",
-                    "comment": "librbd-devel is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128006",
-                    "comment": "librbd-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128007",
-                    "comment": "python-cephfs is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128008",
-                    "comment": "python-cephfs is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128009",
-                    "comment": "python-rados is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128010",
-                    "comment": "python-rados is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128011",
-                    "comment": "librados2 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128012",
-                    "comment": "librados2 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128013",
-                    "comment": "librgw-devel is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128014",
-                    "comment": "librgw-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128015",
-                    "comment": "libradosstriper1 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128016",
-                    "comment": "libradosstriper1 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128017",
-                    "comment": "librbd1 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128018",
-                    "comment": "librbd1 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128019",
-                    "comment": "python-rgw is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128020",
-                    "comment": "python-rgw is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128021",
-                    "comment": "libradosstriper-devel is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128022",
-                    "comment": "libradosstriper-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128023",
-                    "comment": "python-ceph-compat is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128024",
-                    "comment": "python-ceph-compat is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128025",
-                    "comment": "libcephfs2 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128026",
-                    "comment": "libcephfs2 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128027",
-                    "comment": "libcephfs-devel is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128028",
-                    "comment": "libcephfs-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128029",
-                    "comment": "python-rbd is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128030",
-                    "comment": "python-rbd is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128031",
-                    "comment": "ceph-common is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128032",
-                    "comment": "ceph-common is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128033",
-                    "comment": "rados-objclass-devel is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128034",
-                    "comment": "rados-objclass-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128035",
-                    "comment": "librgw2 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20181128036",
-                    "comment": "librgw2 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.cve:tst:20115034003",
-            "comment": "Red Hat Enterprise Linux 7 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.cve:tst:20115034004",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.cve:def:201919337",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "CVE-2019-19337 ceph: denial of service in RGW daemon (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2019-19337",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2019-19337",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: A flaw was found in the way the Ceph RADOS Gateway daemon handles S3 requests. An authenticated attacker can abuse this flaw by causing a remote denial of service by sending a specially crafted HTTP Content-Length header to the Ceph RADOS Gateway server. \n            STATEMENT: This flaw only affects Red Hat Ceph Storage 3, upstream versions of ceph are not affected.\n\nThe ceph package distributed by Red Hat Enterprise Linux 7 and 8 are not affected by this issue, as it doesn't ship any server-side library.\n\nRed Hat OpenStack now consumes fixes directly from the base ceph channels . Therefore the ceph package provided by Red Hat OpenStack 13 has been marked as 'will not fix'.\n            MITIGATION: 1. By default system will use /etc/init.d/ceph-radosgw, stop this service by\n~]# /etc/init.d/ceph-radosgw stop\n\n2. Create systemd service, and change command line parameters according to the environment where Ceph radosgw is running.\n\n~]# cat /usr/lib/systemd/system/ceph-rgw.service\n[Unit]\nDescription=Ceph RGW daemon\n\n[Service]\nType=forking\nExecStart=/bin/radosgw -n client.rgw.$(HOSTNAME REDACTED)\nRestart=on-abnormal\nRestartSec=1s\n\n[Install]\nWantedBy=multi-user.target\n\n3. Run systemd service 'ceph-rgw.service'\n\nCaveat: It still takes +1-2 sec to get service back online. After applying above mentioned mitigation, the malicious IP can be blocked by a firewall rule if there are continuous attempts to launch remote denial of service. This mitigation is of limited use if the attack is launched from multiple IPs. It is recommended to limit the exposure of ceph RGW server to known clients.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2021-02-16"
+			},
+			"cve": [
+				{
+					"text": "CVE-2019-19337",
+					"cvss3": "6.5/CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"cwe": "CWE-20",
+					"href": "https://access.redhat.com/security/cve/CVE-2019-19337",
+					"impact": "moderate",
+					"public": "20191219:1707"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Will not fix",
+						"component": [
+							"ceph-common",
+							"ceph-fuse",
+							"libcephfs-devel",
+							"libcephfs2",
+							"librados-devel",
+							"librados2",
+							"libradosstriper-devel",
+							"libradosstriper1",
+							"librbd-devel",
+							"librbd1",
+							"librgw-devel",
+							"librgw2",
+							"python-ceph-compat",
+							"python-cephfs",
+							"python-rados",
+							"python-rbd",
+							"python-rgw",
+							"rados-objclass-devel"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:openstack-optools:13",
+					"cpe:/a:redhat:openstack-optools:13::el7",
+					"cpe:/a:redhat:openstack:13",
+					"cpe:/a:redhat:openstack:13::el7"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128001",
+										"comment": "ceph-fuse is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128002",
+										"comment": "ceph-fuse is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128003",
+										"comment": "librados-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128004",
+										"comment": "librados-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128005",
+										"comment": "librbd-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128006",
+										"comment": "librbd-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128007",
+										"comment": "python-cephfs is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128008",
+										"comment": "python-cephfs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128009",
+										"comment": "python-rados is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128010",
+										"comment": "python-rados is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128011",
+										"comment": "librados2 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128012",
+										"comment": "librados2 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128013",
+										"comment": "librgw-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128014",
+										"comment": "librgw-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128015",
+										"comment": "libradosstriper1 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128016",
+										"comment": "libradosstriper1 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128017",
+										"comment": "librbd1 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128018",
+										"comment": "librbd1 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128019",
+										"comment": "python-rgw is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128020",
+										"comment": "python-rgw is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128021",
+										"comment": "libradosstriper-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128022",
+										"comment": "libradosstriper-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128023",
+										"comment": "python-ceph-compat is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128024",
+										"comment": "python-ceph-compat is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128025",
+										"comment": "libcephfs2 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128026",
+										"comment": "libcephfs2 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128027",
+										"comment": "libcephfs-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128028",
+										"comment": "libcephfs-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128029",
+										"comment": "python-rbd is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128030",
+										"comment": "python-rbd is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128031",
+										"comment": "ceph-common is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128032",
+										"comment": "ceph-common is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128033",
+										"comment": "rados-objclass-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128034",
+										"comment": "rados-objclass-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128035",
+										"comment": "librgw2 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181128036",
+										"comment": "librgw2 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20115034003",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20115034004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

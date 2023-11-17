@@ -1,129 +1,129 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20152241",
-  "version": "644",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2015:2241: chrony security, bug fix, and enhancement update (Moderate)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2015:2241",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2015:2241",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2015-1821",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-1821",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2015-1822",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-1822",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2015-1853",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-1853",
-        "source": "CVE"
-      }
-    ],
-    "description": "The chrony suite, chronyd and chronyc, is an advanced implementation of the\nNetwork Time Protocol (NTP), specially designed to support systems with\nintermittent connections. It can synchronize the system clock with NTP\nservers, hardware reference clocks, and manual input. It can also operate\nas an NTPv4 (RFC 5905) server or peer to provide a time service to other\ncomputers in the network.\n\nAn out-of-bounds write flaw was found in the way chrony stored certain\naddresses when configuring NTP or cmdmon access. An attacker that has the\ncommand key and is allowed to access cmdmon (only localhost is allowed by\ndefault) could use this flaw to crash chronyd or, possibly, execute\narbitrary code with the privileges of the chronyd process. (CVE-2015-1821)\n\nAn uninitialized pointer use flaw was found when allocating memory to save\nunacknowledged replies to authenticated command requests. An attacker that\nhas the command key and is allowed to access cmdmon (only localhost is\nallowed by default) could use this flaw to crash chronyd or, possibly,\nexecute arbitrary code with the privileges of the chronyd process.\n(CVE-2015-1822)\n\nA denial of service flaw was found in the way chrony hosts that were\npeering with each other authenticated themselves before updating their\ninternal state variables. An attacker could send packets to one peer host,\nwhich could cascade to other peers, and stop the synchronization process\namong the reached peers. (CVE-2015-1853)\n\nThese issues were discovered by Miroslav Lichvár of Red Hat.\n\nThe chrony packages have been upgraded to upstream version 2.1.1, which\nprovides a number of bug fixes and enhancements over the previous version.\nNotable enhancements include:\n\n* Updated to NTP version 4 (RFC 5905)\n\n* Added pool directive to specify pool of NTP servers\n\n* Added leapsecmode directive to select how to correct clock for leap\nsecond\n\n* Added smoothtime directive to smooth served time and enable leap smear\n\n* Added asynchronous name resolving with POSIX threads\n\n* Ready for year 2036 (next NTP era)\n\n* Improved clock control\n\n* Networking code reworked to open separate client sockets for each NTP\nserver\n\n(BZ#1117882)\n\nThis update also fixes the following bug:\n\n* The chronyd service previously assumed that network interfaces specified\nwith the \"bindaddress\" directive were ready when the service was started.\nThis could cause chronyd to fail to bind an NTP server socket to the\ninterface if the interface was not ready. With this update, chronyd uses\nthe IP_FREEBIND socket option, enabling it to bind to an interface later,\nnot only when the service starts. (BZ#1169353)\n\nIn addition, this update adds the following enhancement:\n\n* The chronyd service now supports four modes of handling leap seconds,\nconfigured using the \"leapsecmode\" option. The clock can be either stepped\nby the kernel (the default \"system\" mode), stepped by chronyd (\"step\"\nmode), slowly adjusted by slewing (\"slew\" mode), or the leap second can be\nignored and corrected later in normal operation (\"ignore\" mode). If you\nselect slewing, the correction will always start at 00:00:00 UTC and will\nbe applied at a rate specified in the \"maxslewrate\" option. (BZ#1206504)\n\nAll chrony users are advised to upgrade to these updated packages, which\ncorrect these issues and add these enhancements.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Moderate",
-      "updated": {
-        "date": "2015-11-19"
-      },
-      "cve": [
-        {
-          "text": "CVE-2015-1821",
-          "cwe": "(CWE-122|CWE-787)",
-          "href": "https://access.redhat.com/security/cve/CVE-2015-1821",
-          "impact": "moderate",
-          "public": "20150407",
-          "cvss2": "6.0/AV:N/AC:M/Au:S/C:P/I:P/A:P"
-        },
-        {
-          "text": "CVE-2015-1822",
-          "cwe": "CWE-456",
-          "href": "https://access.redhat.com/security/cve/CVE-2015-1822",
-          "impact": "moderate",
-          "public": "20150407",
-          "cvss2": "6.0/AV:N/AC:M/Au:S/C:P/I:P/A:P"
-        },
-        {
-          "text": "CVE-2015-1853",
-          "cwe": "CWE-345",
-          "href": "https://access.redhat.com/security/cve/CVE-2015-1853",
-          "impact": "moderate",
-          "public": "20150407",
-          "cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:N/A:P"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:rhel_extras_sap_eus:7.7",
-          "cpe:/a:redhat:rhel_extras_sap_hana_eus:7.7",
-          "cpe:/o:redhat:rhel_eus:7.7",
-          "cpe:/o:redhat:rhel_eus:7.7::computenode",
-          "cpe:/o:redhat:rhel_eus:7.7::server"
-        ]
-      },
-      "rights": "Copyright 2015 Red Hat, Inc.",
-      "issued": {
-        "date": "2015-11-19"
-      },
-      "bugzilla": [
-        {
-          "text": "authentication doesn't protect symmetric associations against DoS attacks",
-          "href": "https://bugzilla.redhat.com/1209572",
-          "id": "1209572"
-        },
-        {
-          "text": "Heap out of bound write in address filter",
-          "href": "https://bugzilla.redhat.com/1209631",
-          "id": "1209631"
-        },
-        {
-          "text": "uninitialized pointer in cmdmon reply slots",
-          "href": "https://bugzilla.redhat.com/1209632",
-          "id": "1209632"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Enterprise Linux 7"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.rhba:tst:20150364027",
-            "comment": "Red Hat Enterprise Linux 7 is installed"
-          },
-          {
-            "test_ref": "oval:com.redhat.rhsa:tst:20152241001",
-            "comment": "chrony is earlier than 0:2.1.1-1.el7"
-          },
-          {
-            "test_ref": "oval:com.redhat.rhsa:tst:20152241002",
-            "comment": "chrony is signed with Red Hat redhatrelease2 key"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.rhba:tst:20150364028",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20152241",
+	"version": "644",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2015:2241: chrony security, bug fix, and enhancement update (Moderate)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2015:2241",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2015:2241",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2015-1821",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2015-1821",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2015-1822",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2015-1822",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2015-1853",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2015-1853",
+				"source": "CVE"
+			}
+		],
+		"description": "The chrony suite, chronyd and chronyc, is an advanced implementation of the\nNetwork Time Protocol (NTP), specially designed to support systems with\nintermittent connections. It can synchronize the system clock with NTP\nservers, hardware reference clocks, and manual input. It can also operate\nas an NTPv4 (RFC 5905) server or peer to provide a time service to other\ncomputers in the network.\n\nAn out-of-bounds write flaw was found in the way chrony stored certain\naddresses when configuring NTP or cmdmon access. An attacker that has the\ncommand key and is allowed to access cmdmon (only localhost is allowed by\ndefault) could use this flaw to crash chronyd or, possibly, execute\narbitrary code with the privileges of the chronyd process. (CVE-2015-1821)\n\nAn uninitialized pointer use flaw was found when allocating memory to save\nunacknowledged replies to authenticated command requests. An attacker that\nhas the command key and is allowed to access cmdmon (only localhost is\nallowed by default) could use this flaw to crash chronyd or, possibly,\nexecute arbitrary code with the privileges of the chronyd process.\n(CVE-2015-1822)\n\nA denial of service flaw was found in the way chrony hosts that were\npeering with each other authenticated themselves before updating their\ninternal state variables. An attacker could send packets to one peer host,\nwhich could cascade to other peers, and stop the synchronization process\namong the reached peers. (CVE-2015-1853)\n\nThese issues were discovered by Miroslav Lichvár of Red Hat.\n\nThe chrony packages have been upgraded to upstream version 2.1.1, which\nprovides a number of bug fixes and enhancements over the previous version.\nNotable enhancements include:\n\n* Updated to NTP version 4 (RFC 5905)\n\n* Added pool directive to specify pool of NTP servers\n\n* Added leapsecmode directive to select how to correct clock for leap\nsecond\n\n* Added smoothtime directive to smooth served time and enable leap smear\n\n* Added asynchronous name resolving with POSIX threads\n\n* Ready for year 2036 (next NTP era)\n\n* Improved clock control\n\n* Networking code reworked to open separate client sockets for each NTP\nserver\n\n(BZ#1117882)\n\nThis update also fixes the following bug:\n\n* The chronyd service previously assumed that network interfaces specified\nwith the \"bindaddress\" directive were ready when the service was started.\nThis could cause chronyd to fail to bind an NTP server socket to the\ninterface if the interface was not ready. With this update, chronyd uses\nthe IP_FREEBIND socket option, enabling it to bind to an interface later,\nnot only when the service starts. (BZ#1169353)\n\nIn addition, this update adds the following enhancement:\n\n* The chronyd service now supports four modes of handling leap seconds,\nconfigured using the \"leapsecmode\" option. The clock can be either stepped\nby the kernel (the default \"system\" mode), stepped by chronyd (\"step\"\nmode), slowly adjusted by slewing (\"slew\" mode), or the leap second can be\nignored and corrected later in normal operation (\"ignore\" mode). If you\nselect slewing, the correction will always start at 00:00:00 UTC and will\nbe applied at a rate specified in the \"maxslewrate\" option. (BZ#1206504)\n\nAll chrony users are advised to upgrade to these updated packages, which\ncorrect these issues and add these enhancements.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2015-11-19"
+			},
+			"cve": [
+				{
+					"text": "CVE-2015-1821",
+					"cwe": "(CWE-122|CWE-787)",
+					"href": "https://access.redhat.com/security/cve/CVE-2015-1821",
+					"impact": "moderate",
+					"public": "20150407",
+					"cvss2": "6.0/AV:N/AC:M/Au:S/C:P/I:P/A:P"
+				},
+				{
+					"text": "CVE-2015-1822",
+					"cwe": "CWE-456",
+					"href": "https://access.redhat.com/security/cve/CVE-2015-1822",
+					"impact": "moderate",
+					"public": "20150407",
+					"cvss2": "6.0/AV:N/AC:M/Au:S/C:P/I:P/A:P"
+				},
+				{
+					"text": "CVE-2015-1853",
+					"cwe": "CWE-345",
+					"href": "https://access.redhat.com/security/cve/CVE-2015-1853",
+					"impact": "moderate",
+					"public": "20150407",
+					"cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:N/A:P"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras_sap_eus:7.7",
+					"cpe:/a:redhat:rhel_extras_sap_hana_eus:7.7",
+					"cpe:/o:redhat:rhel_eus:7.7",
+					"cpe:/o:redhat:rhel_eus:7.7::computenode",
+					"cpe:/o:redhat:rhel_eus:7.7::server"
+				]
+			},
+			"rights": "Copyright 2015 Red Hat, Inc.",
+			"issued": {
+				"date": "2015-11-19"
+			},
+			"bugzilla": [
+				{
+					"text": "authentication doesn't protect symmetric associations against DoS attacks",
+					"href": "https://bugzilla.redhat.com/1209572",
+					"id": "1209572"
+				},
+				{
+					"text": "Heap out of bound write in address filter",
+					"href": "https://bugzilla.redhat.com/1209631",
+					"id": "1209631"
+				},
+				{
+					"text": "uninitialized pointer in cmdmon reply slots",
+					"href": "https://bugzilla.redhat.com/1209632",
+					"id": "1209632"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 7"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20150364027",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					},
+					{
+						"test_ref": "oval:com.redhat.rhsa:tst:20152241001",
+						"comment": "chrony is earlier than 0:2.1.1-1.el7"
+					},
+					{
+						"test_ref": "oval:com.redhat.rhsa:tst:20152241002",
+						"comment": "chrony is signed with Red Hat redhatrelease2 key"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20150364028",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

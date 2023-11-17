@@ -1,285 +1,285 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20131144",
-  "version": "652",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2013:1144: nss, nss-util, nss-softokn, and nspr security update (Moderate)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2013:1144",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2013:1144",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2013-0791",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-0791",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2013-1620",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2013-1620",
-        "source": "CVE"
-      }
-    ],
-    "description": "Network Security Services (NSS) is a set of libraries designed to support\nthe cross-platform development of security-enabled client and server\napplications. Netscape Portable Runtime (NSPR) provides platform\nindependence for non-GUI operating system facilities. nss-softokn provides\nan NSS softoken cryptographic module.\n\nIt was discovered that NSS leaked timing information when decrypting\nTLS/SSL and DTLS protocol encrypted records when CBC-mode cipher suites\nwere used. A remote attacker could possibly use this flaw to retrieve plain\ntext from the encrypted packets by using a TLS/SSL or DTLS server as a\npadding oracle. (CVE-2013-1620)\n\nAn out-of-bounds memory read flaw was found in the way NSS decoded certain\ncertificates. If an application using NSS decoded a malformed certificate,\nit could cause the application to crash. (CVE-2013-0791)\n\nRed Hat would like to thank the Mozilla project for reporting\nCVE-2013-0791. Upstream acknowledges Ambroz Bizjak as the original reporter\nof CVE-2013-0791.\n\nThis update also fixes the following bugs:\n\n* The RHBA-2013:0445 update (which upgraded NSS to version 3.14) prevented\nthe use of certificates that have an MD5 signature. This caused problems in\ncertain environments. With this update, certificates that have an MD5\nsignature are once again allowed. To prevent the use of certificates that\nhave an MD5 signature, set the \"NSS_HASH_ALG_SUPPORT\" environment variable\nto \"-MD5\". (BZ#957603)\n\n* Previously, the sechash.h header file was missing, preventing certain\nsource RPMs (such as firefox and xulrunner) from building. (BZ#948715)\n\n* A memory leak in the nssutil_ReadSecmodDB() function has been fixed.\n(BZ#984967)\n\nIn addition, the nss package has been upgraded to upstream version 3.14.3,\nthe nss-util package has been upgraded to upstream version 3.14.3, the\nnss-softokn package has been upgraded to upstream version 3.14.3, and the\nnspr package has been upgraded to upstream version 4.9.5. These updates\nprovide a number of bug fixes and enhancements over the previous versions.\n(BZ#927157, BZ#927171, BZ#927158, BZ#927186)\n\nUsers of NSS, NSPR, nss-util, and nss-softokn are advised to upgrade to\nthese updated packages, which fix these issues and add these enhancements.\nAfter installing this update, applications using NSS, NSPR, nss-util, or\nnss-softokn must be restarted for this update to take effect.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Moderate",
-      "updated": {
-        "date": "2013-08-07"
-      },
-      "cve": [
-        {
-          "text": "CVE-2013-0791",
-          "href": "https://access.redhat.com/security/cve/CVE-2013-0791",
-          "impact": "low",
-          "public": "20130402",
-          "cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:N/A:P"
-        },
-        {
-          "text": "CVE-2013-1620",
-          "href": "https://access.redhat.com/security/cve/CVE-2013-1620",
-          "impact": "moderate",
-          "public": "20130204",
-          "cvss2": "5.1/AV:N/AC:H/Au:N/C:P/I:P/A:P"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:rhel_extras:6",
-          "cpe:/a:redhat:rhel_extras_hpn:6",
-          "cpe:/a:redhat:rhel_extras_oracle_java:6",
-          "cpe:/a:redhat:rhel_extras_sap:6",
-          "cpe:/a:redhat:rhel_extras_sap_els:6",
-          "cpe:/a:redhat:rhel_extras_sap_hana:6",
-          "cpe:/a:redhat:rhel_extras_sap_hana_els:6",
-          "cpe:/o:redhat:enterprise_linux:6",
-          "cpe:/o:redhat:enterprise_linux:6::client",
-          "cpe:/o:redhat:enterprise_linux:6::computenode",
-          "cpe:/o:redhat:enterprise_linux:6::server",
-          "cpe:/o:redhat:enterprise_linux:6::workstation",
-          "cpe:/o:redhat:rhel_els:6"
-        ]
-      },
-      "rights": "Copyright 2013 Red Hat, Inc.",
-      "issued": {
-        "date": "2013-08-07"
-      },
-      "bugzilla": [
-        {
-          "text": "CVE-2013-1620 nss: TLS CBC padding timing attack",
-          "href": "https://bugzilla.redhat.com/908234",
-          "id": "908234"
-        },
-        {
-          "text": "Out-of-bounds array read in CERT_DecodeCertPackage (MFSA 2013-40)",
-          "href": "https://bugzilla.redhat.com/946947",
-          "id": "946947"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Enterprise Linux 6"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144001",
-                    "comment": "nspr is earlier than 0:4.9.5-2.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20150926002",
-                    "comment": "nspr is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144003",
-                    "comment": "nspr-devel is earlier than 0:4.9.5-2.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20150926004",
-                    "comment": "nspr-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144005",
-                    "comment": "nss-softokn is earlier than 0:3.14.3-3.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhea:tst:20193280010",
-                    "comment": "nss-softokn is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144007",
-                    "comment": "nss-softokn-devel is earlier than 0:3.14.3-3.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhea:tst:20193280012",
-                    "comment": "nss-softokn-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144009",
-                    "comment": "nss-softokn-freebl is earlier than 0:3.14.3-3.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhea:tst:20193280014",
-                    "comment": "nss-softokn-freebl is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144011",
-                    "comment": "nss-softokn-freebl-devel is earlier than 0:3.14.3-3.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhea:tst:20193280016",
-                    "comment": "nss-softokn-freebl-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144013",
-                    "comment": "nss is earlier than 0:3.14.3-4.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20150926010",
-                    "comment": "nss is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144015",
-                    "comment": "nss-devel is earlier than 0:3.14.3-4.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20150926012",
-                    "comment": "nss-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144017",
-                    "comment": "nss-pkcs11-devel is earlier than 0:3.14.3-4.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20150926014",
-                    "comment": "nss-pkcs11-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144019",
-                    "comment": "nss-sysinit is earlier than 0:3.14.3-4.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20150926016",
-                    "comment": "nss-sysinit is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144021",
-                    "comment": "nss-tools is earlier than 0:3.14.3-4.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20150926018",
-                    "comment": "nss-tools is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144023",
-                    "comment": "nss-util is earlier than 0:3.14.3-3.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20150926006",
-                    "comment": "nss-util is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20131144025",
-                    "comment": "nss-util-devel is earlier than 0:3.14.3-3.el6_4"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20150926008",
-                    "comment": "nss-util-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
-            "comment": "Red Hat Enterprise Linux 6 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20131144",
+	"version": "652",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2013:1144: nss, nss-util, nss-softokn, and nspr security update (Moderate)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2013:1144",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2013:1144",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2013-0791",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2013-0791",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2013-1620",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2013-1620",
+				"source": "CVE"
+			}
+		],
+		"description": "Network Security Services (NSS) is a set of libraries designed to support\nthe cross-platform development of security-enabled client and server\napplications. Netscape Portable Runtime (NSPR) provides platform\nindependence for non-GUI operating system facilities. nss-softokn provides\nan NSS softoken cryptographic module.\n\nIt was discovered that NSS leaked timing information when decrypting\nTLS/SSL and DTLS protocol encrypted records when CBC-mode cipher suites\nwere used. A remote attacker could possibly use this flaw to retrieve plain\ntext from the encrypted packets by using a TLS/SSL or DTLS server as a\npadding oracle. (CVE-2013-1620)\n\nAn out-of-bounds memory read flaw was found in the way NSS decoded certain\ncertificates. If an application using NSS decoded a malformed certificate,\nit could cause the application to crash. (CVE-2013-0791)\n\nRed Hat would like to thank the Mozilla project for reporting\nCVE-2013-0791. Upstream acknowledges Ambroz Bizjak as the original reporter\nof CVE-2013-0791.\n\nThis update also fixes the following bugs:\n\n* The RHBA-2013:0445 update (which upgraded NSS to version 3.14) prevented\nthe use of certificates that have an MD5 signature. This caused problems in\ncertain environments. With this update, certificates that have an MD5\nsignature are once again allowed. To prevent the use of certificates that\nhave an MD5 signature, set the \"NSS_HASH_ALG_SUPPORT\" environment variable\nto \"-MD5\". (BZ#957603)\n\n* Previously, the sechash.h header file was missing, preventing certain\nsource RPMs (such as firefox and xulrunner) from building. (BZ#948715)\n\n* A memory leak in the nssutil_ReadSecmodDB() function has been fixed.\n(BZ#984967)\n\nIn addition, the nss package has been upgraded to upstream version 3.14.3,\nthe nss-util package has been upgraded to upstream version 3.14.3, the\nnss-softokn package has been upgraded to upstream version 3.14.3, and the\nnspr package has been upgraded to upstream version 4.9.5. These updates\nprovide a number of bug fixes and enhancements over the previous versions.\n(BZ#927157, BZ#927171, BZ#927158, BZ#927186)\n\nUsers of NSS, NSPR, nss-util, and nss-softokn are advised to upgrade to\nthese updated packages, which fix these issues and add these enhancements.\nAfter installing this update, applications using NSS, NSPR, nss-util, or\nnss-softokn must be restarted for this update to take effect.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2013-08-07"
+			},
+			"cve": [
+				{
+					"text": "CVE-2013-0791",
+					"href": "https://access.redhat.com/security/cve/CVE-2013-0791",
+					"impact": "low",
+					"public": "20130402",
+					"cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:N/A:P"
+				},
+				{
+					"text": "CVE-2013-1620",
+					"href": "https://access.redhat.com/security/cve/CVE-2013-1620",
+					"impact": "moderate",
+					"public": "20130204",
+					"cvss2": "5.1/AV:N/AC:H/Au:N/C:P/I:P/A:P"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras:6",
+					"cpe:/a:redhat:rhel_extras_hpn:6",
+					"cpe:/a:redhat:rhel_extras_oracle_java:6",
+					"cpe:/a:redhat:rhel_extras_sap:6",
+					"cpe:/a:redhat:rhel_extras_sap_els:6",
+					"cpe:/a:redhat:rhel_extras_sap_hana:6",
+					"cpe:/a:redhat:rhel_extras_sap_hana_els:6",
+					"cpe:/o:redhat:enterprise_linux:6",
+					"cpe:/o:redhat:enterprise_linux:6::client",
+					"cpe:/o:redhat:enterprise_linux:6::computenode",
+					"cpe:/o:redhat:enterprise_linux:6::server",
+					"cpe:/o:redhat:enterprise_linux:6::workstation",
+					"cpe:/o:redhat:rhel_els:6"
+				]
+			},
+			"rights": "Copyright 2013 Red Hat, Inc.",
+			"issued": {
+				"date": "2013-08-07"
+			},
+			"bugzilla": [
+				{
+					"text": "CVE-2013-1620 nss: TLS CBC padding timing attack",
+					"href": "https://bugzilla.redhat.com/908234",
+					"id": "908234"
+				},
+				{
+					"text": "Out-of-bounds array read in CERT_DecodeCertPackage (MFSA 2013-40)",
+					"href": "https://bugzilla.redhat.com/946947",
+					"id": "946947"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 6"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144001",
+										"comment": "nspr is earlier than 0:4.9.5-2.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20150926002",
+										"comment": "nspr is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144003",
+										"comment": "nspr-devel is earlier than 0:4.9.5-2.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20150926004",
+										"comment": "nspr-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144005",
+										"comment": "nss-softokn is earlier than 0:3.14.3-3.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhea:tst:20193280010",
+										"comment": "nss-softokn is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144007",
+										"comment": "nss-softokn-devel is earlier than 0:3.14.3-3.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhea:tst:20193280012",
+										"comment": "nss-softokn-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144009",
+										"comment": "nss-softokn-freebl is earlier than 0:3.14.3-3.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhea:tst:20193280014",
+										"comment": "nss-softokn-freebl is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144011",
+										"comment": "nss-softokn-freebl-devel is earlier than 0:3.14.3-3.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhea:tst:20193280016",
+										"comment": "nss-softokn-freebl-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144013",
+										"comment": "nss is earlier than 0:3.14.3-4.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20150926010",
+										"comment": "nss is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144015",
+										"comment": "nss-devel is earlier than 0:3.14.3-4.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20150926012",
+										"comment": "nss-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144017",
+										"comment": "nss-pkcs11-devel is earlier than 0:3.14.3-4.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20150926014",
+										"comment": "nss-pkcs11-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144019",
+										"comment": "nss-sysinit is earlier than 0:3.14.3-4.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20150926016",
+										"comment": "nss-sysinit is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144021",
+										"comment": "nss-tools is earlier than 0:3.14.3-4.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20150926018",
+										"comment": "nss-tools is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144023",
+										"comment": "nss-util is earlier than 0:3.14.3-3.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20150926006",
+										"comment": "nss-util is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20131144025",
+										"comment": "nss-util-devel is earlier than 0:3.14.3-3.el6_4"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20150926008",
+										"comment": "nss-util-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20111656003",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20111656004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

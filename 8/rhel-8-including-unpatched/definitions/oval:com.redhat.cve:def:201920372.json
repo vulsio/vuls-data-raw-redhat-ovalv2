@@ -1,203 +1,203 @@
 {
-  "id": "oval:com.redhat.cve:def:201920372",
-  "version": "636",
-  "class": "vulnerability",
-  "metadata": {
-    "title": "HTTP request smuggling in configurations with URL redirect used as error_page (moderate)",
-    "reference": [
-      {
-        "ref_id": "CVE-2019-20372",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2019-20372",
-        "source": "CVE"
-      }
-    ],
-    "description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: NGINX before 1.17.7, with certain error_page configurations, allows HTTP request smuggling, as demonstrated by the ability of an attacker to read unauthorized web pages in environments where NGINX is being fronted by a load balancer. \n            STATEMENT: Ansible Tower 3.5 and 3.6 are not vulnerable by default as are not using error_page variable in the nginx configuration. However, Ansible Tower 3.5 and 3.6 are distributing nginx 1.14 and 1.16 vulnerable versions as a dependency and configuration could be modified making it vulnerable.\n\nRed Hat CloudForms Management Engine 5.9 and 5.10 are not vulnerable by default as are not using error_page variable in the nginx configuration. However, both mentioned builds ships vulnerable nginx versions 1.10 and 1.14 respectively. CloudForms 5.11 does not use nginx directly hence it is not vulnerable.\n\nRed Hat Quay's configuration of nginx means it's not affected by this issue. It doesn't use error_page to do a 302 redirect. It's only use of error_page uses a named location ie:\nerror_page 404 /404.html;\n   location = /40x.html {\n }\nerror_page 500 502 503 504 /50x.html;\n    location = /50x.html {\n}\n            MITIGATION: To mitigate this issue, use a named location instead of having the error_page handler do the redirect, this configuration is not vulnerable to request smuggling on all versions of NGINX we tested.\nserver {\n listen 80;\n server_name localhost;\n error_page 401 @401;\n location / {\n return 401;\n }\n location @401 {\n return 302 http://example.org;\n }\n}",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Moderate",
-      "updated": {
-        "date": "2023-10-06"
-      },
-      "cve": [
-        {
-          "text": "CVE-2019-20372",
-          "cvss3": "5.3/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
-          "cwe": "CWE-444",
-          "href": "https://access.redhat.com/security/cve/CVE-2019-20372",
-          "impact": "moderate",
-          "public": "20200109"
-        }
-      ],
-      "affected": {
-        "resolution": [
-          {
-            "state": "Will not fix",
-            "component": [
-              "nginx:1.14/nginx",
-              "nginx:1.14/nginx-all-modules",
-              "nginx:1.14/nginx-filesystem",
-              "nginx:1.14/nginx-mod-http-image-filter",
-              "nginx:1.14/nginx-mod-http-perl",
-              "nginx:1.14/nginx-mod-http-xslt-filter",
-              "nginx:1.14/nginx-mod-mail",
-              "nginx:1.14/nginx-mod-stream"
-            ]
-          }
-        ]
-      },
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:enterprise_linux:8",
-          "cpe:/a:redhat:enterprise_linux:8::appstream",
-          "cpe:/a:redhat:enterprise_linux:8::crb",
-          "cpe:/a:redhat:enterprise_linux:8::highavailability",
-          "cpe:/a:redhat:enterprise_linux:8::nfv",
-          "cpe:/a:redhat:enterprise_linux:8::realtime",
-          "cpe:/a:redhat:enterprise_linux:8::resilientstorage",
-          "cpe:/a:redhat:enterprise_linux:8::sap",
-          "cpe:/a:redhat:enterprise_linux:8::sap_hana",
-          "cpe:/a:redhat:enterprise_linux:8::supplementary",
-          "cpe:/o:redhat:enterprise_linux:8",
-          "cpe:/o:redhat:enterprise_linux:8::baseos"
-        ]
-      },
-      "issued": {}
-    },
-    "affected": {}
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372001",
-                    "comment": "nginx-mod-stream is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372002",
-                    "comment": "nginx-mod-stream is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372003",
-                    "comment": "nginx is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372004",
-                    "comment": "nginx is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372005",
-                    "comment": "nginx-mod-http-xslt-filter is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372006",
-                    "comment": "nginx-mod-http-xslt-filter is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372007",
-                    "comment": "nginx-all-modules is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372008",
-                    "comment": "nginx-all-modules is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372009",
-                    "comment": "nginx-filesystem is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372010",
-                    "comment": "nginx-filesystem is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372011",
-                    "comment": "nginx-mod-mail is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372012",
-                    "comment": "nginx-mod-mail is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372013",
-                    "comment": "nginx-mod-http-perl is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372014",
-                    "comment": "nginx-mod-http-perl is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372015",
-                    "comment": "nginx-mod-http-image-filter is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201920372016",
-                    "comment": "nginx-mod-http-image-filter is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.cve:tst:20052541003",
-            "comment": "Red Hat Enterprise Linux 8 is installed"
-          },
-          {
-            "test_ref": "oval:com.redhat.cve:tst:201920372017",
-            "comment": "Module nginx:1.14 is enabled"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.cve:tst:20052541004",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.cve:def:201920372",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "HTTP request smuggling in configurations with URL redirect used as error_page (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2019-20372",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2019-20372",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: NGINX before 1.17.7, with certain error_page configurations, allows HTTP request smuggling, as demonstrated by the ability of an attacker to read unauthorized web pages in environments where NGINX is being fronted by a load balancer. \n            STATEMENT: Ansible Tower 3.5 and 3.6 are not vulnerable by default as are not using error_page variable in the nginx configuration. However, Ansible Tower 3.5 and 3.6 are distributing nginx 1.14 and 1.16 vulnerable versions as a dependency and configuration could be modified making it vulnerable.\n\nRed Hat CloudForms Management Engine 5.9 and 5.10 are not vulnerable by default as are not using error_page variable in the nginx configuration. However, both mentioned builds ships vulnerable nginx versions 1.10 and 1.14 respectively. CloudForms 5.11 does not use nginx directly hence it is not vulnerable.\n\nRed Hat Quay's configuration of nginx means it's not affected by this issue. It doesn't use error_page to do a 302 redirect. It's only use of error_page uses a named location ie:\nerror_page 404 /404.html;\n   location = /40x.html {\n }\nerror_page 500 502 503 504 /50x.html;\n    location = /50x.html {\n}\n            MITIGATION: To mitigate this issue, use a named location instead of having the error_page handler do the redirect, this configuration is not vulnerable to request smuggling on all versions of NGINX we tested.\nserver {\n listen 80;\n server_name localhost;\n error_page 401 @401;\n location / {\n return 401;\n }\n location @401 {\n return 302 http://example.org;\n }\n}",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2023-10-06"
+			},
+			"cve": [
+				{
+					"text": "CVE-2019-20372",
+					"cvss3": "5.3/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+					"cwe": "CWE-444",
+					"href": "https://access.redhat.com/security/cve/CVE-2019-20372",
+					"impact": "moderate",
+					"public": "20200109"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Will not fix",
+						"component": [
+							"nginx:1.14/nginx",
+							"nginx:1.14/nginx-all-modules",
+							"nginx:1.14/nginx-filesystem",
+							"nginx:1.14/nginx-mod-http-image-filter",
+							"nginx:1.14/nginx-mod-http-perl",
+							"nginx:1.14/nginx-mod-http-xslt-filter",
+							"nginx:1.14/nginx-mod-mail",
+							"nginx:1.14/nginx-mod-stream"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:enterprise_linux:8",
+					"cpe:/a:redhat:enterprise_linux:8::appstream",
+					"cpe:/a:redhat:enterprise_linux:8::crb",
+					"cpe:/a:redhat:enterprise_linux:8::highavailability",
+					"cpe:/a:redhat:enterprise_linux:8::nfv",
+					"cpe:/a:redhat:enterprise_linux:8::realtime",
+					"cpe:/a:redhat:enterprise_linux:8::resilientstorage",
+					"cpe:/a:redhat:enterprise_linux:8::sap",
+					"cpe:/a:redhat:enterprise_linux:8::sap_hana",
+					"cpe:/a:redhat:enterprise_linux:8::supplementary",
+					"cpe:/o:redhat:enterprise_linux:8",
+					"cpe:/o:redhat:enterprise_linux:8::baseos"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372001",
+										"comment": "nginx-mod-stream is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372002",
+										"comment": "nginx-mod-stream is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372003",
+										"comment": "nginx is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372004",
+										"comment": "nginx is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372005",
+										"comment": "nginx-mod-http-xslt-filter is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372006",
+										"comment": "nginx-mod-http-xslt-filter is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372007",
+										"comment": "nginx-all-modules is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372008",
+										"comment": "nginx-all-modules is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372009",
+										"comment": "nginx-filesystem is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372010",
+										"comment": "nginx-filesystem is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372011",
+										"comment": "nginx-mod-mail is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372012",
+										"comment": "nginx-mod-mail is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372013",
+										"comment": "nginx-mod-http-perl is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372014",
+										"comment": "nginx-mod-http-perl is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372015",
+										"comment": "nginx-mod-http-image-filter is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201920372016",
+										"comment": "nginx-mod-http-image-filter is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20052541003",
+						"comment": "Red Hat Enterprise Linux 8 is installed"
+					},
+					{
+						"test_ref": "oval:com.redhat.cve:tst:201920372017",
+						"comment": "Module nginx:1.14 is enabled"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20052541004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

@@ -1,152 +1,152 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20140561",
-  "version": "644",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2014:0561: curl security and bug fix update (Moderate)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2014:0561",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2014:0561",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2014-0015",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-0015",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2014-0138",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-0138",
-        "source": "CVE"
-      }
-    ],
-    "description": "cURL provides the libcurl library and a command line tool for downloading\nfiles from servers using various protocols, including HTTP, FTP, and LDAP.\n\nIt was found that libcurl could incorrectly reuse existing connections for\nrequests that should have used different or no authentication credentials,\nwhen using one of the following protocols: HTTP(S) with NTLM\nauthentication, LDAP(S), SCP, or SFTP. If an application using the libcurl\nlibrary connected to a remote server with certain authentication\ncredentials, this flaw could cause other requests to use those same\ncredentials. (CVE-2014-0015, CVE-2014-0138)\n\nRed Hat would like to thank the cURL project for reporting these issues.\nUpstream acknowledges Paras Sethia as the original reporter of\nCVE-2014-0015 and Yehezkel Horowitz for discovering the security impact of\nthis issue, and Steve Holme as the original reporter of CVE-2014-0138.\n\nThis update also fixes the following bugs:\n\n* Previously, the libcurl library was closing a network socket without\nfirst terminating the SSL connection using the socket. This resulted in a\nwrite after close and consequent leakage of memory dynamically allocated by\nthe SSL library. An upstream patch has been applied on libcurl to fix this\nbug. As a result, the write after close no longer happens, and the SSL\nlibrary no longer leaks memory. (BZ#1092479)\n\n* Previously, the libcurl library did not implement a non-blocking SSL\nhandshake, which negatively affected performance of applications based on\nlibcurl's multi API. To fix this bug, the non-blocking SSL handshake has\nbeen implemented by libcurl. With this update, libcurl's multi API\nimmediately returns the control back to the application whenever it cannot\nread/write data from/to the underlying network socket. (BZ#1092480)\n\n* Previously, the curl package could not be rebuilt from sources due to an\nexpired cookie in the upstream test-suite, which runs during the build. An\nupstream patch has been applied to postpone the expiration date of the\ncookie, which makes it possible to rebuild the package from sources again.\n(BZ#1092486)\n\n* Previously, the libcurl library attempted to authenticate using Kerberos\nwhenever such an authentication method was offered by the server. This\ncaused problems when the server offered multiple authentication methods and\nKerberos was not the selected one. An upstream patch has been applied on\nlibcurl to fix this bug. Now libcurl no longer uses Kerberos authentication\nif another authentication method is selected. (BZ#1096797)\n\nAll curl users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues. All running\napplications that use libcurl have to be restarted for this update to\ntake effect.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Moderate",
-      "updated": {
-        "date": "2014-05-27"
-      },
-      "cve": [
-        {
-          "text": "CVE-2014-0015",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-0015",
-          "impact": "moderate",
-          "public": "20140129",
-          "cvss2": "4.3/AV:N/AC:M/Au:N/C:P/I:N/A:N"
-        },
-        {
-          "text": "CVE-2014-0138",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-0138",
-          "impact": "moderate",
-          "public": "20140326",
-          "cvss2": "4.3/AV:N/AC:M/Au:N/C:P/I:N/A:N"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:rhel_extras:6",
-          "cpe:/a:redhat:rhel_extras_hpn:6",
-          "cpe:/a:redhat:rhel_extras_oracle_java:6",
-          "cpe:/a:redhat:rhel_extras_sap:6",
-          "cpe:/a:redhat:rhel_extras_sap_hana:6",
-          "cpe:/o:redhat:enterprise_linux:6",
-          "cpe:/o:redhat:enterprise_linux:6::client",
-          "cpe:/o:redhat:enterprise_linux:6::computenode",
-          "cpe:/o:redhat:enterprise_linux:6::server",
-          "cpe:/o:redhat:enterprise_linux:6::workstation"
-        ]
-      },
-      "rights": "Copyright 2014 Red Hat, Inc.",
-      "issued": {
-        "date": "2014-05-27"
-      },
-      "bugzilla": [
-        {
-          "text": "re-use of wrong HTTP NTLM connection in libcurl",
-          "href": "https://bugzilla.redhat.com/1053903",
-          "id": "1053903"
-        },
-        {
-          "text": "wrong re-use of connections in libcurl",
-          "href": "https://bugzilla.redhat.com/1079148",
-          "id": "1079148"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Enterprise Linux 6"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140561001",
-                    "comment": "curl is earlier than 0:7.19.7-37.el6_5.3"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20153153006",
-                    "comment": "curl is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140561003",
-                    "comment": "libcurl is earlier than 0:7.19.7-37.el6_5.3"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20153153002",
-                    "comment": "libcurl is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140561005",
-                    "comment": "libcurl-devel is earlier than 0:7.19.7-37.el6_5.3"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20153153004",
-                    "comment": "libcurl-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.cve:tst:20022439069",
-            "comment": "Red Hat Enterprise Linux 6 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.cve:tst:20022439070",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20140561",
+	"version": "644",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2014:0561: curl security and bug fix update (Moderate)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2014:0561",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2014:0561",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2014-0015",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-0015",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2014-0138",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-0138",
+				"source": "CVE"
+			}
+		],
+		"description": "cURL provides the libcurl library and a command line tool for downloading\nfiles from servers using various protocols, including HTTP, FTP, and LDAP.\n\nIt was found that libcurl could incorrectly reuse existing connections for\nrequests that should have used different or no authentication credentials,\nwhen using one of the following protocols: HTTP(S) with NTLM\nauthentication, LDAP(S), SCP, or SFTP. If an application using the libcurl\nlibrary connected to a remote server with certain authentication\ncredentials, this flaw could cause other requests to use those same\ncredentials. (CVE-2014-0015, CVE-2014-0138)\n\nRed Hat would like to thank the cURL project for reporting these issues.\nUpstream acknowledges Paras Sethia as the original reporter of\nCVE-2014-0015 and Yehezkel Horowitz for discovering the security impact of\nthis issue, and Steve Holme as the original reporter of CVE-2014-0138.\n\nThis update also fixes the following bugs:\n\n* Previously, the libcurl library was closing a network socket without\nfirst terminating the SSL connection using the socket. This resulted in a\nwrite after close and consequent leakage of memory dynamically allocated by\nthe SSL library. An upstream patch has been applied on libcurl to fix this\nbug. As a result, the write after close no longer happens, and the SSL\nlibrary no longer leaks memory. (BZ#1092479)\n\n* Previously, the libcurl library did not implement a non-blocking SSL\nhandshake, which negatively affected performance of applications based on\nlibcurl's multi API. To fix this bug, the non-blocking SSL handshake has\nbeen implemented by libcurl. With this update, libcurl's multi API\nimmediately returns the control back to the application whenever it cannot\nread/write data from/to the underlying network socket. (BZ#1092480)\n\n* Previously, the curl package could not be rebuilt from sources due to an\nexpired cookie in the upstream test-suite, which runs during the build. An\nupstream patch has been applied to postpone the expiration date of the\ncookie, which makes it possible to rebuild the package from sources again.\n(BZ#1092486)\n\n* Previously, the libcurl library attempted to authenticate using Kerberos\nwhenever such an authentication method was offered by the server. This\ncaused problems when the server offered multiple authentication methods and\nKerberos was not the selected one. An upstream patch has been applied on\nlibcurl to fix this bug. Now libcurl no longer uses Kerberos authentication\nif another authentication method is selected. (BZ#1096797)\n\nAll curl users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues. All running\napplications that use libcurl have to be restarted for this update to\ntake effect.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2014-05-27"
+			},
+			"cve": [
+				{
+					"text": "CVE-2014-0015",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-0015",
+					"impact": "moderate",
+					"public": "20140129",
+					"cvss2": "4.3/AV:N/AC:M/Au:N/C:P/I:N/A:N"
+				},
+				{
+					"text": "CVE-2014-0138",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-0138",
+					"impact": "moderate",
+					"public": "20140326",
+					"cvss2": "4.3/AV:N/AC:M/Au:N/C:P/I:N/A:N"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras:6",
+					"cpe:/a:redhat:rhel_extras_hpn:6",
+					"cpe:/a:redhat:rhel_extras_oracle_java:6",
+					"cpe:/a:redhat:rhel_extras_sap:6",
+					"cpe:/a:redhat:rhel_extras_sap_hana:6",
+					"cpe:/o:redhat:enterprise_linux:6",
+					"cpe:/o:redhat:enterprise_linux:6::client",
+					"cpe:/o:redhat:enterprise_linux:6::computenode",
+					"cpe:/o:redhat:enterprise_linux:6::server",
+					"cpe:/o:redhat:enterprise_linux:6::workstation"
+				]
+			},
+			"rights": "Copyright 2014 Red Hat, Inc.",
+			"issued": {
+				"date": "2014-05-27"
+			},
+			"bugzilla": [
+				{
+					"text": "re-use of wrong HTTP NTLM connection in libcurl",
+					"href": "https://bugzilla.redhat.com/1053903",
+					"id": "1053903"
+				},
+				{
+					"text": "wrong re-use of connections in libcurl",
+					"href": "https://bugzilla.redhat.com/1079148",
+					"id": "1079148"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 6"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140561001",
+										"comment": "curl is earlier than 0:7.19.7-37.el6_5.3"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20153153006",
+										"comment": "curl is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140561003",
+										"comment": "libcurl is earlier than 0:7.19.7-37.el6_5.3"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20153153002",
+										"comment": "libcurl is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140561005",
+										"comment": "libcurl-devel is earlier than 0:7.19.7-37.el6_5.3"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20153153004",
+										"comment": "libcurl-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20022439069",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20022439070",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

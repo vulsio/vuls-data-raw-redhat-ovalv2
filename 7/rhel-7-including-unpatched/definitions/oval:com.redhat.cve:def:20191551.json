@@ -1,155 +1,155 @@
 {
-  "id": "oval:com.redhat.cve:def:20191551",
-  "version": "636",
-  "class": "vulnerability",
-  "metadata": {
-    "title": "Integer overflow in RSAZ modular exponentiation on x86_64 (low)",
-    "reference": [
-      {
-        "ref_id": "CVE-2019-1551",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2019-1551",
-        "source": "CVE"
-      }
-    ],
-    "description": "DOCUMENTATION: An integer overflow was found in the x64_64 Montgomery squaring procedure used in exponentiation with 512-bit moduli.  As per upstream:\n\n* No EC algorithms are affected. \n\n* Attacks against 2-prime RSA1024, 3-prime RSA1536, and DSA1024 as a result of this defect would be very difficult to perform and are not believed likely. \n\n* Attacks against DH512 are considered just feasible. However, for an attack the target would have to re-use the DH512 private key, which is not recommended anyway.\n\n* Also applications directly using the low level API BN_mod_exp may be affected if they use BN_FLG_CONSTTIME \n            STATEMENT: Accelerated modular exponentiation for Intel processors (RSAZ) was introduced in openssl-1.0.2, therefore older versions of OpenSSL are not affected by this flaw.\n            MITIGATION: For Red Hat Enterprise Linux 7, 512 bit DH is already disabled. As this bug is about leakage of the private key to the attacker, it should be fully sufficient to just not use 1024 bit RSA keys or 1024 bit DSA keys. These keys are not secure enough anyway. 3-prime RSA keys are not supported on RHEL-7.\n\nFor Red Hat Enterprise 8, The DEFAULT crypto policy already disables all these key sizes.\n\nAlso applications compiled with openssl which use the low level  API BN_mod_exp may be affected if they use BN_FLG_CONSTTIME, other users of this API are not affected by this flaw.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Low",
-      "updated": {
-        "date": "2023-09-07"
-      },
-      "cve": [
-        {
-          "text": "CVE-2019-1551",
-          "cvss3": "4.8/CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N",
-          "cwe": "CWE-190",
-          "href": "https://access.redhat.com/security/cve/CVE-2019-1551",
-          "impact": "low",
-          "public": "20191206"
-        }
-      ],
-      "affected": {
-        "resolution": [
-          {
-            "state": "Will not fix",
-            "component": [
-              "openssl",
-              "openssl-devel",
-              "openssl-libs",
-              "openssl-perl",
-              "openssl-static"
-            ]
-          }
-        ]
-      },
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:rhel_extras:7",
-          "cpe:/a:redhat:rhel_extras_oracle_java:7",
-          "cpe:/a:redhat:rhel_extras_rt:7",
-          "cpe:/a:redhat:rhel_extras_sap:7",
-          "cpe:/a:redhat:rhel_extras_sap_hana:7",
-          "cpe:/o:redhat:enterprise_linux:7",
-          "cpe:/o:redhat:enterprise_linux:7::client",
-          "cpe:/o:redhat:enterprise_linux:7::computenode",
-          "cpe:/o:redhat:enterprise_linux:7::server",
-          "cpe:/o:redhat:enterprise_linux:7::workstation"
-        ]
-      },
-      "issued": {}
-    },
-    "affected": {}
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20152808011",
-                    "comment": "openssl-perl is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20152808012",
-                    "comment": "openssl-perl is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20152808009",
-                    "comment": "openssl-static is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20152808010",
-                    "comment": "openssl-static is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20152808005",
-                    "comment": "openssl is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20152808006",
-                    "comment": "openssl is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20152808001",
-                    "comment": "openssl-devel is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20152808002",
-                    "comment": "openssl-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20152808007",
-                    "comment": "openssl-libs is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:20152808008",
-                    "comment": "openssl-libs is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.cve:tst:20042779005",
-            "comment": "Red Hat Enterprise Linux 7 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.cve:tst:20042779006",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.cve:def:20191551",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "Integer overflow in RSAZ modular exponentiation on x86_64 (low)",
+		"reference": [
+			{
+				"ref_id": "CVE-2019-1551",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2019-1551",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: An integer overflow was found in the x64_64 Montgomery squaring procedure used in exponentiation with 512-bit moduli.  As per upstream:\n\n* No EC algorithms are affected. \n\n* Attacks against 2-prime RSA1024, 3-prime RSA1536, and DSA1024 as a result of this defect would be very difficult to perform and are not believed likely. \n\n* Attacks against DH512 are considered just feasible. However, for an attack the target would have to re-use the DH512 private key, which is not recommended anyway.\n\n* Also applications directly using the low level API BN_mod_exp may be affected if they use BN_FLG_CONSTTIME \n            STATEMENT: Accelerated modular exponentiation for Intel processors (RSAZ) was introduced in openssl-1.0.2, therefore older versions of OpenSSL are not affected by this flaw.\n            MITIGATION: For Red Hat Enterprise Linux 7, 512 bit DH is already disabled. As this bug is about leakage of the private key to the attacker, it should be fully sufficient to just not use 1024 bit RSA keys or 1024 bit DSA keys. These keys are not secure enough anyway. 3-prime RSA keys are not supported on RHEL-7.\n\nFor Red Hat Enterprise 8, The DEFAULT crypto policy already disables all these key sizes.\n\nAlso applications compiled with openssl which use the low level  API BN_mod_exp may be affected if they use BN_FLG_CONSTTIME, other users of this API are not affected by this flaw.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Low",
+			"updated": {
+				"date": "2023-09-07"
+			},
+			"cve": [
+				{
+					"text": "CVE-2019-1551",
+					"cvss3": "4.8/CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N",
+					"cwe": "CWE-190",
+					"href": "https://access.redhat.com/security/cve/CVE-2019-1551",
+					"impact": "low",
+					"public": "20191206"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Will not fix",
+						"component": [
+							"openssl",
+							"openssl-devel",
+							"openssl-libs",
+							"openssl-perl",
+							"openssl-static"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras:7",
+					"cpe:/a:redhat:rhel_extras_oracle_java:7",
+					"cpe:/a:redhat:rhel_extras_rt:7",
+					"cpe:/a:redhat:rhel_extras_sap:7",
+					"cpe:/a:redhat:rhel_extras_sap_hana:7",
+					"cpe:/o:redhat:enterprise_linux:7",
+					"cpe:/o:redhat:enterprise_linux:7::client",
+					"cpe:/o:redhat:enterprise_linux:7::computenode",
+					"cpe:/o:redhat:enterprise_linux:7::server",
+					"cpe:/o:redhat:enterprise_linux:7::workstation"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20152808011",
+										"comment": "openssl-perl is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20152808012",
+										"comment": "openssl-perl is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20152808009",
+										"comment": "openssl-static is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20152808010",
+										"comment": "openssl-static is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20152808005",
+										"comment": "openssl is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20152808006",
+										"comment": "openssl is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20152808001",
+										"comment": "openssl-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20152808002",
+										"comment": "openssl-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20152808007",
+										"comment": "openssl-libs is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20152808008",
+										"comment": "openssl-libs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20042779005",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20042779006",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

@@ -1,530 +1,530 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20130509",
-  "version": "648",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2013:0509: rdma security, bug fix and enhancement update (Low)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2013:0509",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2013:0509",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2012-4517",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2012-4517",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2012-4518",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2012-4518",
-        "source": "CVE"
-      }
-    ],
-    "description": "Red Hat Enterprise Linux includes a collection of InfiniBand and iWARP\nutilities, libraries and development packages for writing applications\nthat use Remote Direct Memory Access (RDMA) technology.\n\nA denial of service flaw was found in the way ibacm managed reference\ncounts for multicast connections. An attacker could send specially-crafted\nmulticast packets that would cause the ibacm daemon to crash.\n(CVE-2012-4517)\n\nIt was found that the ibacm daemon created some files with world-writable\npermissions. A local attacker could use this flaw to overwrite the\ncontents of the ibacm.log or ibacm.port file, allowing them to mask\ncertain actions from the log or cause ibacm to run on a non-default port.\n(CVE-2012-4518)\n\nCVE-2012-4518 was discovered by Florian Weimer of the Red Hat Product\nSecurity Team and Kurt Seifried of the Red Hat Security Response Team.\n\nThe InfiniBand/iWARP/RDMA stack components have been upgraded to more\nrecent upstream versions.\n\nThis update also fixes the following bugs:\n\n* Previously, the \"ibnodes -h\" command did not show a proper usage message.\nWith this update the problem is fixed and \"ibnodes -h\" now shows the\ncorrect usage message. (BZ#818606)\n\n* Previously, the ibv_devinfo utility erroneously showed iWARP cxgb3\nhardware's physical state as invalid even when the device was working. For\niWARP hardware, the phys_state field has no meaning. This update patches\nthe utility to not print out anything for this field when the hardware is\niWARP hardware. (BZ#822781)\n\n* Prior to the release of Red Hat Enterprise Linux 6.3, the kernel created\nthe InfiniBand device files in the wrong place and a udev rules file was\nused to force the devices to be created in the proper place. With the\nupdate to 6.3, the kernel was fixed to create the InfiniBand device files\nin the proper place, and so the udev rules file was removed as no longer\nbeing necessary. However, a bug in the kernel device creation meant that,\nalthough the devices were now being created in the right place, they had\nincorrect permissions. Consequently, when users attempted to run an RDMA\napplication as a non-root user, the application failed to get the necessary\npermissions to use the RDMA device and the application terminated. This\nupdate puts a new udev rules file in place. It no longer attempts to create\nthe InfiniBand devices since they already exist, but it does correct the\ndevice permissions on the files. (BZ#834428)\n\n* Previously, using the \"perfquery -C\" command with a host name caused the\nperfquery utility to become unresponsive. The list of controllers to\nprocess was never cleared and the process looped infinitely on a single\ncontroller. A patch has been applied to make sure that in the case where\nthe user passes in the -C option, the controller list is cleared out once\nthat controller has been processed. As a result, perfquery now works as\nexpected in the scenario described. (BZ#847129)\n\n* The OpenSM init script did not handle the case where there were no\nconfiguration files under \"/etc/rdma/opensm.conf.*\". With this update, the\nscript as been patched and the InfiniBand Subnet Manager, OpenSM, now\nstarts as expected in the scenario described. (BZ#862857)\n\nThis update also adds the following enhancement:\n\n* This update provides an updated mlx4_ib Mellanox driver which includes\nSingle Root I/O Virtualization (SR-IOV) support. (BZ#869737)\n\nAll users of RDMA are advised to upgrade to these updated packages, which\nfix these issues and add this enhancement.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Low",
-      "updated": {
-        "date": "2013-02-21"
-      },
-      "cve": [
-        {
-          "text": "CVE-2012-4517",
-          "href": "https://access.redhat.com/security/cve/CVE-2012-4517",
-          "impact": "low",
-          "public": "20120404",
-          "cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:N/A:P"
-        },
-        {
-          "text": "CVE-2012-4518",
-          "href": "https://access.redhat.com/security/cve/CVE-2012-4518",
-          "impact": "low",
-          "public": "20121009",
-          "cvss2": "2.1/AV:L/AC:L/Au:N/C:N/I:N/A:P"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:rhel_extras:6",
-          "cpe:/a:redhat:rhel_extras_hpn:6",
-          "cpe:/a:redhat:rhel_extras_oracle_java:6",
-          "cpe:/a:redhat:rhel_extras_sap:6",
-          "cpe:/a:redhat:rhel_extras_sap_hana:6",
-          "cpe:/o:redhat:enterprise_linux:6",
-          "cpe:/o:redhat:enterprise_linux:6::client",
-          "cpe:/o:redhat:enterprise_linux:6::computenode",
-          "cpe:/o:redhat:enterprise_linux:6::server",
-          "cpe:/o:redhat:enterprise_linux:6::workstation",
-          "cpe:/o:redhat:rhel_eus:6.0"
-        ]
-      },
-      "rights": "Copyright 2013 Red Hat, Inc.",
-      "issued": {
-        "date": "2013-02-20"
-      },
-      "bugzilla": [
-        {
-          "text": "CVE-2012-4517 ibacm: DoS (ibacm deamon crash) by joining responses for multicast destinations",
-          "href": "https://bugzilla.redhat.com/865492",
-          "id": "865492"
-        },
-        {
-          "text": "CVE-2012-4518 ibacm: ibacm service files created with world writable permissions (DoS)",
-          "href": "https://bugzilla.redhat.com/865499",
-          "id": "865499"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Enterprise Linux 6"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509001",
-                    "comment": "infinipath-psm is earlier than 0:3.0.1-115.1015_open.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509002",
-                    "comment": "infinipath-psm is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509003",
-                    "comment": "infinipath-psm-devel is earlier than 0:3.0.1-115.1015_open.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509004",
-                    "comment": "infinipath-psm-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509005",
-                    "comment": "rdma is earlier than 0:3.6-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509006",
-                    "comment": "rdma is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509007",
-                    "comment": "libibverbs is earlier than 0:1.1.6-5.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509008",
-                    "comment": "libibverbs is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509009",
-                    "comment": "libibverbs-devel is earlier than 0:1.1.6-5.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509010",
-                    "comment": "libibverbs-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509011",
-                    "comment": "libibverbs-devel-static is earlier than 0:1.1.6-5.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509012",
-                    "comment": "libibverbs-devel-static is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509013",
-                    "comment": "libibverbs-utils is earlier than 0:1.1.6-5.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509014",
-                    "comment": "libibverbs-utils is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509015",
-                    "comment": "libmlx4 is earlier than 0:1.0.4-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509016",
-                    "comment": "libmlx4 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509017",
-                    "comment": "libmlx4-static is earlier than 0:1.0.4-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509018",
-                    "comment": "libmlx4-static is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509019",
-                    "comment": "libibumad is earlier than 0:1.3.8-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509020",
-                    "comment": "libibumad is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509021",
-                    "comment": "libibumad-devel is earlier than 0:1.3.8-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509022",
-                    "comment": "libibumad-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509023",
-                    "comment": "libibumad-static is earlier than 0:1.3.8-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509024",
-                    "comment": "libibumad-static is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509025",
-                    "comment": "libibmad is earlier than 0:1.3.9-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509026",
-                    "comment": "libibmad is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509027",
-                    "comment": "libibmad-devel is earlier than 0:1.3.9-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509028",
-                    "comment": "libibmad-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509029",
-                    "comment": "libibmad-static is earlier than 0:1.3.9-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509030",
-                    "comment": "libibmad-static is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509031",
-                    "comment": "opensm is earlier than 0:3.3.15-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509032",
-                    "comment": "opensm is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509033",
-                    "comment": "opensm-devel is earlier than 0:3.3.15-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509034",
-                    "comment": "opensm-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509035",
-                    "comment": "opensm-libs is earlier than 0:3.3.15-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509036",
-                    "comment": "opensm-libs is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509037",
-                    "comment": "opensm-static is earlier than 0:3.3.15-1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509038",
-                    "comment": "opensm-static is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509039",
-                    "comment": "ibutils is earlier than 0:1.5.7-7.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509040",
-                    "comment": "ibutils is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509041",
-                    "comment": "ibutils-devel is earlier than 0:1.5.7-7.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509042",
-                    "comment": "ibutils-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509043",
-                    "comment": "ibutils-libs is earlier than 0:1.5.7-7.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509044",
-                    "comment": "ibutils-libs is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509045",
-                    "comment": "ibsim is earlier than 0:0.5-7.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509046",
-                    "comment": "ibsim is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509047",
-                    "comment": "ibacm is earlier than 0:1.0.8-0.git7a3adb7.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509048",
-                    "comment": "ibacm is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509049",
-                    "comment": "ibacm-devel is earlier than 0:1.0.8-0.git7a3adb7.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509050",
-                    "comment": "ibacm-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509051",
-                    "comment": "infiniband-diags is earlier than 0:1.5.12-5.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509052",
-                    "comment": "infiniband-diags is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509053",
-                    "comment": "infiniband-diags-devel is earlier than 0:1.5.12-5.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509054",
-                    "comment": "infiniband-diags-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509055",
-                    "comment": "infiniband-diags-devel-static is earlier than 0:1.5.12-5.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509056",
-                    "comment": "infiniband-diags-devel-static is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509057",
-                    "comment": "librdmacm is earlier than 0:1.0.17-0.git4b5c1aa.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509058",
-                    "comment": "librdmacm is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509059",
-                    "comment": "librdmacm-devel is earlier than 0:1.0.17-0.git4b5c1aa.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509060",
-                    "comment": "librdmacm-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509061",
-                    "comment": "librdmacm-static is earlier than 0:1.0.17-0.git4b5c1aa.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509062",
-                    "comment": "librdmacm-static is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509063",
-                    "comment": "librdmacm-utils is earlier than 0:1.0.17-0.git4b5c1aa.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20130509064",
-                    "comment": "librdmacm-utils is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
-            "comment": "Red Hat Enterprise Linux 6 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20130509",
+	"version": "648",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2013:0509: rdma security, bug fix and enhancement update (Low)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2013:0509",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2013:0509",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2012-4517",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2012-4517",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2012-4518",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2012-4518",
+				"source": "CVE"
+			}
+		],
+		"description": "Red Hat Enterprise Linux includes a collection of InfiniBand and iWARP\nutilities, libraries and development packages for writing applications\nthat use Remote Direct Memory Access (RDMA) technology.\n\nA denial of service flaw was found in the way ibacm managed reference\ncounts for multicast connections. An attacker could send specially-crafted\nmulticast packets that would cause the ibacm daemon to crash.\n(CVE-2012-4517)\n\nIt was found that the ibacm daemon created some files with world-writable\npermissions. A local attacker could use this flaw to overwrite the\ncontents of the ibacm.log or ibacm.port file, allowing them to mask\ncertain actions from the log or cause ibacm to run on a non-default port.\n(CVE-2012-4518)\n\nCVE-2012-4518 was discovered by Florian Weimer of the Red Hat Product\nSecurity Team and Kurt Seifried of the Red Hat Security Response Team.\n\nThe InfiniBand/iWARP/RDMA stack components have been upgraded to more\nrecent upstream versions.\n\nThis update also fixes the following bugs:\n\n* Previously, the \"ibnodes -h\" command did not show a proper usage message.\nWith this update the problem is fixed and \"ibnodes -h\" now shows the\ncorrect usage message. (BZ#818606)\n\n* Previously, the ibv_devinfo utility erroneously showed iWARP cxgb3\nhardware's physical state as invalid even when the device was working. For\niWARP hardware, the phys_state field has no meaning. This update patches\nthe utility to not print out anything for this field when the hardware is\niWARP hardware. (BZ#822781)\n\n* Prior to the release of Red Hat Enterprise Linux 6.3, the kernel created\nthe InfiniBand device files in the wrong place and a udev rules file was\nused to force the devices to be created in the proper place. With the\nupdate to 6.3, the kernel was fixed to create the InfiniBand device files\nin the proper place, and so the udev rules file was removed as no longer\nbeing necessary. However, a bug in the kernel device creation meant that,\nalthough the devices were now being created in the right place, they had\nincorrect permissions. Consequently, when users attempted to run an RDMA\napplication as a non-root user, the application failed to get the necessary\npermissions to use the RDMA device and the application terminated. This\nupdate puts a new udev rules file in place. It no longer attempts to create\nthe InfiniBand devices since they already exist, but it does correct the\ndevice permissions on the files. (BZ#834428)\n\n* Previously, using the \"perfquery -C\" command with a host name caused the\nperfquery utility to become unresponsive. The list of controllers to\nprocess was never cleared and the process looped infinitely on a single\ncontroller. A patch has been applied to make sure that in the case where\nthe user passes in the -C option, the controller list is cleared out once\nthat controller has been processed. As a result, perfquery now works as\nexpected in the scenario described. (BZ#847129)\n\n* The OpenSM init script did not handle the case where there were no\nconfiguration files under \"/etc/rdma/opensm.conf.*\". With this update, the\nscript as been patched and the InfiniBand Subnet Manager, OpenSM, now\nstarts as expected in the scenario described. (BZ#862857)\n\nThis update also adds the following enhancement:\n\n* This update provides an updated mlx4_ib Mellanox driver which includes\nSingle Root I/O Virtualization (SR-IOV) support. (BZ#869737)\n\nAll users of RDMA are advised to upgrade to these updated packages, which\nfix these issues and add this enhancement.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Low",
+			"updated": {
+				"date": "2013-02-21"
+			},
+			"cve": [
+				{
+					"text": "CVE-2012-4517",
+					"href": "https://access.redhat.com/security/cve/CVE-2012-4517",
+					"impact": "low",
+					"public": "20120404",
+					"cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:N/A:P"
+				},
+				{
+					"text": "CVE-2012-4518",
+					"href": "https://access.redhat.com/security/cve/CVE-2012-4518",
+					"impact": "low",
+					"public": "20121009",
+					"cvss2": "2.1/AV:L/AC:L/Au:N/C:N/I:N/A:P"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras:6",
+					"cpe:/a:redhat:rhel_extras_hpn:6",
+					"cpe:/a:redhat:rhel_extras_oracle_java:6",
+					"cpe:/a:redhat:rhel_extras_sap:6",
+					"cpe:/a:redhat:rhel_extras_sap_hana:6",
+					"cpe:/o:redhat:enterprise_linux:6",
+					"cpe:/o:redhat:enterprise_linux:6::client",
+					"cpe:/o:redhat:enterprise_linux:6::computenode",
+					"cpe:/o:redhat:enterprise_linux:6::server",
+					"cpe:/o:redhat:enterprise_linux:6::workstation",
+					"cpe:/o:redhat:rhel_eus:6.0"
+				]
+			},
+			"rights": "Copyright 2013 Red Hat, Inc.",
+			"issued": {
+				"date": "2013-02-20"
+			},
+			"bugzilla": [
+				{
+					"text": "CVE-2012-4517 ibacm: DoS (ibacm deamon crash) by joining responses for multicast destinations",
+					"href": "https://bugzilla.redhat.com/865492",
+					"id": "865492"
+				},
+				{
+					"text": "CVE-2012-4518 ibacm: ibacm service files created with world writable permissions (DoS)",
+					"href": "https://bugzilla.redhat.com/865499",
+					"id": "865499"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 6"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509001",
+										"comment": "infinipath-psm is earlier than 0:3.0.1-115.1015_open.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509002",
+										"comment": "infinipath-psm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509003",
+										"comment": "infinipath-psm-devel is earlier than 0:3.0.1-115.1015_open.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509004",
+										"comment": "infinipath-psm-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509005",
+										"comment": "rdma is earlier than 0:3.6-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509006",
+										"comment": "rdma is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509007",
+										"comment": "libibverbs is earlier than 0:1.1.6-5.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509008",
+										"comment": "libibverbs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509009",
+										"comment": "libibverbs-devel is earlier than 0:1.1.6-5.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509010",
+										"comment": "libibverbs-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509011",
+										"comment": "libibverbs-devel-static is earlier than 0:1.1.6-5.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509012",
+										"comment": "libibverbs-devel-static is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509013",
+										"comment": "libibverbs-utils is earlier than 0:1.1.6-5.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509014",
+										"comment": "libibverbs-utils is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509015",
+										"comment": "libmlx4 is earlier than 0:1.0.4-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509016",
+										"comment": "libmlx4 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509017",
+										"comment": "libmlx4-static is earlier than 0:1.0.4-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509018",
+										"comment": "libmlx4-static is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509019",
+										"comment": "libibumad is earlier than 0:1.3.8-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509020",
+										"comment": "libibumad is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509021",
+										"comment": "libibumad-devel is earlier than 0:1.3.8-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509022",
+										"comment": "libibumad-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509023",
+										"comment": "libibumad-static is earlier than 0:1.3.8-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509024",
+										"comment": "libibumad-static is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509025",
+										"comment": "libibmad is earlier than 0:1.3.9-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509026",
+										"comment": "libibmad is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509027",
+										"comment": "libibmad-devel is earlier than 0:1.3.9-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509028",
+										"comment": "libibmad-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509029",
+										"comment": "libibmad-static is earlier than 0:1.3.9-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509030",
+										"comment": "libibmad-static is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509031",
+										"comment": "opensm is earlier than 0:3.3.15-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509032",
+										"comment": "opensm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509033",
+										"comment": "opensm-devel is earlier than 0:3.3.15-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509034",
+										"comment": "opensm-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509035",
+										"comment": "opensm-libs is earlier than 0:3.3.15-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509036",
+										"comment": "opensm-libs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509037",
+										"comment": "opensm-static is earlier than 0:3.3.15-1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509038",
+										"comment": "opensm-static is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509039",
+										"comment": "ibutils is earlier than 0:1.5.7-7.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509040",
+										"comment": "ibutils is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509041",
+										"comment": "ibutils-devel is earlier than 0:1.5.7-7.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509042",
+										"comment": "ibutils-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509043",
+										"comment": "ibutils-libs is earlier than 0:1.5.7-7.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509044",
+										"comment": "ibutils-libs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509045",
+										"comment": "ibsim is earlier than 0:0.5-7.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509046",
+										"comment": "ibsim is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509047",
+										"comment": "ibacm is earlier than 0:1.0.8-0.git7a3adb7.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509048",
+										"comment": "ibacm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509049",
+										"comment": "ibacm-devel is earlier than 0:1.0.8-0.git7a3adb7.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509050",
+										"comment": "ibacm-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509051",
+										"comment": "infiniband-diags is earlier than 0:1.5.12-5.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509052",
+										"comment": "infiniband-diags is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509053",
+										"comment": "infiniband-diags-devel is earlier than 0:1.5.12-5.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509054",
+										"comment": "infiniband-diags-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509055",
+										"comment": "infiniband-diags-devel-static is earlier than 0:1.5.12-5.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509056",
+										"comment": "infiniband-diags-devel-static is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509057",
+										"comment": "librdmacm is earlier than 0:1.0.17-0.git4b5c1aa.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509058",
+										"comment": "librdmacm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509059",
+										"comment": "librdmacm-devel is earlier than 0:1.0.17-0.git4b5c1aa.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509060",
+										"comment": "librdmacm-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509061",
+										"comment": "librdmacm-static is earlier than 0:1.0.17-0.git4b5c1aa.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509062",
+										"comment": "librdmacm-static is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509063",
+										"comment": "librdmacm-utils is earlier than 0:1.0.17-0.git4b5c1aa.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20130509064",
+										"comment": "librdmacm-utils is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20111656003",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20111656004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

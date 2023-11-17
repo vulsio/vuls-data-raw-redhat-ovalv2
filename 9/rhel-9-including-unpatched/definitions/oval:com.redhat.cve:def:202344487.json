@@ -1,616 +1,616 @@
 {
-  "id": "oval:com.redhat.cve:def:202344487",
-  "version": "636",
-  "class": "vulnerability",
-  "metadata": {
-    "title": "HTTP/2: Multiple HTTP/2 enabled web servers are vulnerable to a DDoS attack (Rapid Reset Attack) (important)",
-    "reference": [
-      {
-        "ref_id": "CVE-2023-44487",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2023-44487",
-        "source": "CVE"
-      }
-    ],
-    "description": "DOCUMENTATION: A flaw was found in handling multiplexed streams in the HTTP/2 protocol. A client can repeatedly make a request for a new multiplex stream and immediately send an RST_STREAM frame to cancel it. This creates extra work for the server setting up and tearing down the streams while not hitting any server-side limit for the maximum number of active streams per connection, resulting in a denial of service due to server resource consumption. Red Hat has rated the severity of this flaw as 'Important' as the US Cybersecurity and Infrastructure Security Agency (CISA) declared this vulnerability an active exploit.\n\nCVE-2023-39325 was assigned for the `Rapid Reset Attack` in the Go language packages. \n            STATEMENT: NGINX has been marked as Moderate Impact because, for performance and resource consumption reasons, NGINX limits the number of concurrent streams to a default of 128. In addition, to optimally balance network and server performance, NGINX allows the client to persist HTTP connections for up to 1000 requests by default using an HTTP keepalive.\n\nThe majority of RHEL utilities are not long-running applications; instead, they are command-line tools. These tools utilize Golang package as build-time dependency, which is why they are classified as having a \"Moderate\" level of impact.\n            MITIGATION: Users are strongly urged to update their software as soon as fixes are available. \nThere are several mitigation approaches for this flaw. \n\n1. If circumstances permit, users may disable http2 endpoints to circumvent the flaw altogether until a fix is available.\n2. IP-based blocking or flood protection and rate control tools may be used at network endpoints to filter incoming traffic.\n3. Several package specific mitigations are also available. \n     a. nginx: https://www.nginx.com/blog/http-2-rapid-reset-attack-impacting-f5-nginx-products/\n     b. netty: https://github.com/netty/netty/security/advisories/GHSA-xpw8-rcwv-8f8p\n     c. haproxy: https://www.haproxy.com/blog/haproxy-is-not-affected-by-the-http-2-rapid-reset-attack-cve-2023-44487\n     d. nghttp2: https://github.com/nghttp2/nghttp2/security/advisories/GHSA-vx74-f528-fxqg\n     e. golang: The default stream concurrency limit in golang is 250 streams (requests) per HTTP/2 connection. This value may be adjusted in the golang.org/x/net/http2 package using the Server.MaxConcurrentStreams setting and the ConfigureServer function which are available in golang.org/x/net/http2.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Important",
-      "updated": {
-        "date": "2023-11-16"
-      },
-      "cve": [
-        {
-          "text": "CVE-2023-44487",
-          "cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
-          "cwe": "CWE-400",
-          "href": "https://access.redhat.com/security/cve/CVE-2023-44487",
-          "impact": "important",
-          "public": "20231010"
-        }
-      ],
-      "affected": {
-        "resolution": [
-          {
-            "state": "Affected",
-            "component": [
-              "aspnetcore-runtime-8.0",
-              "aspnetcore-targeting-pack-8.0",
-              "dotnet-apphost-pack-8.0",
-              "dotnet-host",
-              "dotnet-hostfxr-8.0",
-              "dotnet-runtime-8.0",
-              "dotnet-sdk-8.0",
-              "dotnet-sdk-8.0-source-built-artifacts",
-              "dotnet-targeting-pack-8.0",
-              "dotnet-templates-8.0",
-              "dotnet8.0",
-              "netstandard-targeting-pack-2.1",
-              "nginx:1.22/nginx",
-              "nginx:1.22/nginx-all-modules",
-              "nginx:1.22/nginx-core",
-              "nginx:1.22/nginx-filesystem",
-              "nginx:1.22/nginx-mod-devel",
-              "nginx:1.22/nginx-mod-http-image-filter",
-              "nginx:1.22/nginx-mod-http-perl",
-              "nginx:1.22/nginx-mod-http-xslt-filter",
-              "nginx:1.22/nginx-mod-mail",
-              "nginx:1.22/nginx-mod-stream",
-              "nodejs:18/nodejs",
-              "nodejs:18/nodejs-docs",
-              "nodejs:18/nodejs-full-i18n",
-              "nodejs:18/nodejs-libs",
-              "nodejs:18/npm",
-              "nodejs:20/nodejs",
-              "nodejs:20/nodejs-docs",
-              "nodejs:20/nodejs-full-i18n",
-              "nodejs:20/nodejs-libs",
-              "nodejs:20/npm"
-            ]
-          },
-          {
-            "state": "Will not fix",
-            "component": [
-              "pki-servlet-4.0-api",
-              "pki-servlet-engine"
-            ]
-          }
-        ]
-      },
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:enterprise_linux:9",
-          "cpe:/a:redhat:enterprise_linux:9::appstream",
-          "cpe:/a:redhat:enterprise_linux:9::crb",
-          "cpe:/a:redhat:enterprise_linux:9::highavailability",
-          "cpe:/a:redhat:enterprise_linux:9::nfv",
-          "cpe:/a:redhat:enterprise_linux:9::realtime",
-          "cpe:/a:redhat:enterprise_linux:9::resilientstorage",
-          "cpe:/a:redhat:enterprise_linux:9::sap",
-          "cpe:/a:redhat:enterprise_linux:9::sap_hana",
-          "cpe:/a:redhat:enterprise_linux:9::supplementary",
-          "cpe:/o:redhat:enterprise_linux:9",
-          "cpe:/o:redhat:enterprise_linux:9::baseos"
-        ]
-      },
-      "issued": {}
-    },
-    "affected": {}
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202225881021",
-                    "comment": "netstandard-targeting-pack-2.1 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202225881022",
-                    "comment": "netstandard-targeting-pack-2.1 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487003",
-                    "comment": "dotnet-sdk-8.0 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487004",
-                    "comment": "dotnet-sdk-8.0 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487005",
-                    "comment": "aspnetcore-runtime-8.0 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487006",
-                    "comment": "aspnetcore-runtime-8.0 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487007",
-                    "comment": "dotnet-runtime-8.0 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487008",
-                    "comment": "dotnet-runtime-8.0 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487009",
-                    "comment": "dotnet-targeting-pack-8.0 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487010",
-                    "comment": "dotnet-targeting-pack-8.0 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202225881011",
-                    "comment": "dotnet-host is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202225881012",
-                    "comment": "dotnet-host is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487013",
-                    "comment": "dotnet-sdk-8.0-source-built-artifacts is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487014",
-                    "comment": "dotnet-sdk-8.0-source-built-artifacts is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487015",
-                    "comment": "dotnet-templates-8.0 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487016",
-                    "comment": "dotnet-templates-8.0 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487017",
-                    "comment": "aspnetcore-targeting-pack-8.0 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487018",
-                    "comment": "aspnetcore-targeting-pack-8.0 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487019",
-                    "comment": "dotnet-hostfxr-8.0 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487020",
-                    "comment": "dotnet-hostfxr-8.0 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487021",
-                    "comment": "dotnet8.0 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487022",
-                    "comment": "dotnet8.0 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202141079001",
-                    "comment": "pki-servlet-engine is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202141079002",
-                    "comment": "pki-servlet-engine is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202141079003",
-                    "comment": "pki-servlet-4.0-api is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202141079004",
-                    "comment": "pki-servlet-4.0-api is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487027",
-                    "comment": "dotnet-apphost-pack-8.0 is installed"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487028",
-                    "comment": "dotnet-apphost-pack-8.0 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterias": [
-                  {
-                    "operator": "OR",
-                    "criterias": [
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290001",
-                            "comment": "nodejs-docs is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290002",
-                            "comment": "nodejs-docs is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290007",
-                            "comment": "nodejs-libs is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290008",
-                            "comment": "nodejs-libs is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290005",
-                            "comment": "npm is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290006",
-                            "comment": "npm is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290013",
-                            "comment": "nodejs-full-i18n is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290014",
-                            "comment": "nodejs-full-i18n is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290009",
-                            "comment": "nodejs is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290010",
-                            "comment": "nodejs is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ],
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202225881035",
-                    "comment": "Module nodejs:18 is enabled"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterias": [
-                  {
-                    "operator": "OR",
-                    "criterias": [
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247013",
-                            "comment": "nginx-mod-http-xslt-filter is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247014",
-                            "comment": "nginx-mod-http-xslt-filter is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247003",
-                            "comment": "nginx-mod-mail is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247004",
-                            "comment": "nginx-mod-mail is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247007",
-                            "comment": "nginx-all-modules is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247008",
-                            "comment": "nginx-all-modules is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247015",
-                            "comment": "nginx-mod-stream is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247016",
-                            "comment": "nginx-mod-stream is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247017",
-                            "comment": "nginx-mod-devel is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247018",
-                            "comment": "nginx-mod-devel is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20223638013",
-                            "comment": "nginx-core is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20223638014",
-                            "comment": "nginx-core is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247009",
-                            "comment": "nginx-mod-http-perl is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247010",
-                            "comment": "nginx-mod-http-perl is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247005",
-                            "comment": "nginx-filesystem is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247006",
-                            "comment": "nginx-filesystem is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247011",
-                            "comment": "nginx is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247012",
-                            "comment": "nginx is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247001",
-                            "comment": "nginx-mod-http-image-filter is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:20161247002",
-                            "comment": "nginx-mod-http-image-filter is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ],
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202344487060",
-                    "comment": "Module nginx:1.22 is enabled"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterias": [
-                  {
-                    "operator": "OR",
-                    "criterias": [
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290001",
-                            "comment": "nodejs-docs is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290002",
-                            "comment": "nodejs-docs is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290007",
-                            "comment": "nodejs-libs is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290008",
-                            "comment": "nodejs-libs is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290005",
-                            "comment": "npm is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290006",
-                            "comment": "npm is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290013",
-                            "comment": "nodejs-full-i18n is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290014",
-                            "comment": "nodejs-full-i18n is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      },
-                      {
-                        "operator": "AND",
-                        "criterions": [
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290009",
-                            "comment": "nodejs is installed"
-                          },
-                          {
-                            "test_ref": "oval:com.redhat.cve:tst:202127290010",
-                            "comment": "nodejs is signed with Red Hat redhatrelease2 key"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ],
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202338552011",
-                    "comment": "Module nodejs:20 is enabled"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.cve:tst:20052541003",
-            "comment": "Red Hat Enterprise Linux 9 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.cve:tst:20052541004",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.cve:def:202344487",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "HTTP/2: Multiple HTTP/2 enabled web servers are vulnerable to a DDoS attack (Rapid Reset Attack) (important)",
+		"reference": [
+			{
+				"ref_id": "CVE-2023-44487",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2023-44487",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: A flaw was found in handling multiplexed streams in the HTTP/2 protocol. A client can repeatedly make a request for a new multiplex stream and immediately send an RST_STREAM frame to cancel it. This creates extra work for the server setting up and tearing down the streams while not hitting any server-side limit for the maximum number of active streams per connection, resulting in a denial of service due to server resource consumption. Red Hat has rated the severity of this flaw as 'Important' as the US Cybersecurity and Infrastructure Security Agency (CISA) declared this vulnerability an active exploit.\n\nCVE-2023-39325 was assigned for the `Rapid Reset Attack` in the Go language packages. \n            STATEMENT: NGINX has been marked as Moderate Impact because, for performance and resource consumption reasons, NGINX limits the number of concurrent streams to a default of 128. In addition, to optimally balance network and server performance, NGINX allows the client to persist HTTP connections for up to 1000 requests by default using an HTTP keepalive.\n\nThe majority of RHEL utilities are not long-running applications; instead, they are command-line tools. These tools utilize Golang package as build-time dependency, which is why they are classified as having a \"Moderate\" level of impact.\n            MITIGATION: Users are strongly urged to update their software as soon as fixes are available. \nThere are several mitigation approaches for this flaw. \n\n1. If circumstances permit, users may disable http2 endpoints to circumvent the flaw altogether until a fix is available.\n2. IP-based blocking or flood protection and rate control tools may be used at network endpoints to filter incoming traffic.\n3. Several package specific mitigations are also available. \n     a. nginx: https://www.nginx.com/blog/http-2-rapid-reset-attack-impacting-f5-nginx-products/\n     b. netty: https://github.com/netty/netty/security/advisories/GHSA-xpw8-rcwv-8f8p\n     c. haproxy: https://www.haproxy.com/blog/haproxy-is-not-affected-by-the-http-2-rapid-reset-attack-cve-2023-44487\n     d. nghttp2: https://github.com/nghttp2/nghttp2/security/advisories/GHSA-vx74-f528-fxqg\n     e. golang: The default stream concurrency limit in golang is 250 streams (requests) per HTTP/2 connection. This value may be adjusted in the golang.org/x/net/http2 package using the Server.MaxConcurrentStreams setting and the ConfigureServer function which are available in golang.org/x/net/http2.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Important",
+			"updated": {
+				"date": "2023-11-16"
+			},
+			"cve": [
+				{
+					"text": "CVE-2023-44487",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+					"cwe": "CWE-400",
+					"href": "https://access.redhat.com/security/cve/CVE-2023-44487",
+					"impact": "important",
+					"public": "20231010"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Affected",
+						"component": [
+							"aspnetcore-runtime-8.0",
+							"aspnetcore-targeting-pack-8.0",
+							"dotnet-apphost-pack-8.0",
+							"dotnet-host",
+							"dotnet-hostfxr-8.0",
+							"dotnet-runtime-8.0",
+							"dotnet-sdk-8.0",
+							"dotnet-sdk-8.0-source-built-artifacts",
+							"dotnet-targeting-pack-8.0",
+							"dotnet-templates-8.0",
+							"dotnet8.0",
+							"netstandard-targeting-pack-2.1",
+							"nginx:1.22/nginx",
+							"nginx:1.22/nginx-all-modules",
+							"nginx:1.22/nginx-core",
+							"nginx:1.22/nginx-filesystem",
+							"nginx:1.22/nginx-mod-devel",
+							"nginx:1.22/nginx-mod-http-image-filter",
+							"nginx:1.22/nginx-mod-http-perl",
+							"nginx:1.22/nginx-mod-http-xslt-filter",
+							"nginx:1.22/nginx-mod-mail",
+							"nginx:1.22/nginx-mod-stream",
+							"nodejs:18/nodejs",
+							"nodejs:18/nodejs-docs",
+							"nodejs:18/nodejs-full-i18n",
+							"nodejs:18/nodejs-libs",
+							"nodejs:18/npm",
+							"nodejs:20/nodejs",
+							"nodejs:20/nodejs-docs",
+							"nodejs:20/nodejs-full-i18n",
+							"nodejs:20/nodejs-libs",
+							"nodejs:20/npm"
+						]
+					},
+					{
+						"state": "Will not fix",
+						"component": [
+							"pki-servlet-4.0-api",
+							"pki-servlet-engine"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:enterprise_linux:9",
+					"cpe:/a:redhat:enterprise_linux:9::appstream",
+					"cpe:/a:redhat:enterprise_linux:9::crb",
+					"cpe:/a:redhat:enterprise_linux:9::highavailability",
+					"cpe:/a:redhat:enterprise_linux:9::nfv",
+					"cpe:/a:redhat:enterprise_linux:9::realtime",
+					"cpe:/a:redhat:enterprise_linux:9::resilientstorage",
+					"cpe:/a:redhat:enterprise_linux:9::sap",
+					"cpe:/a:redhat:enterprise_linux:9::sap_hana",
+					"cpe:/a:redhat:enterprise_linux:9::supplementary",
+					"cpe:/o:redhat:enterprise_linux:9",
+					"cpe:/o:redhat:enterprise_linux:9::baseos"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202225881021",
+										"comment": "netstandard-targeting-pack-2.1 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202225881022",
+										"comment": "netstandard-targeting-pack-2.1 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487003",
+										"comment": "dotnet-sdk-8.0 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487004",
+										"comment": "dotnet-sdk-8.0 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487005",
+										"comment": "aspnetcore-runtime-8.0 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487006",
+										"comment": "aspnetcore-runtime-8.0 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487007",
+										"comment": "dotnet-runtime-8.0 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487008",
+										"comment": "dotnet-runtime-8.0 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487009",
+										"comment": "dotnet-targeting-pack-8.0 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487010",
+										"comment": "dotnet-targeting-pack-8.0 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202225881011",
+										"comment": "dotnet-host is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202225881012",
+										"comment": "dotnet-host is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487013",
+										"comment": "dotnet-sdk-8.0-source-built-artifacts is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487014",
+										"comment": "dotnet-sdk-8.0-source-built-artifacts is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487015",
+										"comment": "dotnet-templates-8.0 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487016",
+										"comment": "dotnet-templates-8.0 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487017",
+										"comment": "aspnetcore-targeting-pack-8.0 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487018",
+										"comment": "aspnetcore-targeting-pack-8.0 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487019",
+										"comment": "dotnet-hostfxr-8.0 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487020",
+										"comment": "dotnet-hostfxr-8.0 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487021",
+										"comment": "dotnet8.0 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487022",
+										"comment": "dotnet8.0 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202141079001",
+										"comment": "pki-servlet-engine is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202141079002",
+										"comment": "pki-servlet-engine is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202141079003",
+										"comment": "pki-servlet-4.0-api is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202141079004",
+										"comment": "pki-servlet-4.0-api is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487027",
+										"comment": "dotnet-apphost-pack-8.0 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487028",
+										"comment": "dotnet-apphost-pack-8.0 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290001",
+														"comment": "nodejs-docs is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290002",
+														"comment": "nodejs-docs is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290007",
+														"comment": "nodejs-libs is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290008",
+														"comment": "nodejs-libs is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290005",
+														"comment": "npm is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290006",
+														"comment": "npm is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290013",
+														"comment": "nodejs-full-i18n is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290014",
+														"comment": "nodejs-full-i18n is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290009",
+														"comment": "nodejs is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290010",
+														"comment": "nodejs is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202225881035",
+										"comment": "Module nodejs:18 is enabled"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247013",
+														"comment": "nginx-mod-http-xslt-filter is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247014",
+														"comment": "nginx-mod-http-xslt-filter is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247003",
+														"comment": "nginx-mod-mail is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247004",
+														"comment": "nginx-mod-mail is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247007",
+														"comment": "nginx-all-modules is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247008",
+														"comment": "nginx-all-modules is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247015",
+														"comment": "nginx-mod-stream is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247016",
+														"comment": "nginx-mod-stream is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247017",
+														"comment": "nginx-mod-devel is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247018",
+														"comment": "nginx-mod-devel is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20223638013",
+														"comment": "nginx-core is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20223638014",
+														"comment": "nginx-core is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247009",
+														"comment": "nginx-mod-http-perl is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247010",
+														"comment": "nginx-mod-http-perl is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247005",
+														"comment": "nginx-filesystem is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247006",
+														"comment": "nginx-filesystem is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247011",
+														"comment": "nginx is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247012",
+														"comment": "nginx is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247001",
+														"comment": "nginx-mod-http-image-filter is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20161247002",
+														"comment": "nginx-mod-http-image-filter is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202344487060",
+										"comment": "Module nginx:1.22 is enabled"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290001",
+														"comment": "nodejs-docs is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290002",
+														"comment": "nodejs-docs is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290007",
+														"comment": "nodejs-libs is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290008",
+														"comment": "nodejs-libs is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290005",
+														"comment": "npm is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290006",
+														"comment": "npm is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290013",
+														"comment": "nodejs-full-i18n is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290014",
+														"comment": "nodejs-full-i18n is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290009",
+														"comment": "nodejs is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202127290010",
+														"comment": "nodejs is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202338552011",
+										"comment": "Module nodejs:20 is enabled"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20052541003",
+						"comment": "Red Hat Enterprise Linux 9 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20052541004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

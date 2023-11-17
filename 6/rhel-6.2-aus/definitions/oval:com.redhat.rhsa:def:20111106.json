@@ -1,245 +1,245 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20111106",
-  "version": "649",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2011:1106: kernel security, bug fix, and enhancement update (Moderate)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2011:1106",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2011:1106",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2011-1576",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2011-1576",
-        "source": "CVE"
-      }
-    ],
-    "description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\nThis update fixes the following security issue:\n\n* A flaw allowed napi_reuse_skb() to be called on VLAN (virtual LAN)\npackets. An attacker on the local network could trigger this flaw by\nsending specially-crafted packets to a target system, possibly causing a\ndenial of service. (CVE-2011-1576, Moderate)\n\nRed Hat would like to thank Ryan Sweat for reporting this issue.\n\nThis update also fixes the following bugs:\n\n* The LSI SAS2 controller firmware issued an 0x620f fault while performing\nI/O operations and with a Task Manager running, causing possible data\ncorruption. This update corrects this issue. (BZ#710625)\n\n* The crashkernel memory region can overlap the RunTime Abstraction\nServices (RTAS) memory region. If the crashkernel memory region was freed,\nthe RTAS memory region was freed as well and the system would crash. With\nthis update, the crash_free_reserved_phys_range() function is overridden\nand overlaps with the RTAS memory region are checked so that system crashes\nno longer occur. (BZ#710626)\n\n* If the microcode module was loaded, saving and restoring a Xen guest\nreturned a warning message and a backtrace error. With this update,\nbacktrace errors are no longer returned, and saving and restoring a Xen\nguest works as expected. (BZ#710632)\n\n* When the Distributed Lock Manager (DLM) queued three callbacks for a lock\nin the following sequence: blocking - completion - blocking, it would\nconsider the final blocking callback redundant and skip it. Because the\ncallback was skipped, GFS would not release the lock, causing processes on\nother nodes to wait indefinitely for it. With this update, the DLM does not\nskip the necessary blocking callback. (BZ#710642)\n\n* The XFRM_SUB_POLICY feature causes all bundles to be at the finest\ngranularity possible. As a result of the data structure used to implement\nthis, the system performance would drop considerably. This update disables\na part of XFRM_SUB_POLICY, eliminating the poor performance at the cost of\nsub-IP address selection granularity in the policy. (BZ#710645)\n\n* A kernel panic in the mpt2sas driver could occur on an IBM system using a\ndrive with SMART (Self-Monitoring, Analysis and Reporting Technology)\nissues. This was because the driver was sending an SEP request while the\nkernel was in the interrupt context, causing the driver to enter the sleep\nstate. With this update, a fake event is now executed from the interrupt\ncontext, assuring the SEP request is properly issued. (BZ#714189)\n\nFinally, this update provides the following enhancements:\n\n* This update introduces a kernel module option that allows the Flow\nDirector to be disabled. (BZ#711549)\n\n* This update introduces parallel port printer support for Red Hat\nEnterprise Linux 6. (BZ#713825)\n\n* This update restricts access to the /proc/kcore file to ELF headers only.\n(BZ#710638)\n\nUsers should upgrade to these updated packages, which contain backported\npatches to resolve these issues and add these enhancements. The system must\nbe rebooted for this update to take effect.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Moderate",
-      "updated": {
-        "date": "2011-08-02"
-      },
-      "cve": [
-        {
-          "text": "CVE-2011-1576",
-          "cwe": "CWE-401",
-          "href": "https://access.redhat.com/security/cve/CVE-2011-1576",
-          "impact": "moderate",
-          "public": "20110606",
-          "cvss2": "5.7/AV:A/AC:M/Au:N/C:N/I:N/A:C"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/o:redhat:rhel_mission_critical:6.2",
-          "cpe:/o:redhat:rhel_mission_critical:6.2::server"
-        ]
-      },
-      "rights": "Copyright 2011 Red Hat, Inc.",
-      "issued": {
-        "date": "2011-08-02"
-      },
-      "bugzilla": [
-        {
-          "text": "Fix memory leak/corruption on VLAN GRO_DROP",
-          "href": "https://bugzilla.redhat.com/695173",
-          "id": "695173"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Enterprise Linux 6.0 EUS - Server Only"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterions": [
-              {
-                "test_ref": "oval:com.redhat.rhsa:tst:20111106023",
-                "comment": "kernel earlier than 0:2.6.32-71.34.1.el6 is currently running"
-              },
-              {
-                "test_ref": "oval:com.redhat.rhsa:tst:20111106024",
-                "comment": "kernel earlier than 0:2.6.32-71.34.1.el6 is set to boot up on next boot"
-              }
-            ]
-          },
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111106001",
-                    "comment": "kernel is earlier than 0:2.6.32-71.34.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842002",
-                    "comment": "kernel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111106003",
-                    "comment": "kernel-bootwrapper is earlier than 0:2.6.32-71.34.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842004",
-                    "comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111106005",
-                    "comment": "kernel-debug is earlier than 0:2.6.32-71.34.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842006",
-                    "comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111106007",
-                    "comment": "kernel-debug-devel is earlier than 0:2.6.32-71.34.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842008",
-                    "comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111106009",
-                    "comment": "kernel-devel is earlier than 0:2.6.32-71.34.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842010",
-                    "comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111106011",
-                    "comment": "kernel-doc is earlier than 0:2.6.32-71.34.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842012",
-                    "comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111106013",
-                    "comment": "kernel-firmware is earlier than 0:2.6.32-71.34.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842014",
-                    "comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111106015",
-                    "comment": "kernel-headers is earlier than 0:2.6.32-71.34.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842016",
-                    "comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111106017",
-                    "comment": "kernel-kdump is earlier than 0:2.6.32-71.34.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842018",
-                    "comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111106019",
-                    "comment": "kernel-kdump-devel is earlier than 0:2.6.32-71.34.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842020",
-                    "comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111106021",
-                    "comment": "perf is earlier than 0:2.6.32-71.34.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842022",
-                    "comment": "perf is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
-            "comment": "Red Hat Enterprise Linux 6 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20111106",
+	"version": "649",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2011:1106: kernel security, bug fix, and enhancement update (Moderate)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2011:1106",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2011:1106",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2011-1576",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2011-1576",
+				"source": "CVE"
+			}
+		],
+		"description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\nThis update fixes the following security issue:\n\n* A flaw allowed napi_reuse_skb() to be called on VLAN (virtual LAN)\npackets. An attacker on the local network could trigger this flaw by\nsending specially-crafted packets to a target system, possibly causing a\ndenial of service. (CVE-2011-1576, Moderate)\n\nRed Hat would like to thank Ryan Sweat for reporting this issue.\n\nThis update also fixes the following bugs:\n\n* The LSI SAS2 controller firmware issued an 0x620f fault while performing\nI/O operations and with a Task Manager running, causing possible data\ncorruption. This update corrects this issue. (BZ#710625)\n\n* The crashkernel memory region can overlap the RunTime Abstraction\nServices (RTAS) memory region. If the crashkernel memory region was freed,\nthe RTAS memory region was freed as well and the system would crash. With\nthis update, the crash_free_reserved_phys_range() function is overridden\nand overlaps with the RTAS memory region are checked so that system crashes\nno longer occur. (BZ#710626)\n\n* If the microcode module was loaded, saving and restoring a Xen guest\nreturned a warning message and a backtrace error. With this update,\nbacktrace errors are no longer returned, and saving and restoring a Xen\nguest works as expected. (BZ#710632)\n\n* When the Distributed Lock Manager (DLM) queued three callbacks for a lock\nin the following sequence: blocking - completion - blocking, it would\nconsider the final blocking callback redundant and skip it. Because the\ncallback was skipped, GFS would not release the lock, causing processes on\nother nodes to wait indefinitely for it. With this update, the DLM does not\nskip the necessary blocking callback. (BZ#710642)\n\n* The XFRM_SUB_POLICY feature causes all bundles to be at the finest\ngranularity possible. As a result of the data structure used to implement\nthis, the system performance would drop considerably. This update disables\na part of XFRM_SUB_POLICY, eliminating the poor performance at the cost of\nsub-IP address selection granularity in the policy. (BZ#710645)\n\n* A kernel panic in the mpt2sas driver could occur on an IBM system using a\ndrive with SMART (Self-Monitoring, Analysis and Reporting Technology)\nissues. This was because the driver was sending an SEP request while the\nkernel was in the interrupt context, causing the driver to enter the sleep\nstate. With this update, a fake event is now executed from the interrupt\ncontext, assuring the SEP request is properly issued. (BZ#714189)\n\nFinally, this update provides the following enhancements:\n\n* This update introduces a kernel module option that allows the Flow\nDirector to be disabled. (BZ#711549)\n\n* This update introduces parallel port printer support for Red Hat\nEnterprise Linux 6. (BZ#713825)\n\n* This update restricts access to the /proc/kcore file to ELF headers only.\n(BZ#710638)\n\nUsers should upgrade to these updated packages, which contain backported\npatches to resolve these issues and add these enhancements. The system must\nbe rebooted for this update to take effect.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2011-08-02"
+			},
+			"cve": [
+				{
+					"text": "CVE-2011-1576",
+					"cwe": "CWE-401",
+					"href": "https://access.redhat.com/security/cve/CVE-2011-1576",
+					"impact": "moderate",
+					"public": "20110606",
+					"cvss2": "5.7/AV:A/AC:M/Au:N/C:N/I:N/A:C"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:redhat:rhel_mission_critical:6.2",
+					"cpe:/o:redhat:rhel_mission_critical:6.2::server"
+				]
+			},
+			"rights": "Copyright 2011 Red Hat, Inc.",
+			"issued": {
+				"date": "2011-08-02"
+			},
+			"bugzilla": [
+				{
+					"text": "Fix memory leak/corruption on VLAN GRO_DROP",
+					"href": "https://bugzilla.redhat.com/695173",
+					"id": "695173"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 6.0 EUS - Server Only"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterions": [
+							{
+								"test_ref": "oval:com.redhat.rhsa:tst:20111106023",
+								"comment": "kernel earlier than 0:2.6.32-71.34.1.el6 is currently running"
+							},
+							{
+								"test_ref": "oval:com.redhat.rhsa:tst:20111106024",
+								"comment": "kernel earlier than 0:2.6.32-71.34.1.el6 is set to boot up on next boot"
+							}
+						]
+					},
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111106001",
+										"comment": "kernel is earlier than 0:2.6.32-71.34.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842002",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111106003",
+										"comment": "kernel-bootwrapper is earlier than 0:2.6.32-71.34.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842004",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111106005",
+										"comment": "kernel-debug is earlier than 0:2.6.32-71.34.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842006",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111106007",
+										"comment": "kernel-debug-devel is earlier than 0:2.6.32-71.34.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842008",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111106009",
+										"comment": "kernel-devel is earlier than 0:2.6.32-71.34.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842010",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111106011",
+										"comment": "kernel-doc is earlier than 0:2.6.32-71.34.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842012",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111106013",
+										"comment": "kernel-firmware is earlier than 0:2.6.32-71.34.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842014",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111106015",
+										"comment": "kernel-headers is earlier than 0:2.6.32-71.34.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842016",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111106017",
+										"comment": "kernel-kdump is earlier than 0:2.6.32-71.34.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842018",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111106019",
+										"comment": "kernel-kdump-devel is earlier than 0:2.6.32-71.34.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842020",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111106021",
+										"comment": "perf is earlier than 0:2.6.32-71.34.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842022",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20111656003",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20111656004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

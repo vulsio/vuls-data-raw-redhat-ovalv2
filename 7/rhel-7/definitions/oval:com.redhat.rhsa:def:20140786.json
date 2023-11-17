@@ -1,413 +1,413 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20140786",
-  "version": "645",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2014:0786: kernel security, bug fix, and enhancement update (Important)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2014:0786",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2014:0786",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2014-0206",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-0206",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2014-1737",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-1737",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2014-1738",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-1738",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2014-2568",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-2568",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2014-2851",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-2851",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2014-3144",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-3144",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2014-3145",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-3145",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2014-3153",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-3153",
-        "source": "CVE"
-      }
-    ],
-    "description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\n* A flaw was found in the way the Linux kernel's futex subsystem handled\nthe requeuing of certain Priority Inheritance (PI) futexes. A local,\nunprivileged user could use this flaw to escalate their privileges on the\nsystem. (CVE-2014-3153, Important)\n\n* A use-after-free flaw was found in the way the ping_init_sock() function\nof the Linux kernel handled the group_info reference counter. A local,\nunprivileged user could use this flaw to crash the system or, potentially,\nescalate their privileges on the system. (CVE-2014-2851, Important)\n\n* Use-after-free and information leak flaws were found in the way the\nLinux kernel's floppy driver processed the FDRAWCMD IOCTL command. A local\nuser with write access to /dev/fdX could use these flaws to escalate their\nprivileges on the system. (CVE-2014-1737, CVE-2014-1738, Important)\n\n* It was found that the aio_read_events_ring() function of the Linux\nkernel's Asynchronous I/O (AIO) subsystem did not properly sanitize the AIO\nring head received from user space. A local, unprivileged user could use\nthis flaw to disclose random parts of the (physical) memory belonging to\nthe kernel and/or other processes. (CVE-2014-0206, Moderate)\n\n* An out-of-bounds memory access flaw was found in the Netlink Attribute\nextension of the Berkeley Packet Filter (BPF) interpreter functionality in\nthe Linux kernel's networking implementation. A local, unprivileged user\ncould use this flaw to crash the system or leak kernel memory to user space\nvia a specially crafted socket filter. (CVE-2014-3144, CVE-2014-3145,\nModerate)\n\n* An information leak flaw was found in the way the skb_zerocopy() function\ncopied socket buffers (skb) that are backed by user-space buffers (for\nexample vhost-net and Xen netback), potentially allowing an attacker to\nread data from those buffers. (CVE-2014-2568, Low)\n\nRed Hat would like to thank Kees Cook of Google for reporting\nCVE-2014-3153 and Matthew Daley for reporting CVE-2014-1737 and CVE-2014-1738. Google acknowledges Pinkie Pie as the original reporter of\nCVE-2014-3153. The CVE-2014-0206 issue was discovered by Mateusz Guzik of\nRed Hat.\n\nThis update also fixes the following bugs:\n\n* Due to incorrect calculation of Tx statistics in the qlcninc driver,\nrunning the \"ethtool -S ethX\" command could trigger memory corruption.\nAs a consequence, running the sosreport tool, that uses this command,\nresulted in a kernel panic. The problem has been fixed by correcting the\nsaid statistics calculation. (BZ#1104972)\n\n* When an attempt to create a file on the GFS2 file system failed due to a\nfile system quota violation, the relevant VFS inode was not completely\nuninitialized. This could result in a list corruption error. This update\nresolves this problem by correctly uninitializing the VFS inode in this\nsituation. (BZ#1097407)\n\n* Due to a race condition in the kernel, the getcwd() system call could\nreturn \"/\" instead of the correct full path name when querying a path name\nof a file or directory. Paths returned in the \"/proc\" file system could\nalso be incorrect. This problem was causing instability of various\napplications. The aforementioned race condition has been fixed and getcwd()\nnow always returns the correct paths. (BZ#1099048)\n\nIn addition, this update adds the following enhancements:\n\n* The kernel mutex code has been improved. The changes include improved\nqueuing of the MCS spin locks, the MCS code optimization, introduction of\nthe cancellable MCS spin locks, and improved handling of mutexes without\nwait locks. (BZ#1103631, BZ#1103629)\n\n* The handling of the Virtual Memory Area (VMA) cache and huge page faults\nhas been improved. (BZ#1103630)\n\nAll kernel users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues and add these\nenhancements. The system must be rebooted for this update to take effect.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Important",
-      "updated": {
-        "date": "2014-06-24"
-      },
-      "cve": [
-        {
-          "text": "CVE-2014-0206",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-0206",
-          "impact": "moderate",
-          "public": "20140624",
-          "cvss2": "4.0/AV:L/AC:H/Au:N/C:N/I:N/A:C"
-        },
-        {
-          "text": "CVE-2014-1737",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-1737",
-          "impact": "important",
-          "public": "20140507",
-          "cvss2": "6.6/AV:L/AC:M/Au:S/C:C/I:C/A:C"
-        },
-        {
-          "text": "CVE-2014-1738",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-1738",
-          "impact": "important",
-          "public": "20140507",
-          "cvss2": "6.6/AV:L/AC:M/Au:S/C:C/I:C/A:C"
-        },
-        {
-          "text": "CVE-2014-2568",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-2568",
-          "impact": "low",
-          "public": "20140318",
-          "cvss2": "2.9/AV:A/AC:M/Au:N/C:P/I:N/A:N"
-        },
-        {
-          "text": "CVE-2014-2851",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-2851",
-          "impact": "important",
-          "public": "20140411",
-          "cvss2": "6.2/AV:L/AC:H/Au:N/C:C/I:C/A:C"
-        },
-        {
-          "text": "CVE-2014-3144",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-3144",
-          "impact": "moderate",
-          "public": "20140413",
-          "cvss2": "5.4/AV:L/AC:M/Au:N/C:P/I:N/A:C"
-        },
-        {
-          "text": "CVE-2014-3145",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-3145",
-          "impact": "moderate",
-          "public": "20140413",
-          "cvss2": "5.4/AV:L/AC:M/Au:N/C:P/I:N/A:C"
-        },
-        {
-          "text": "CVE-2014-3153",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-3153",
-          "impact": "important",
-          "public": "20140604",
-          "cvss2": "7.2/AV:L/AC:L/Au:N/C:C/I:C/A:C"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:rhel_extras:7",
-          "cpe:/a:redhat:rhel_extras_oracle_java:7",
-          "cpe:/a:redhat:rhel_extras_rt:7",
-          "cpe:/a:redhat:rhel_extras_sap:7",
-          "cpe:/a:redhat:rhel_extras_sap_hana:7",
-          "cpe:/o:redhat:enterprise_linux:7",
-          "cpe:/o:redhat:enterprise_linux:7::client",
-          "cpe:/o:redhat:enterprise_linux:7::computenode",
-          "cpe:/o:redhat:enterprise_linux:7::server",
-          "cpe:/o:redhat:enterprise_linux:7::workstation"
-        ]
-      },
-      "rights": "Copyright 2014 Red Hat, Inc.",
-      "issued": {
-        "date": "2014-06-24"
-      },
-      "bugzilla": [
-        {
-          "text": "CVE-2014-2568 kernel: net: potential information leak when ubuf backed skbs are skb_zerocopy()ied",
-          "href": "https://bugzilla.redhat.com/1079012",
-          "id": "1079012"
-        },
-        {
-          "text": "CVE-2014-2851 kernel: net: ping: refcount issue in ping_init_sock() function",
-          "href": "https://bugzilla.redhat.com/1086730",
-          "id": "1086730"
-        },
-        {
-          "text": "privilege escalation via FDRAWCMD floppy ioctl command",
-          "href": "https://bugzilla.redhat.com/1094299",
-          "id": "1094299"
-        },
-        {
-          "text": "insufficient sanitization of head in aio_read_events_ring()",
-          "href": "https://bugzilla.redhat.com/1094602",
-          "id": "1094602"
-        },
-        {
-          "text": "CVE-2014-3144 CVE-2014-3145 Kernel: filter: prevent nla extensions to peek beyond the end of the message",
-          "href": "https://bugzilla.redhat.com/1096775",
-          "id": "1096775"
-        },
-        {
-          "text": "CVE-2014-3153 kernel: futex: pi futexes requeue issue",
-          "href": "https://bugzilla.redhat.com/1103626",
-          "id": "1103626"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Enterprise Linux 7"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterions": [
-              {
-                "test_ref": "oval:com.redhat.rhsa:tst:20140786031",
-                "comment": "kernel earlier than 0:3.10.0-123.4.2.el7 is currently running"
-              },
-              {
-                "test_ref": "oval:com.redhat.rhsa:tst:20140786032",
-                "comment": "kernel earlier than 0:3.10.0-123.4.2.el7 is set to boot up on next boot"
-              }
-            ]
-          },
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786001",
-                    "comment": "kernel is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678002",
-                    "comment": "kernel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786003",
-                    "comment": "kernel-abi-whitelists is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678004",
-                    "comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786005",
-                    "comment": "kernel-bootwrapper is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678006",
-                    "comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786007",
-                    "comment": "kernel-debug is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678008",
-                    "comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786009",
-                    "comment": "kernel-debug-devel is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678010",
-                    "comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786011",
-                    "comment": "kernel-devel is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678012",
-                    "comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786013",
-                    "comment": "kernel-doc is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678014",
-                    "comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786015",
-                    "comment": "kernel-headers is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678016",
-                    "comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786017",
-                    "comment": "kernel-kdump is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678018",
-                    "comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786019",
-                    "comment": "kernel-kdump-devel is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678020",
-                    "comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786021",
-                    "comment": "kernel-tools is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678022",
-                    "comment": "kernel-tools is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786023",
-                    "comment": "kernel-tools-libs is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678024",
-                    "comment": "kernel-tools-libs is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786025",
-                    "comment": "kernel-tools-libs-devel is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678026",
-                    "comment": "kernel-tools-libs-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786027",
-                    "comment": "perf is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678028",
-                    "comment": "perf is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140786029",
-                    "comment": "python-perf is earlier than 0:3.10.0-123.4.2.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20140678030",
-                    "comment": "python-perf is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.rhba:tst:20150364027",
-            "comment": "Red Hat Enterprise Linux 7 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.rhba:tst:20150364028",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20140786",
+	"version": "645",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2014:0786: kernel security, bug fix, and enhancement update (Important)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2014:0786",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2014:0786",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2014-0206",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-0206",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2014-1737",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-1737",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2014-1738",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-1738",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2014-2568",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-2568",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2014-2851",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-2851",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2014-3144",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-3144",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2014-3145",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-3145",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2014-3153",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-3153",
+				"source": "CVE"
+			}
+		],
+		"description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\n* A flaw was found in the way the Linux kernel's futex subsystem handled\nthe requeuing of certain Priority Inheritance (PI) futexes. A local,\nunprivileged user could use this flaw to escalate their privileges on the\nsystem. (CVE-2014-3153, Important)\n\n* A use-after-free flaw was found in the way the ping_init_sock() function\nof the Linux kernel handled the group_info reference counter. A local,\nunprivileged user could use this flaw to crash the system or, potentially,\nescalate their privileges on the system. (CVE-2014-2851, Important)\n\n* Use-after-free and information leak flaws were found in the way the\nLinux kernel's floppy driver processed the FDRAWCMD IOCTL command. A local\nuser with write access to /dev/fdX could use these flaws to escalate their\nprivileges on the system. (CVE-2014-1737, CVE-2014-1738, Important)\n\n* It was found that the aio_read_events_ring() function of the Linux\nkernel's Asynchronous I/O (AIO) subsystem did not properly sanitize the AIO\nring head received from user space. A local, unprivileged user could use\nthis flaw to disclose random parts of the (physical) memory belonging to\nthe kernel and/or other processes. (CVE-2014-0206, Moderate)\n\n* An out-of-bounds memory access flaw was found in the Netlink Attribute\nextension of the Berkeley Packet Filter (BPF) interpreter functionality in\nthe Linux kernel's networking implementation. A local, unprivileged user\ncould use this flaw to crash the system or leak kernel memory to user space\nvia a specially crafted socket filter. (CVE-2014-3144, CVE-2014-3145,\nModerate)\n\n* An information leak flaw was found in the way the skb_zerocopy() function\ncopied socket buffers (skb) that are backed by user-space buffers (for\nexample vhost-net and Xen netback), potentially allowing an attacker to\nread data from those buffers. (CVE-2014-2568, Low)\n\nRed Hat would like to thank Kees Cook of Google for reporting\nCVE-2014-3153 and Matthew Daley for reporting CVE-2014-1737 and CVE-2014-1738. Google acknowledges Pinkie Pie as the original reporter of\nCVE-2014-3153. The CVE-2014-0206 issue was discovered by Mateusz Guzik of\nRed Hat.\n\nThis update also fixes the following bugs:\n\n* Due to incorrect calculation of Tx statistics in the qlcninc driver,\nrunning the \"ethtool -S ethX\" command could trigger memory corruption.\nAs a consequence, running the sosreport tool, that uses this command,\nresulted in a kernel panic. The problem has been fixed by correcting the\nsaid statistics calculation. (BZ#1104972)\n\n* When an attempt to create a file on the GFS2 file system failed due to a\nfile system quota violation, the relevant VFS inode was not completely\nuninitialized. This could result in a list corruption error. This update\nresolves this problem by correctly uninitializing the VFS inode in this\nsituation. (BZ#1097407)\n\n* Due to a race condition in the kernel, the getcwd() system call could\nreturn \"/\" instead of the correct full path name when querying a path name\nof a file or directory. Paths returned in the \"/proc\" file system could\nalso be incorrect. This problem was causing instability of various\napplications. The aforementioned race condition has been fixed and getcwd()\nnow always returns the correct paths. (BZ#1099048)\n\nIn addition, this update adds the following enhancements:\n\n* The kernel mutex code has been improved. The changes include improved\nqueuing of the MCS spin locks, the MCS code optimization, introduction of\nthe cancellable MCS spin locks, and improved handling of mutexes without\nwait locks. (BZ#1103631, BZ#1103629)\n\n* The handling of the Virtual Memory Area (VMA) cache and huge page faults\nhas been improved. (BZ#1103630)\n\nAll kernel users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues and add these\nenhancements. The system must be rebooted for this update to take effect.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Important",
+			"updated": {
+				"date": "2014-06-24"
+			},
+			"cve": [
+				{
+					"text": "CVE-2014-0206",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-0206",
+					"impact": "moderate",
+					"public": "20140624",
+					"cvss2": "4.0/AV:L/AC:H/Au:N/C:N/I:N/A:C"
+				},
+				{
+					"text": "CVE-2014-1737",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-1737",
+					"impact": "important",
+					"public": "20140507",
+					"cvss2": "6.6/AV:L/AC:M/Au:S/C:C/I:C/A:C"
+				},
+				{
+					"text": "CVE-2014-1738",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-1738",
+					"impact": "important",
+					"public": "20140507",
+					"cvss2": "6.6/AV:L/AC:M/Au:S/C:C/I:C/A:C"
+				},
+				{
+					"text": "CVE-2014-2568",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-2568",
+					"impact": "low",
+					"public": "20140318",
+					"cvss2": "2.9/AV:A/AC:M/Au:N/C:P/I:N/A:N"
+				},
+				{
+					"text": "CVE-2014-2851",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-2851",
+					"impact": "important",
+					"public": "20140411",
+					"cvss2": "6.2/AV:L/AC:H/Au:N/C:C/I:C/A:C"
+				},
+				{
+					"text": "CVE-2014-3144",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-3144",
+					"impact": "moderate",
+					"public": "20140413",
+					"cvss2": "5.4/AV:L/AC:M/Au:N/C:P/I:N/A:C"
+				},
+				{
+					"text": "CVE-2014-3145",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-3145",
+					"impact": "moderate",
+					"public": "20140413",
+					"cvss2": "5.4/AV:L/AC:M/Au:N/C:P/I:N/A:C"
+				},
+				{
+					"text": "CVE-2014-3153",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-3153",
+					"impact": "important",
+					"public": "20140604",
+					"cvss2": "7.2/AV:L/AC:L/Au:N/C:C/I:C/A:C"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras:7",
+					"cpe:/a:redhat:rhel_extras_oracle_java:7",
+					"cpe:/a:redhat:rhel_extras_rt:7",
+					"cpe:/a:redhat:rhel_extras_sap:7",
+					"cpe:/a:redhat:rhel_extras_sap_hana:7",
+					"cpe:/o:redhat:enterprise_linux:7",
+					"cpe:/o:redhat:enterprise_linux:7::client",
+					"cpe:/o:redhat:enterprise_linux:7::computenode",
+					"cpe:/o:redhat:enterprise_linux:7::server",
+					"cpe:/o:redhat:enterprise_linux:7::workstation"
+				]
+			},
+			"rights": "Copyright 2014 Red Hat, Inc.",
+			"issued": {
+				"date": "2014-06-24"
+			},
+			"bugzilla": [
+				{
+					"text": "CVE-2014-2568 kernel: net: potential information leak when ubuf backed skbs are skb_zerocopy()ied",
+					"href": "https://bugzilla.redhat.com/1079012",
+					"id": "1079012"
+				},
+				{
+					"text": "CVE-2014-2851 kernel: net: ping: refcount issue in ping_init_sock() function",
+					"href": "https://bugzilla.redhat.com/1086730",
+					"id": "1086730"
+				},
+				{
+					"text": "privilege escalation via FDRAWCMD floppy ioctl command",
+					"href": "https://bugzilla.redhat.com/1094299",
+					"id": "1094299"
+				},
+				{
+					"text": "insufficient sanitization of head in aio_read_events_ring()",
+					"href": "https://bugzilla.redhat.com/1094602",
+					"id": "1094602"
+				},
+				{
+					"text": "CVE-2014-3144 CVE-2014-3145 Kernel: filter: prevent nla extensions to peek beyond the end of the message",
+					"href": "https://bugzilla.redhat.com/1096775",
+					"id": "1096775"
+				},
+				{
+					"text": "CVE-2014-3153 kernel: futex: pi futexes requeue issue",
+					"href": "https://bugzilla.redhat.com/1103626",
+					"id": "1103626"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 7"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterions": [
+							{
+								"test_ref": "oval:com.redhat.rhsa:tst:20140786031",
+								"comment": "kernel earlier than 0:3.10.0-123.4.2.el7 is currently running"
+							},
+							{
+								"test_ref": "oval:com.redhat.rhsa:tst:20140786032",
+								"comment": "kernel earlier than 0:3.10.0-123.4.2.el7 is set to boot up on next boot"
+							}
+						]
+					},
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786001",
+										"comment": "kernel is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678002",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786003",
+										"comment": "kernel-abi-whitelists is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678004",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786005",
+										"comment": "kernel-bootwrapper is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678006",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786007",
+										"comment": "kernel-debug is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678008",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786009",
+										"comment": "kernel-debug-devel is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678010",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786011",
+										"comment": "kernel-devel is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678012",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786013",
+										"comment": "kernel-doc is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678014",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786015",
+										"comment": "kernel-headers is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678016",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786017",
+										"comment": "kernel-kdump is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678018",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786019",
+										"comment": "kernel-kdump-devel is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678020",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786021",
+										"comment": "kernel-tools is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678022",
+										"comment": "kernel-tools is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786023",
+										"comment": "kernel-tools-libs is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678024",
+										"comment": "kernel-tools-libs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786025",
+										"comment": "kernel-tools-libs-devel is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678026",
+										"comment": "kernel-tools-libs-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786027",
+										"comment": "perf is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678028",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140786029",
+										"comment": "python-perf is earlier than 0:3.10.0-123.4.2.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20140678030",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20150364027",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20150364028",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

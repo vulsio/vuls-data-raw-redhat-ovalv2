@@ -1,541 +1,541 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20182177",
-  "version": "643",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2018:2177: Red Hat Ceph Storage 3.0 security and bug fix update (Moderate)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2018:2177",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2018:2177",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2018-10861",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2018-10861",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2018-1128",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2018-1128",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2018-1129",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2018-1129",
-        "source": "CVE"
-      }
-    ],
-    "description": "Red Hat Ceph Storage is a scalable, open, software-defined storage platform\nthat combines the most stable version of the Ceph storage system with a\nCeph management platform, deployment utilities, and support services.\n\nSecurity Fix(es):\n\n* ceph: cephx protocol is vulnerable to replay attack (CVE-2018-1128)\n\n* ceph: cephx uses weak signatures (CVE-2018-1129)\n\n* ceph: ceph-mon does not perform authorization on OSD pool ops (CVE-2018-10861)\n\nFor more details about the security issue(s), including the impact, a CVSS score, and other related information, refer to the CVE page(s) listed in the References section.\n\nBug Fix(es):\n\n* Previously, Ceph RADOS Gateway (RGW) instances in zones configured for multi-site replication would crash if configured to disable sync (\"rgw_run_sync_thread = false\"). Therefor, multi-site replication environments could not start dedicated non-replication RGW instances. With this update, the \"rgw_run_sync_thread\" option can be used to configure RGW instances that will not participate in replication even if their zone is replicated. (BZ#1552202)\n\n* Previously, when increasing \"max_mds\" from \"1\" to \"2\", if the Metadata Server (MDS) daemon was in the starting/resolve state for a long period of time, then restarting the MDS daemon lead to assert. This caused the Ceph File System (CephFS) to be in degraded state. With this update, increasing \"max_mds\" no longer causes CephFS to be in degraded state. (BZ#1566016)\n\n* Previously, the transition to containerized Ceph left some \"ceph-disk\" unit files. The files were harmless, but appeared as failing. With this update, executing the \"switch-from-non-containerized-to-containerized-ceph-daemons.yml\" playbook disables the \"ceph-disk\" unit files too. (BZ#1577846)\n\n* Previously, the \"entries_behind_master\" metric output from the \"rbd mirror image status\" CLI tool did not always reduce to zero under synthetic workloads. This could cause a false alarm that there is an issue with RBD mirroring replications. With this update, the metric is now updated periodically without the need for an explicit I/O flush in the workload. (BZ#1578509)\n\n* Previously, when using the \"pool create\" command with \"expected_num_objects\", placement group (PG) directories were not pre-created at pool creation time as expected, resulting in performance drops when filestore splitting occurred. With this update, the \"expected_num_objects\" parameter is now passed through to filestore correctly, and PG directories for the expected number of objects are pre-created at pool creation time. (BZ#1579039)\n\n* Previously, internal RADOS Gateway (RGW) multi-site sync logic behaved incorrectly when attempting to sync containers with S3 object versioning enabled. Objects in versioning-enabled containers would fail to sync in some scenarios—for example, when using \"s3cmd sync\" to mirror a filesystem directory. With this update, RGW multi-site replication logic has been corrected for the known failure cases. (BZ#1580497)\n\n* When restarting OSD daemons, the \"ceph-ansible\" restart script goes through all the daemons by listing the units with systemctl list-units. Under certain circumstances, the output of the command contains extra spaces, which caused parsing and restart to fail. With this update, the underlying code has been changed to handle the extra space.\n\n* Previously, the Ceph RADOS Gateway (RGW) server treated negative byte-range object requests (\"bytes=0--1\") as invalid. Applications that expect the AWS behavior for negative or other invalid range requests saw unexpected errors and could fail. With this update, a new option \"rgw_ignore_get_invalid_range\" has been added to RGW. When \"rgw_ignore_get_invalid_range\" is set to \"true\", the RGW behavior for invalid range requests is backwards compatible with AWS.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Moderate",
-      "updated": {
-        "date": "2018-07-11"
-      },
-      "cve": [
-        {
-          "text": "CVE-2018-10861",
-          "cvss3": "4.6/CVSS:3.0/AV:A/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:L",
-          "cwe": "CWE-285",
-          "href": "https://access.redhat.com/security/cve/CVE-2018-10861",
-          "impact": "moderate",
-          "public": "20180709:1200"
-        },
-        {
-          "text": "CVE-2018-1128",
-          "cvss3": "5.9/CVSS:3.0/AV:A/AC:H/PR:N/UI:R/S:U/C:H/I:L/A:L",
-          "cwe": "CWE-294",
-          "href": "https://access.redhat.com/security/cve/CVE-2018-1128",
-          "impact": "moderate",
-          "public": "20180709:1200"
-        },
-        {
-          "text": "CVE-2018-1129",
-          "cvss3": "5.9/CVSS:3.0/AV:A/AC:H/PR:N/UI:R/S:U/C:H/I:L/A:L",
-          "cwe": "CWE-284",
-          "href": "https://access.redhat.com/security/cve/CVE-2018-1129",
-          "impact": "moderate",
-          "public": "20180709:1200"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:ceph_storage:3",
-          "cpe:/a:redhat:ceph_storage:3::el7"
-        ]
-      },
-      "rights": "Copyright 2018 Red Hat, Inc.",
-      "issued": {
-        "date": "2018-07-11"
-      },
-      "bugzilla": [
-        {
-          "text": "CVE-2018-1128 ceph: cephx protocol is vulnerable to replay attack",
-          "href": "https://bugzilla.redhat.com/1575866",
-          "id": "1575866"
-        },
-        {
-          "text": "CVE-2018-1129 ceph: cephx uses weak signatures",
-          "href": "https://bugzilla.redhat.com/1576057",
-          "id": "1576057"
-        },
-        {
-          "text": "CVE-2018-10861 ceph: ceph-mon does not perform authorization on OSD pool ops",
-          "href": "https://bugzilla.redhat.com/1593308",
-          "id": "1593308"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Ceph Storage 3.0"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177001",
-                    "comment": "cephmetrics is earlier than 0:1.0.1-1.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177002",
-                    "comment": "cephmetrics is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177003",
-                    "comment": "cephmetrics-ansible is earlier than 0:1.0.1-1.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177004",
-                    "comment": "cephmetrics-ansible is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177005",
-                    "comment": "cephmetrics-collectors is earlier than 0:1.0.1-1.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177006",
-                    "comment": "cephmetrics-collectors is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177007",
-                    "comment": "cephmetrics-grafana-plugins is earlier than 0:1.0.1-1.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177008",
-                    "comment": "cephmetrics-grafana-plugins is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177009",
-                    "comment": "nfs-ganesha is earlier than 0:2.5.5-6.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177010",
-                    "comment": "nfs-ganesha is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177011",
-                    "comment": "nfs-ganesha-ceph is earlier than 0:2.5.5-6.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177012",
-                    "comment": "nfs-ganesha-ceph is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177013",
-                    "comment": "nfs-ganesha-rgw is earlier than 0:2.5.5-6.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177014",
-                    "comment": "nfs-ganesha-rgw is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177015",
-                    "comment": "ceph-base is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684028",
-                    "comment": "ceph-base is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177017",
-                    "comment": "ceph-common is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684002",
-                    "comment": "ceph-common is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177019",
-                    "comment": "ceph-fuse is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684036",
-                    "comment": "ceph-fuse is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177021",
-                    "comment": "ceph-mds is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684040",
-                    "comment": "ceph-mds is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177023",
-                    "comment": "ceph-mgr is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684020",
-                    "comment": "ceph-mgr is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177025",
-                    "comment": "ceph-mon is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684032",
-                    "comment": "ceph-mon is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177027",
-                    "comment": "ceph-osd is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684046",
-                    "comment": "ceph-osd is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177029",
-                    "comment": "ceph-radosgw is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684024",
-                    "comment": "ceph-radosgw is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177031",
-                    "comment": "ceph-selinux is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684016",
-                    "comment": "ceph-selinux is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177033",
-                    "comment": "ceph-test is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684018",
-                    "comment": "ceph-test is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177035",
-                    "comment": "libcephfs-devel is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684048",
-                    "comment": "libcephfs-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177037",
-                    "comment": "libcephfs2 is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684004",
-                    "comment": "libcephfs2 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177039",
-                    "comment": "librados-devel is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684006",
-                    "comment": "librados-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177041",
-                    "comment": "librados2 is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684026",
-                    "comment": "librados2 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177043",
-                    "comment": "libradosstriper1 is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684042",
-                    "comment": "libradosstriper1 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177045",
-                    "comment": "librbd-devel is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684008",
-                    "comment": "librbd-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177047",
-                    "comment": "librbd1 is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684010",
-                    "comment": "librbd1 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177049",
-                    "comment": "librgw-devel is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684012",
-                    "comment": "librgw-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177051",
-                    "comment": "librgw2 is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684014",
-                    "comment": "librgw2 is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177053",
-                    "comment": "python-cephfs is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684050",
-                    "comment": "python-cephfs is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177055",
-                    "comment": "python-rados is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684030",
-                    "comment": "python-rados is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177057",
-                    "comment": "python-rbd is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684034",
-                    "comment": "python-rbd is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177059",
-                    "comment": "python-rgw is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684038",
-                    "comment": "python-rgw is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177061",
-                    "comment": "rbd-mirror is earlier than 2:12.2.4-30.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201812684044",
-                    "comment": "rbd-mirror is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20182177063",
-                    "comment": "ceph-ansible is earlier than 0:3.0.39-1.el7cp"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:202025677002",
-                    "comment": "ceph-ansible is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.cve:tst:201610745003",
-            "comment": "Red Hat Enterprise Linux 7 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.cve:tst:201610745004",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20182177",
+	"version": "643",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2018:2177: Red Hat Ceph Storage 3.0 security and bug fix update (Moderate)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2018:2177",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2018:2177",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2018-10861",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2018-10861",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2018-1128",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2018-1128",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2018-1129",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2018-1129",
+				"source": "CVE"
+			}
+		],
+		"description": "Red Hat Ceph Storage is a scalable, open, software-defined storage platform\nthat combines the most stable version of the Ceph storage system with a\nCeph management platform, deployment utilities, and support services.\n\nSecurity Fix(es):\n\n* ceph: cephx protocol is vulnerable to replay attack (CVE-2018-1128)\n\n* ceph: cephx uses weak signatures (CVE-2018-1129)\n\n* ceph: ceph-mon does not perform authorization on OSD pool ops (CVE-2018-10861)\n\nFor more details about the security issue(s), including the impact, a CVSS score, and other related information, refer to the CVE page(s) listed in the References section.\n\nBug Fix(es):\n\n* Previously, Ceph RADOS Gateway (RGW) instances in zones configured for multi-site replication would crash if configured to disable sync (\"rgw_run_sync_thread = false\"). Therefor, multi-site replication environments could not start dedicated non-replication RGW instances. With this update, the \"rgw_run_sync_thread\" option can be used to configure RGW instances that will not participate in replication even if their zone is replicated. (BZ#1552202)\n\n* Previously, when increasing \"max_mds\" from \"1\" to \"2\", if the Metadata Server (MDS) daemon was in the starting/resolve state for a long period of time, then restarting the MDS daemon lead to assert. This caused the Ceph File System (CephFS) to be in degraded state. With this update, increasing \"max_mds\" no longer causes CephFS to be in degraded state. (BZ#1566016)\n\n* Previously, the transition to containerized Ceph left some \"ceph-disk\" unit files. The files were harmless, but appeared as failing. With this update, executing the \"switch-from-non-containerized-to-containerized-ceph-daemons.yml\" playbook disables the \"ceph-disk\" unit files too. (BZ#1577846)\n\n* Previously, the \"entries_behind_master\" metric output from the \"rbd mirror image status\" CLI tool did not always reduce to zero under synthetic workloads. This could cause a false alarm that there is an issue with RBD mirroring replications. With this update, the metric is now updated periodically without the need for an explicit I/O flush in the workload. (BZ#1578509)\n\n* Previously, when using the \"pool create\" command with \"expected_num_objects\", placement group (PG) directories were not pre-created at pool creation time as expected, resulting in performance drops when filestore splitting occurred. With this update, the \"expected_num_objects\" parameter is now passed through to filestore correctly, and PG directories for the expected number of objects are pre-created at pool creation time. (BZ#1579039)\n\n* Previously, internal RADOS Gateway (RGW) multi-site sync logic behaved incorrectly when attempting to sync containers with S3 object versioning enabled. Objects in versioning-enabled containers would fail to sync in some scenarios—for example, when using \"s3cmd sync\" to mirror a filesystem directory. With this update, RGW multi-site replication logic has been corrected for the known failure cases. (BZ#1580497)\n\n* When restarting OSD daemons, the \"ceph-ansible\" restart script goes through all the daemons by listing the units with systemctl list-units. Under certain circumstances, the output of the command contains extra spaces, which caused parsing and restart to fail. With this update, the underlying code has been changed to handle the extra space.\n\n* Previously, the Ceph RADOS Gateway (RGW) server treated negative byte-range object requests (\"bytes=0--1\") as invalid. Applications that expect the AWS behavior for negative or other invalid range requests saw unexpected errors and could fail. With this update, a new option \"rgw_ignore_get_invalid_range\" has been added to RGW. When \"rgw_ignore_get_invalid_range\" is set to \"true\", the RGW behavior for invalid range requests is backwards compatible with AWS.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2018-07-11"
+			},
+			"cve": [
+				{
+					"text": "CVE-2018-10861",
+					"cvss3": "4.6/CVSS:3.0/AV:A/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:L",
+					"cwe": "CWE-285",
+					"href": "https://access.redhat.com/security/cve/CVE-2018-10861",
+					"impact": "moderate",
+					"public": "20180709:1200"
+				},
+				{
+					"text": "CVE-2018-1128",
+					"cvss3": "5.9/CVSS:3.0/AV:A/AC:H/PR:N/UI:R/S:U/C:H/I:L/A:L",
+					"cwe": "CWE-294",
+					"href": "https://access.redhat.com/security/cve/CVE-2018-1128",
+					"impact": "moderate",
+					"public": "20180709:1200"
+				},
+				{
+					"text": "CVE-2018-1129",
+					"cvss3": "5.9/CVSS:3.0/AV:A/AC:H/PR:N/UI:R/S:U/C:H/I:L/A:L",
+					"cwe": "CWE-284",
+					"href": "https://access.redhat.com/security/cve/CVE-2018-1129",
+					"impact": "moderate",
+					"public": "20180709:1200"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:ceph_storage:3",
+					"cpe:/a:redhat:ceph_storage:3::el7"
+				]
+			},
+			"rights": "Copyright 2018 Red Hat, Inc.",
+			"issued": {
+				"date": "2018-07-11"
+			},
+			"bugzilla": [
+				{
+					"text": "CVE-2018-1128 ceph: cephx protocol is vulnerable to replay attack",
+					"href": "https://bugzilla.redhat.com/1575866",
+					"id": "1575866"
+				},
+				{
+					"text": "CVE-2018-1129 ceph: cephx uses weak signatures",
+					"href": "https://bugzilla.redhat.com/1576057",
+					"id": "1576057"
+				},
+				{
+					"text": "CVE-2018-10861 ceph: ceph-mon does not perform authorization on OSD pool ops",
+					"href": "https://bugzilla.redhat.com/1593308",
+					"id": "1593308"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Ceph Storage 3.0"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177001",
+										"comment": "cephmetrics is earlier than 0:1.0.1-1.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177002",
+										"comment": "cephmetrics is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177003",
+										"comment": "cephmetrics-ansible is earlier than 0:1.0.1-1.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177004",
+										"comment": "cephmetrics-ansible is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177005",
+										"comment": "cephmetrics-collectors is earlier than 0:1.0.1-1.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177006",
+										"comment": "cephmetrics-collectors is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177007",
+										"comment": "cephmetrics-grafana-plugins is earlier than 0:1.0.1-1.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177008",
+										"comment": "cephmetrics-grafana-plugins is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177009",
+										"comment": "nfs-ganesha is earlier than 0:2.5.5-6.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177010",
+										"comment": "nfs-ganesha is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177011",
+										"comment": "nfs-ganesha-ceph is earlier than 0:2.5.5-6.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177012",
+										"comment": "nfs-ganesha-ceph is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177013",
+										"comment": "nfs-ganesha-rgw is earlier than 0:2.5.5-6.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177014",
+										"comment": "nfs-ganesha-rgw is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177015",
+										"comment": "ceph-base is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684028",
+										"comment": "ceph-base is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177017",
+										"comment": "ceph-common is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684002",
+										"comment": "ceph-common is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177019",
+										"comment": "ceph-fuse is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684036",
+										"comment": "ceph-fuse is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177021",
+										"comment": "ceph-mds is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684040",
+										"comment": "ceph-mds is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177023",
+										"comment": "ceph-mgr is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684020",
+										"comment": "ceph-mgr is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177025",
+										"comment": "ceph-mon is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684032",
+										"comment": "ceph-mon is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177027",
+										"comment": "ceph-osd is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684046",
+										"comment": "ceph-osd is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177029",
+										"comment": "ceph-radosgw is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684024",
+										"comment": "ceph-radosgw is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177031",
+										"comment": "ceph-selinux is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684016",
+										"comment": "ceph-selinux is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177033",
+										"comment": "ceph-test is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684018",
+										"comment": "ceph-test is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177035",
+										"comment": "libcephfs-devel is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684048",
+										"comment": "libcephfs-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177037",
+										"comment": "libcephfs2 is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684004",
+										"comment": "libcephfs2 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177039",
+										"comment": "librados-devel is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684006",
+										"comment": "librados-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177041",
+										"comment": "librados2 is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684026",
+										"comment": "librados2 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177043",
+										"comment": "libradosstriper1 is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684042",
+										"comment": "libradosstriper1 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177045",
+										"comment": "librbd-devel is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684008",
+										"comment": "librbd-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177047",
+										"comment": "librbd1 is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684010",
+										"comment": "librbd1 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177049",
+										"comment": "librgw-devel is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684012",
+										"comment": "librgw-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177051",
+										"comment": "librgw2 is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684014",
+										"comment": "librgw2 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177053",
+										"comment": "python-cephfs is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684050",
+										"comment": "python-cephfs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177055",
+										"comment": "python-rados is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684030",
+										"comment": "python-rados is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177057",
+										"comment": "python-rbd is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684034",
+										"comment": "python-rbd is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177059",
+										"comment": "python-rgw is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684038",
+										"comment": "python-rgw is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177061",
+										"comment": "rbd-mirror is earlier than 2:12.2.4-30.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201812684044",
+										"comment": "rbd-mirror is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20182177063",
+										"comment": "ceph-ansible is earlier than 0:3.0.39-1.el7cp"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202025677002",
+										"comment": "ceph-ansible is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:201610745003",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:201610745004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

@@ -1,453 +1,453 @@
 {
-  "id": "oval:com.redhat.rhba:def:20190620",
-  "version": "638",
-  "class": "patch",
-  "metadata": {
-    "title": "RHBA-2019:0620: OpenShift Container Platform 3.10 bug fix update (Moderate)",
-    "reference": [
-      {
-        "ref_id": "RHBA-2019:0620",
-        "ref_url": "https://access.redhat.com/errata/RHBA-2019:0620",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2019-1002101",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2019-1002101",
-        "source": "CVE"
-      }
-    ],
-    "description": "Red Hat OpenShift Container Platform is Red Hat's cloud computing\nKubernetes application platform solution designed for on-premise or private\ncloud deployments.\n\nThis advisory contains the RPM packages for Red Hat OpenShift Container\nPlatform 3.10.127. See the following advisory for the container images for\nthis release:\n\nhttps://access.redhat.com/errata/RHBA-2019:0621\n\nThis update fixes the following bugs:\n\n* Playbooks that redeployed master certificates did not update `webconsole` secrets, causing failure to start the `webconsole` after redeployment. Now, `webconsole` secrets are re-created when master certificate playbooks are used and the `webconsole`now works properly. (BZ#1667981)\n\n*  The files that implemented log rotation functionality were not copied to the correct `fluentd` directory. As a result, logs were not rotated. Now, the container build inspects the `fluentd` gem to find out where to install the files. The files that implement log rotation are copied to the correct directory for `fluentd` usage. (BZ#1684210)\n\n* The SSL and TLS service uses Diffie-Hellman groups with insufficient strength (a key size less than 2048 bytes). As a result, the keys are more vulnerable. Now, the key strength has been increased and certificates are more secure. (BZ#1686135)\n\n* When a cluster was installed, the user name in the loopback kubeconfig is the same as the host name of the master. Now, the variable in the playbook is changed to a different value. (BZ#1686585)\n\n* Using `MERGE_JSON_LOG=true` would create fields in the record that would cause syntax violations or create too many fields in `Elasticsearch`, causing severe performance problems. Now, users who experience these problems can tune `fluentd` to accommodate their log record fields without errors or `Elasticsearch` performance degradation. (BZ#1686946)\n\n* If an override host name had been set, the sync script generated an error in the sync logs. This has now been resolved and is no longer present in situations where `/etc/sysconfig/KUBELET_HOSTNAME_OVERRIDE` is not present. (BZ#1687803)\n\n* Upgrade playbooks ran several `oc` commands that used resource aliases that may not be immediately available after a restart or other reasons. Now, the `oc` suite of commands uses the fully qualified resource name to avoid potential failure. (BZ#1688452)\n\nAll OpenShift Container Platform 3.10 users are advised to upgrade to these\nupdated packages.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Moderate",
-      "updated": {
-        "date": "2019-04-09"
-      },
-      "cve": [
-        {
-          "text": "CVE-2019-1002101",
-          "cvss3": "5.3/CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:N/I:H/A:N",
-          "cwe": "CWE-59",
-          "href": "https://access.redhat.com/security/cve/CVE-2019-1002101",
-          "impact": "moderate",
-          "public": "20190328"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:openshift:3.10",
-          "cpe:/a:redhat:openshift:3.10::el7"
-        ]
-      },
-      "rights": "Copyright 2019 Red Hat, Inc.",
-      "issued": {
-        "date": "2019-04-09"
-      },
-      "bugzilla": [
-        {
-          "text": "CVE-2019-1002101 kubernetes: Mishandling of symlinks allows for arbitrary file write via `kubectl cp`",
-          "href": "https://bugzilla.redhat.com/1685213",
-          "id": "1685213"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat OpenShift Container Platform 3.10"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620001",
-                    "comment": "openshift-enterprise-cluster-capacity is earlier than 0:3.10.127-1.git.0.44580c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20181816582",
-                    "comment": "openshift-enterprise-cluster-capacity is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620003",
-                    "comment": "atomic-openshift-web-console is earlier than 0:3.10.127-1.git.50.eab7949.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20181816722",
-                    "comment": "atomic-openshift-web-console is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620005",
-                    "comment": "atomic-enterprise-service-catalog is earlier than 1:3.10.127-1.git.55.b54f8c7.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20181816626",
-                    "comment": "atomic-enterprise-service-catalog is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620007",
-                    "comment": "atomic-enterprise-service-catalog-svcat is earlier than 1:3.10.127-1.git.55.b54f8c7.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20181816628",
-                    "comment": "atomic-enterprise-service-catalog-svcat is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620009",
-                    "comment": "atomic-openshift-dockerregistry is earlier than 0:3.10.127-1.git.0.f8aa6dd.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20181816020",
-                    "comment": "atomic-openshift-dockerregistry is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620011",
-                    "comment": "atomic-openshift-descheduler is earlier than 0:3.10.127-1.git.153.bc1eddd.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20181816354",
-                    "comment": "atomic-openshift-descheduler is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620013",
-                    "comment": "atomic-openshift is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367024",
-                    "comment": "atomic-openshift is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620015",
-                    "comment": "atomic-openshift-clients is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367012",
-                    "comment": "atomic-openshift-clients is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620017",
-                    "comment": "atomic-openshift-clients-redistributable is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367008",
-                    "comment": "atomic-openshift-clients-redistributable is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620019",
-                    "comment": "atomic-openshift-docker-excluder is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367004",
-                    "comment": "atomic-openshift-docker-excluder is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620021",
-                    "comment": "atomic-openshift-excluder is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367016",
-                    "comment": "atomic-openshift-excluder is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620023",
-                    "comment": "atomic-openshift-hyperkube is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367002",
-                    "comment": "atomic-openshift-hyperkube is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620025",
-                    "comment": "atomic-openshift-hypershift is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367010",
-                    "comment": "atomic-openshift-hypershift is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620027",
-                    "comment": "atomic-openshift-master is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367006",
-                    "comment": "atomic-openshift-master is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620029",
-                    "comment": "atomic-openshift-node is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367018",
-                    "comment": "atomic-openshift-node is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620031",
-                    "comment": "atomic-openshift-pod is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367026",
-                    "comment": "atomic-openshift-pod is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620033",
-                    "comment": "atomic-openshift-sdn-ovs is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367020",
-                    "comment": "atomic-openshift-sdn-ovs is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620035",
-                    "comment": "atomic-openshift-template-service-broker is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367022",
-                    "comment": "atomic-openshift-template-service-broker is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620037",
-                    "comment": "atomic-openshift-tests is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201718367014",
-                    "comment": "atomic-openshift-tests is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620039",
-                    "comment": "atomic-openshift-node-problem-detector is earlier than 0:3.10.127-1.git.0.4f5519b.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20181816636",
-                    "comment": "atomic-openshift-node-problem-detector is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620041",
-                    "comment": "prometheus-node-exporter is earlier than 0:3.10.127-1.git.0.8ebe819.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20181816802",
-                    "comment": "prometheus-node-exporter is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620043",
-                    "comment": "openshift-ansible is earlier than 0:3.10.127-1.git.0.131da09.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201914819002",
-                    "comment": "openshift-ansible is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620045",
-                    "comment": "openshift-ansible-docs is earlier than 0:3.10.127-1.git.0.131da09.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201914819008",
-                    "comment": "openshift-ansible-docs is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620047",
-                    "comment": "openshift-ansible-playbooks is earlier than 0:3.10.127-1.git.0.131da09.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201914819004",
-                    "comment": "openshift-ansible-playbooks is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620049",
-                    "comment": "openshift-ansible-roles is earlier than 0:3.10.127-1.git.0.131da09.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.cve:tst:201914819006",
-                    "comment": "openshift-ansible-roles is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620051",
-                    "comment": "rubygem-fluent-plugin-viaq_data_model is earlier than 0:0.0.18-1.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20181816244",
-                    "comment": "rubygem-fluent-plugin-viaq_data_model is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620053",
-                    "comment": "rubygem-fluent-plugin-viaq_data_model-doc is earlier than 0:0.0.18-1.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20181816246",
-                    "comment": "rubygem-fluent-plugin-viaq_data_model-doc is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620055",
-                    "comment": "python-libcloud is earlier than 0:2.2.1-20180102gitd701bf9.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20190620056",
-                    "comment": "python-libcloud is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.cve:tst:201715095005",
-            "comment": "Red Hat Enterprise Linux 7 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.cve:tst:201715095006",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhba:def:20190620",
+	"version": "638",
+	"class": "patch",
+	"metadata": {
+		"title": "RHBA-2019:0620: OpenShift Container Platform 3.10 bug fix update (Moderate)",
+		"reference": [
+			{
+				"ref_id": "RHBA-2019:0620",
+				"ref_url": "https://access.redhat.com/errata/RHBA-2019:0620",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2019-1002101",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2019-1002101",
+				"source": "CVE"
+			}
+		],
+		"description": "Red Hat OpenShift Container Platform is Red Hat's cloud computing\nKubernetes application platform solution designed for on-premise or private\ncloud deployments.\n\nThis advisory contains the RPM packages for Red Hat OpenShift Container\nPlatform 3.10.127. See the following advisory for the container images for\nthis release:\n\nhttps://access.redhat.com/errata/RHBA-2019:0621\n\nThis update fixes the following bugs:\n\n* Playbooks that redeployed master certificates did not update `webconsole` secrets, causing failure to start the `webconsole` after redeployment. Now, `webconsole` secrets are re-created when master certificate playbooks are used and the `webconsole`now works properly. (BZ#1667981)\n\n*  The files that implemented log rotation functionality were not copied to the correct `fluentd` directory. As a result, logs were not rotated. Now, the container build inspects the `fluentd` gem to find out where to install the files. The files that implement log rotation are copied to the correct directory for `fluentd` usage. (BZ#1684210)\n\n* The SSL and TLS service uses Diffie-Hellman groups with insufficient strength (a key size less than 2048 bytes). As a result, the keys are more vulnerable. Now, the key strength has been increased and certificates are more secure. (BZ#1686135)\n\n* When a cluster was installed, the user name in the loopback kubeconfig is the same as the host name of the master. Now, the variable in the playbook is changed to a different value. (BZ#1686585)\n\n* Using `MERGE_JSON_LOG=true` would create fields in the record that would cause syntax violations or create too many fields in `Elasticsearch`, causing severe performance problems. Now, users who experience these problems can tune `fluentd` to accommodate their log record fields without errors or `Elasticsearch` performance degradation. (BZ#1686946)\n\n* If an override host name had been set, the sync script generated an error in the sync logs. This has now been resolved and is no longer present in situations where `/etc/sysconfig/KUBELET_HOSTNAME_OVERRIDE` is not present. (BZ#1687803)\n\n* Upgrade playbooks ran several `oc` commands that used resource aliases that may not be immediately available after a restart or other reasons. Now, the `oc` suite of commands uses the fully qualified resource name to avoid potential failure. (BZ#1688452)\n\nAll OpenShift Container Platform 3.10 users are advised to upgrade to these\nupdated packages.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2019-04-09"
+			},
+			"cve": [
+				{
+					"text": "CVE-2019-1002101",
+					"cvss3": "5.3/CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:N/I:H/A:N",
+					"cwe": "CWE-59",
+					"href": "https://access.redhat.com/security/cve/CVE-2019-1002101",
+					"impact": "moderate",
+					"public": "20190328"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:openshift:3.10",
+					"cpe:/a:redhat:openshift:3.10::el7"
+				]
+			},
+			"rights": "Copyright 2019 Red Hat, Inc.",
+			"issued": {
+				"date": "2019-04-09"
+			},
+			"bugzilla": [
+				{
+					"text": "CVE-2019-1002101 kubernetes: Mishandling of symlinks allows for arbitrary file write via `kubectl cp`",
+					"href": "https://bugzilla.redhat.com/1685213",
+					"id": "1685213"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat OpenShift Container Platform 3.10"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620001",
+										"comment": "openshift-enterprise-cluster-capacity is earlier than 0:3.10.127-1.git.0.44580c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20181816582",
+										"comment": "openshift-enterprise-cluster-capacity is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620003",
+										"comment": "atomic-openshift-web-console is earlier than 0:3.10.127-1.git.50.eab7949.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20181816722",
+										"comment": "atomic-openshift-web-console is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620005",
+										"comment": "atomic-enterprise-service-catalog is earlier than 1:3.10.127-1.git.55.b54f8c7.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20181816626",
+										"comment": "atomic-enterprise-service-catalog is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620007",
+										"comment": "atomic-enterprise-service-catalog-svcat is earlier than 1:3.10.127-1.git.55.b54f8c7.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20181816628",
+										"comment": "atomic-enterprise-service-catalog-svcat is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620009",
+										"comment": "atomic-openshift-dockerregistry is earlier than 0:3.10.127-1.git.0.f8aa6dd.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20181816020",
+										"comment": "atomic-openshift-dockerregistry is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620011",
+										"comment": "atomic-openshift-descheduler is earlier than 0:3.10.127-1.git.153.bc1eddd.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20181816354",
+										"comment": "atomic-openshift-descheduler is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620013",
+										"comment": "atomic-openshift is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367024",
+										"comment": "atomic-openshift is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620015",
+										"comment": "atomic-openshift-clients is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367012",
+										"comment": "atomic-openshift-clients is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620017",
+										"comment": "atomic-openshift-clients-redistributable is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367008",
+										"comment": "atomic-openshift-clients-redistributable is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620019",
+										"comment": "atomic-openshift-docker-excluder is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367004",
+										"comment": "atomic-openshift-docker-excluder is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620021",
+										"comment": "atomic-openshift-excluder is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367016",
+										"comment": "atomic-openshift-excluder is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620023",
+										"comment": "atomic-openshift-hyperkube is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367002",
+										"comment": "atomic-openshift-hyperkube is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620025",
+										"comment": "atomic-openshift-hypershift is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367010",
+										"comment": "atomic-openshift-hypershift is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620027",
+										"comment": "atomic-openshift-master is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367006",
+										"comment": "atomic-openshift-master is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620029",
+										"comment": "atomic-openshift-node is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367018",
+										"comment": "atomic-openshift-node is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620031",
+										"comment": "atomic-openshift-pod is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367026",
+										"comment": "atomic-openshift-pod is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620033",
+										"comment": "atomic-openshift-sdn-ovs is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367020",
+										"comment": "atomic-openshift-sdn-ovs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620035",
+										"comment": "atomic-openshift-template-service-broker is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367022",
+										"comment": "atomic-openshift-template-service-broker is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620037",
+										"comment": "atomic-openshift-tests is earlier than 0:3.10.127-1.git.0.dab74c6.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201718367014",
+										"comment": "atomic-openshift-tests is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620039",
+										"comment": "atomic-openshift-node-problem-detector is earlier than 0:3.10.127-1.git.0.4f5519b.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20181816636",
+										"comment": "atomic-openshift-node-problem-detector is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620041",
+										"comment": "prometheus-node-exporter is earlier than 0:3.10.127-1.git.0.8ebe819.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20181816802",
+										"comment": "prometheus-node-exporter is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620043",
+										"comment": "openshift-ansible is earlier than 0:3.10.127-1.git.0.131da09.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201914819002",
+										"comment": "openshift-ansible is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620045",
+										"comment": "openshift-ansible-docs is earlier than 0:3.10.127-1.git.0.131da09.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201914819008",
+										"comment": "openshift-ansible-docs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620047",
+										"comment": "openshift-ansible-playbooks is earlier than 0:3.10.127-1.git.0.131da09.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201914819004",
+										"comment": "openshift-ansible-playbooks is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620049",
+										"comment": "openshift-ansible-roles is earlier than 0:3.10.127-1.git.0.131da09.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201914819006",
+										"comment": "openshift-ansible-roles is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620051",
+										"comment": "rubygem-fluent-plugin-viaq_data_model is earlier than 0:0.0.18-1.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20181816244",
+										"comment": "rubygem-fluent-plugin-viaq_data_model is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620053",
+										"comment": "rubygem-fluent-plugin-viaq_data_model-doc is earlier than 0:0.0.18-1.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20181816246",
+										"comment": "rubygem-fluent-plugin-viaq_data_model-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620055",
+										"comment": "python-libcloud is earlier than 0:2.2.1-20180102gitd701bf9.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20190620056",
+										"comment": "python-libcloud is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:201715095005",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:201715095006",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

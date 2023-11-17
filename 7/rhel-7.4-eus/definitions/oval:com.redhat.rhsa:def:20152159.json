@@ -1,203 +1,203 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20152159",
-  "version": "643",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2015:2159: curl security, bug fix, and enhancement update (Moderate)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2015:2159",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2015:2159",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2014-3613",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-3613",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2014-3707",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-3707",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2014-8150",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-8150",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2015-3143",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-3143",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2015-3148",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-3148",
-        "source": "CVE"
-      }
-    ],
-    "description": "The curl packages provide the libcurl library and the curl utility for\ndownloading files from servers using various protocols, including HTTP,\nFTP, and LDAP.\n\nIt was found that the libcurl library did not correctly handle partial\nliteral IP addresses when parsing received HTTP cookies. An attacker able\nto trick a user into connecting to a malicious server could use this flaw\nto set the user's cookie to a crafted domain, making other cookie-related\nissues easier to exploit. (CVE-2014-3613)\n\nA flaw was found in the way the libcurl library performed the duplication\nof connection handles. If an application set the CURLOPT_COPYPOSTFIELDS\noption for a handle, using the handle's duplicate could cause the\napplication to crash or disclose a portion of its memory. (CVE-2014-3707)\n\nIt was discovered that the libcurl library failed to properly handle URLs\nwith embedded end-of-line characters. An attacker able to make an\napplication using libcurl access a specially crafted URL via an HTTP proxy\ncould use this flaw to inject additional headers to the request or\nconstruct additional requests. (CVE-2014-8150)\n\nIt was discovered that libcurl implemented aspects of the NTLM and\nNegotatiate authentication incorrectly. If an application uses libcurl\nand the affected mechanisms in a specifc way, certain requests to a\npreviously NTLM-authenticated server could appears as sent by the wrong\nauthenticated user. Additionally, the initial set of credentials for HTTP\nNegotiate-authenticated requests could be reused in subsequent requests,\nalthough a different set of credentials was specified. (CVE-2015-3143,\nCVE-2015-3148)\n\nRed Hat would like to thank the cURL project for reporting these issues.\n\nBug fixes:\n\n* An out-of-protocol fallback to SSL 3.0 was available with libcurl.\nAttackers could abuse the fallback to force downgrade of the SSL version.\nThe fallback has been removed from libcurl. Users requiring this\nfunctionality can explicitly enable SSL 3.0 through the libcurl API.\n(BZ#1154060)\n\n* TLS 1.1 and TLS 1.2 are no longer disabled by default in libcurl. You can\nexplicitly disable them through the libcurl API. (BZ#1170339)\n\n* FTP operations such as downloading files took a significantly long time\nto complete. Now, the FTP implementation in libcurl correctly sets blocking\ndirection and estimated timeout for connections, resulting in faster FTP\ntransfers. (BZ#1218272)\n\nEnhancements:\n\n* With the updated packages, it is possible to explicitly enable or disable\nnew Advanced Encryption Standard (AES) cipher suites to be used for the TLS\nprotocol. (BZ#1066065)\n\n* The libcurl library did not implement a non-blocking SSL handshake, which\nnegatively affected performance of applications based on the libcurl multi\nAPI. The non-blocking SSL handshake has been implemented in libcurl, and\nthe libcurl multi API now immediately returns the control back to the\napplication whenever it cannot read or write data from or to the underlying\nnetwork socket. (BZ#1091429)\n\n* The libcurl library used an unnecessarily long blocking delay for actions\nwith no active file descriptors, even for short operations. Some actions,\nsuch as resolving a host name using /etc/hosts, took a long time to\ncomplete. The blocking code in libcurl has been modified so that the\ninitial delay is short and gradually increases until an event occurs.\n(BZ#1130239)\n\nAll curl users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues and add these\nenhancements.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Moderate",
-      "updated": {
-        "date": "2015-11-19"
-      },
-      "cve": [
-        {
-          "text": "CVE-2014-3613",
-          "cwe": "CWE-20->CWE-284",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-3613",
-          "impact": "moderate",
-          "public": "20140910",
-          "cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:P/A:N"
-        },
-        {
-          "text": "CVE-2014-3707",
-          "cwe": "(CWE-125|CWE-416)",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-3707",
-          "impact": "moderate",
-          "public": "20141105",
-          "cvss2": "4.0/AV:N/AC:H/Au:N/C:P/I:N/A:P"
-        },
-        {
-          "text": "CVE-2014-8150",
-          "cwe": "CWE-113",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-8150",
-          "impact": "moderate",
-          "public": "20150108",
-          "cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:P/A:N"
-        },
-        {
-          "text": "CVE-2015-3143",
-          "cwe": "CWE-287",
-          "href": "https://access.redhat.com/security/cve/CVE-2015-3143",
-          "impact": "moderate",
-          "public": "20150422",
-          "cvss2": "4.0/AV:N/AC:H/Au:N/C:P/I:P/A:N"
-        },
-        {
-          "text": "CVE-2015-3148",
-          "cwe": "CWE-287",
-          "href": "https://access.redhat.com/security/cve/CVE-2015-3148",
-          "impact": "moderate",
-          "public": "20150422",
-          "cvss2": "4.0/AV:N/AC:H/Au:N/C:P/I:P/A:N"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:rhel_extras_sap_eus:7.4",
-          "cpe:/a:redhat:rhel_extras_sap_hana_eus:7.4",
-          "cpe:/o:redhat:rhel_eus:7.4",
-          "cpe:/o:redhat:rhel_eus:7.4::computenode",
-          "cpe:/o:redhat:rhel_eus:7.4::server"
-        ]
-      },
-      "rights": "Copyright 2015 Red Hat, Inc.",
-      "issued": {
-        "date": "2015-11-19"
-      },
-      "bugzilla": [
-        {
-          "text": "incorrect handling of IP addresses in cookie domain",
-          "href": "https://bugzilla.redhat.com/1136154",
-          "id": "1136154"
-        },
-        {
-          "text": "incorrect handle duplication after COPYPOSTFIELDS",
-          "href": "https://bugzilla.redhat.com/1154941",
-          "id": "1154941"
-        },
-        {
-          "text": "URL request injection vulnerability in parseurlandfillconn()",
-          "href": "https://bugzilla.redhat.com/1178692",
-          "id": "1178692"
-        },
-        {
-          "text": "re-using authenticated connection when unauthenticated",
-          "href": "https://bugzilla.redhat.com/1213306",
-          "id": "1213306"
-        },
-        {
-          "text": "Negotiate not treated as connection-oriented",
-          "href": "https://bugzilla.redhat.com/1213351",
-          "id": "1213351"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Enterprise Linux 7"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20152159001",
-                    "comment": "curl is earlier than 0:7.29.0-25.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20152159002",
-                    "comment": "curl is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20152159003",
-                    "comment": "libcurl is earlier than 0:7.29.0-25.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20152159004",
-                    "comment": "libcurl is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20152159005",
-                    "comment": "libcurl-devel is earlier than 0:7.29.0-25.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20152159006",
-                    "comment": "libcurl-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.rhba:tst:20150364027",
-            "comment": "Red Hat Enterprise Linux 7 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.rhba:tst:20150364028",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20152159",
+	"version": "643",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2015:2159: curl security, bug fix, and enhancement update (Moderate)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2015:2159",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2015:2159",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2014-3613",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-3613",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2014-3707",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-3707",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2014-8150",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-8150",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2015-3143",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2015-3143",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2015-3148",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2015-3148",
+				"source": "CVE"
+			}
+		],
+		"description": "The curl packages provide the libcurl library and the curl utility for\ndownloading files from servers using various protocols, including HTTP,\nFTP, and LDAP.\n\nIt was found that the libcurl library did not correctly handle partial\nliteral IP addresses when parsing received HTTP cookies. An attacker able\nto trick a user into connecting to a malicious server could use this flaw\nto set the user's cookie to a crafted domain, making other cookie-related\nissues easier to exploit. (CVE-2014-3613)\n\nA flaw was found in the way the libcurl library performed the duplication\nof connection handles. If an application set the CURLOPT_COPYPOSTFIELDS\noption for a handle, using the handle's duplicate could cause the\napplication to crash or disclose a portion of its memory. (CVE-2014-3707)\n\nIt was discovered that the libcurl library failed to properly handle URLs\nwith embedded end-of-line characters. An attacker able to make an\napplication using libcurl access a specially crafted URL via an HTTP proxy\ncould use this flaw to inject additional headers to the request or\nconstruct additional requests. (CVE-2014-8150)\n\nIt was discovered that libcurl implemented aspects of the NTLM and\nNegotatiate authentication incorrectly. If an application uses libcurl\nand the affected mechanisms in a specifc way, certain requests to a\npreviously NTLM-authenticated server could appears as sent by the wrong\nauthenticated user. Additionally, the initial set of credentials for HTTP\nNegotiate-authenticated requests could be reused in subsequent requests,\nalthough a different set of credentials was specified. (CVE-2015-3143,\nCVE-2015-3148)\n\nRed Hat would like to thank the cURL project for reporting these issues.\n\nBug fixes:\n\n* An out-of-protocol fallback to SSL 3.0 was available with libcurl.\nAttackers could abuse the fallback to force downgrade of the SSL version.\nThe fallback has been removed from libcurl. Users requiring this\nfunctionality can explicitly enable SSL 3.0 through the libcurl API.\n(BZ#1154060)\n\n* TLS 1.1 and TLS 1.2 are no longer disabled by default in libcurl. You can\nexplicitly disable them through the libcurl API. (BZ#1170339)\n\n* FTP operations such as downloading files took a significantly long time\nto complete. Now, the FTP implementation in libcurl correctly sets blocking\ndirection and estimated timeout for connections, resulting in faster FTP\ntransfers. (BZ#1218272)\n\nEnhancements:\n\n* With the updated packages, it is possible to explicitly enable or disable\nnew Advanced Encryption Standard (AES) cipher suites to be used for the TLS\nprotocol. (BZ#1066065)\n\n* The libcurl library did not implement a non-blocking SSL handshake, which\nnegatively affected performance of applications based on the libcurl multi\nAPI. The non-blocking SSL handshake has been implemented in libcurl, and\nthe libcurl multi API now immediately returns the control back to the\napplication whenever it cannot read or write data from or to the underlying\nnetwork socket. (BZ#1091429)\n\n* The libcurl library used an unnecessarily long blocking delay for actions\nwith no active file descriptors, even for short operations. Some actions,\nsuch as resolving a host name using /etc/hosts, took a long time to\ncomplete. The blocking code in libcurl has been modified so that the\ninitial delay is short and gradually increases until an event occurs.\n(BZ#1130239)\n\nAll curl users are advised to upgrade to these updated packages, which\ncontain backported patches to correct these issues and add these\nenhancements.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2015-11-19"
+			},
+			"cve": [
+				{
+					"text": "CVE-2014-3613",
+					"cwe": "CWE-20->CWE-284",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-3613",
+					"impact": "moderate",
+					"public": "20140910",
+					"cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:P/A:N"
+				},
+				{
+					"text": "CVE-2014-3707",
+					"cwe": "(CWE-125|CWE-416)",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-3707",
+					"impact": "moderate",
+					"public": "20141105",
+					"cvss2": "4.0/AV:N/AC:H/Au:N/C:P/I:N/A:P"
+				},
+				{
+					"text": "CVE-2014-8150",
+					"cwe": "CWE-113",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-8150",
+					"impact": "moderate",
+					"public": "20150108",
+					"cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:P/A:N"
+				},
+				{
+					"text": "CVE-2015-3143",
+					"cwe": "CWE-287",
+					"href": "https://access.redhat.com/security/cve/CVE-2015-3143",
+					"impact": "moderate",
+					"public": "20150422",
+					"cvss2": "4.0/AV:N/AC:H/Au:N/C:P/I:P/A:N"
+				},
+				{
+					"text": "CVE-2015-3148",
+					"cwe": "CWE-287",
+					"href": "https://access.redhat.com/security/cve/CVE-2015-3148",
+					"impact": "moderate",
+					"public": "20150422",
+					"cvss2": "4.0/AV:N/AC:H/Au:N/C:P/I:P/A:N"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras_sap_eus:7.4",
+					"cpe:/a:redhat:rhel_extras_sap_hana_eus:7.4",
+					"cpe:/o:redhat:rhel_eus:7.4",
+					"cpe:/o:redhat:rhel_eus:7.4::computenode",
+					"cpe:/o:redhat:rhel_eus:7.4::server"
+				]
+			},
+			"rights": "Copyright 2015 Red Hat, Inc.",
+			"issued": {
+				"date": "2015-11-19"
+			},
+			"bugzilla": [
+				{
+					"text": "incorrect handling of IP addresses in cookie domain",
+					"href": "https://bugzilla.redhat.com/1136154",
+					"id": "1136154"
+				},
+				{
+					"text": "incorrect handle duplication after COPYPOSTFIELDS",
+					"href": "https://bugzilla.redhat.com/1154941",
+					"id": "1154941"
+				},
+				{
+					"text": "URL request injection vulnerability in parseurlandfillconn()",
+					"href": "https://bugzilla.redhat.com/1178692",
+					"id": "1178692"
+				},
+				{
+					"text": "re-using authenticated connection when unauthenticated",
+					"href": "https://bugzilla.redhat.com/1213306",
+					"id": "1213306"
+				},
+				{
+					"text": "Negotiate not treated as connection-oriented",
+					"href": "https://bugzilla.redhat.com/1213351",
+					"id": "1213351"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 7"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20152159001",
+										"comment": "curl is earlier than 0:7.29.0-25.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20152159002",
+										"comment": "curl is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20152159003",
+										"comment": "libcurl is earlier than 0:7.29.0-25.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20152159004",
+										"comment": "libcurl is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20152159005",
+										"comment": "libcurl-devel is earlier than 0:7.29.0-25.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20152159006",
+										"comment": "libcurl-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20150364027",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20150364028",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

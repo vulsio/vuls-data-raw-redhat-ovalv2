@@ -1,172 +1,172 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20181820",
-  "version": "639",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2018:1820: Red Hat Virtualization security, bug fix, and enhancement update (Important)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2018:1820",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2018:1820",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2018-1124",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2018-1124",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2018-1126",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2018-1126",
-        "source": "CVE"
-      }
-    ],
-    "description": "The redhat-virtualization-host packages provide the Red Hat Virtualization Host. These packages include redhat-release-virtualization-host, ovirt-node, and rhev-hypervisor. Red Hat Virtualization Hosts (RHVH) are installed using a special build of Red Hat Enterprise Linux with only the packages required to host virtual machines. RHVH features a Cockpit user interface for monitoring the host's resources and performing administrative tasks.\n\nSecurity Fix(es):\n\n* procps-ng, procps: Integer overflows leading to heap overflow in file2strvec (CVE-2018-1124)\n\n* procps-ng, procps: incorrect integer size in proc/alloc.* leading to truncation / integer overflow issues (CVE-2018-1126)\n\nFor more details about the security issue(s), including the impact, a CVSS score, and other related information, refer to the CVE page(s) listed in the References section.\n\nRed Hat would like to thank Qualys Research Labs for reporting these issues.\n\nBug Fix(es):\n\n* Previously some SELinux %post scripts were not re-executed because imgbased attempts to re-execute RPM %post scripts which involve SELinux commands inside a namespace, and some commands failed due to SELinux namespacing rules.\n\nThis update ensures that SELinux contexts inside imgbased update namespaces now update appropriately, and the scripts are re-executed by remounting /sys and /sys/fs/selinux inside the update namespace. (BZ#1571607)\n\n* Previously, vmcore files that were created by kdump were not relabelled by kdumpctl after a reboot. As a result, Rsync returned an error when trying to remove the security.selinux attribute while syncing unlabelled files, as this is forbidden by selinux.\n\nIn this release, restorecon is run on the source directory before syncing it, which enables the files to be synchronized with the correct labels. (BZ#1579141)\n\nEnhancement(s):\n\n* Previously, imgbased filtered out stderr from LVM commands to improve parsing reliability. In this release, imgbased now logs stderr from LVM commands in order to provide this information in the imgbased logs, for example during an upgrade failure. (BZ#1574187)",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Important",
-      "updated": {
-        "date": "2018-06-11"
-      },
-      "cve": [
-        {
-          "text": "CVE-2018-1124",
-          "cvss3": "7.3/CVSS:3.0/AV:L/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H",
-          "cwe": "CWE-190->CWE-122",
-          "href": "https://access.redhat.com/security/cve/CVE-2018-1124",
-          "impact": "important",
-          "public": "20180517:1700"
-        },
-        {
-          "text": "CVE-2018-1126",
-          "cvss3": "4.8/CVSS:3.0/AV:L/AC:L/PR:L/UI:R/S:U/C:L/I:L/A:L",
-          "cwe": "CWE-190",
-          "href": "https://access.redhat.com/security/cve/CVE-2018-1126",
-          "impact": "moderate",
-          "public": "20180517:1700"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/o:redhat:enterprise_linux:7",
-          "cpe:/o:redhat:enterprise_linux:7::hypervisor"
-        ]
-      },
-      "rights": "Copyright 2018 Red Hat, Inc.",
-      "issued": {
-        "date": "2018-06-11"
-      },
-      "bugzilla": [
-        {
-          "text": "CVE-2018-1124 procps-ng, procps: Integer overflows leading to heap overflow in file2strvec",
-          "href": "https://bugzilla.redhat.com/1575465",
-          "id": "1575465"
-        },
-        {
-          "text": "CVE-2018-1126 procps-ng, procps: incorrect integer size in proc/alloc.* leading to truncation / integer overflow issues",
-          "href": "https://bugzilla.redhat.com/1575853",
-          "id": "1575853"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Virtualization 4 for Red Hat Enterprise Linux 7"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20181820001",
-                    "comment": "imgbased is earlier than 0:1.0.17-0.1.el7ev"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20172529008",
-                    "comment": "imgbased is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20181820003",
-                    "comment": "python-imgbased is earlier than 0:1.0.17-0.1.el7ev"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20191053012",
-                    "comment": "python-imgbased is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20181820005",
-                    "comment": "redhat-release-virtualization-host is earlier than 0:4.2-3.1.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20172529004",
-                    "comment": "redhat-release-virtualization-host is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20181820007",
-                    "comment": "redhat-virtualization-host-image-update-placeholder is earlier than 0:4.2-3.1.el7"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20172529006",
-                    "comment": "redhat-virtualization-host-image-update-placeholder is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20181820009",
-                    "comment": "redhat-virtualization-host-image-update is earlier than 0:4.2-20180531.0.el7_5"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20172529010",
-                    "comment": "redhat-virtualization-host-image-update is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.rhba:tst:20172529011",
-            "comment": "Red Hat Enterprise Linux 7 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.rhba:tst:20172529012",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20181820",
+	"version": "639",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2018:1820: Red Hat Virtualization security, bug fix, and enhancement update (Important)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2018:1820",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2018:1820",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2018-1124",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2018-1124",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2018-1126",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2018-1126",
+				"source": "CVE"
+			}
+		],
+		"description": "The redhat-virtualization-host packages provide the Red Hat Virtualization Host. These packages include redhat-release-virtualization-host, ovirt-node, and rhev-hypervisor. Red Hat Virtualization Hosts (RHVH) are installed using a special build of Red Hat Enterprise Linux with only the packages required to host virtual machines. RHVH features a Cockpit user interface for monitoring the host's resources and performing administrative tasks.\n\nSecurity Fix(es):\n\n* procps-ng, procps: Integer overflows leading to heap overflow in file2strvec (CVE-2018-1124)\n\n* procps-ng, procps: incorrect integer size in proc/alloc.* leading to truncation / integer overflow issues (CVE-2018-1126)\n\nFor more details about the security issue(s), including the impact, a CVSS score, and other related information, refer to the CVE page(s) listed in the References section.\n\nRed Hat would like to thank Qualys Research Labs for reporting these issues.\n\nBug Fix(es):\n\n* Previously some SELinux %post scripts were not re-executed because imgbased attempts to re-execute RPM %post scripts which involve SELinux commands inside a namespace, and some commands failed due to SELinux namespacing rules.\n\nThis update ensures that SELinux contexts inside imgbased update namespaces now update appropriately, and the scripts are re-executed by remounting /sys and /sys/fs/selinux inside the update namespace. (BZ#1571607)\n\n* Previously, vmcore files that were created by kdump were not relabelled by kdumpctl after a reboot. As a result, Rsync returned an error when trying to remove the security.selinux attribute while syncing unlabelled files, as this is forbidden by selinux.\n\nIn this release, restorecon is run on the source directory before syncing it, which enables the files to be synchronized with the correct labels. (BZ#1579141)\n\nEnhancement(s):\n\n* Previously, imgbased filtered out stderr from LVM commands to improve parsing reliability. In this release, imgbased now logs stderr from LVM commands in order to provide this information in the imgbased logs, for example during an upgrade failure. (BZ#1574187)",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Important",
+			"updated": {
+				"date": "2018-06-11"
+			},
+			"cve": [
+				{
+					"text": "CVE-2018-1124",
+					"cvss3": "7.3/CVSS:3.0/AV:L/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H",
+					"cwe": "CWE-190->CWE-122",
+					"href": "https://access.redhat.com/security/cve/CVE-2018-1124",
+					"impact": "important",
+					"public": "20180517:1700"
+				},
+				{
+					"text": "CVE-2018-1126",
+					"cvss3": "4.8/CVSS:3.0/AV:L/AC:L/PR:L/UI:R/S:U/C:L/I:L/A:L",
+					"cwe": "CWE-190",
+					"href": "https://access.redhat.com/security/cve/CVE-2018-1126",
+					"impact": "moderate",
+					"public": "20180517:1700"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:redhat:enterprise_linux:7",
+					"cpe:/o:redhat:enterprise_linux:7::hypervisor"
+				]
+			},
+			"rights": "Copyright 2018 Red Hat, Inc.",
+			"issued": {
+				"date": "2018-06-11"
+			},
+			"bugzilla": [
+				{
+					"text": "CVE-2018-1124 procps-ng, procps: Integer overflows leading to heap overflow in file2strvec",
+					"href": "https://bugzilla.redhat.com/1575465",
+					"id": "1575465"
+				},
+				{
+					"text": "CVE-2018-1126 procps-ng, procps: incorrect integer size in proc/alloc.* leading to truncation / integer overflow issues",
+					"href": "https://bugzilla.redhat.com/1575853",
+					"id": "1575853"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Virtualization 4 for Red Hat Enterprise Linux 7"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20181820001",
+										"comment": "imgbased is earlier than 0:1.0.17-0.1.el7ev"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20172529008",
+										"comment": "imgbased is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20181820003",
+										"comment": "python-imgbased is earlier than 0:1.0.17-0.1.el7ev"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20191053012",
+										"comment": "python-imgbased is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20181820005",
+										"comment": "redhat-release-virtualization-host is earlier than 0:4.2-3.1.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20172529004",
+										"comment": "redhat-release-virtualization-host is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20181820007",
+										"comment": "redhat-virtualization-host-image-update-placeholder is earlier than 0:4.2-3.1.el7"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20172529006",
+										"comment": "redhat-virtualization-host-image-update-placeholder is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20181820009",
+										"comment": "redhat-virtualization-host-image-update is earlier than 0:4.2-20180531.0.el7_5"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20172529010",
+										"comment": "redhat-virtualization-host-image-update is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20172529011",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20172529012",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

@@ -1,256 +1,256 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20151564",
-  "version": "643",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2015:1564: kernel-rt security, bug fix, and enhancement update (Moderate)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2015:1564",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2015:1564",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2014-9715",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2014-9715",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2015-2922",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-2922",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2015-3636",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2015-3636",
-        "source": "CVE"
-      }
-    ],
-    "description": "The kernel-rt packages contain the Linux kernel, the core of any Linux\noperating system.\n\n* An integer overflow flaw was found in the way the Linux kernel's\nnetfilter connection tracking implementation loaded extensions. An attacker\non a local network could potentially send a sequence of specially crafted\npackets that would initiate the loading of a large number of extensions,\ncausing the targeted system in that network to crash. (CVE-2014-9715,\nModerate)\n\n* It was found that the Linux kernel's ping socket implementation did not\nproperly handle socket unhashing during spurious disconnects, which could\nlead to a use-after-free flaw. On x86-64 architecture systems, a local user\nable to create ping sockets could use this flaw to crash the system.\nOn non-x86-64 architecture systems, a local user able to create ping\nsockets could use this flaw to escalate their privileges on the system.\n(CVE-2015-3636, Moderate)\n\n* It was found that the Linux kernel's TCP/IP protocol suite implementation\nfor IPv6 allowed the Hop Limit value to be set to a smaller value than the\ndefault one. An attacker on a local network could use this flaw to prevent\nsystems on that network from sending or receiving network packets.\n(CVE-2015-2922, Low)\n\nRed Hat would like to thank Nathan Hoad for reporting the CVE-2014-9715\nissue.\n\nThis update provides a build of the kernel-rt package for Red Hat\nEnterprise MRG 2.5 that is layered on Red Hat Enterprise Linux 6, and fixes\nthe following issues:\n\n* drbg: Add stdrng alias and increase priority\n* seqiv / eseqiv / chainiv: Move IV seeding into init function\n* ipv4: kABI fix for 0bbf87d backport\n* ipv4: Convert ipv4.ip_local_port_range to be per netns\n* libceph: tcp_nodelay support\n* ipr: Increase default adapter init stage change timeout\n* fix use-after-free bug in usb_hcd_unlink_urb()\n* libceph: fix double __remove_osd() problem\n* ext4: fix data corruption caused by unwritten and delayed extents\n* sunrpc: Add missing support for RPC_CLNT_CREATE_NO_RETRANS_TIMEOUT\n* nfs: Fixing lease renewal (Benjamin Coddington)\n* control hard lockup detection default\n* Fix print-once on enable\n* watchdog: update watchdog_thresh properly and watchdog attributes\n  atomically\n* module: Call module notifier on failure after complete_formation()\n\n(BZ#1230403)\n\nThis update also fixes the following bugs:\n\n* Non-standard usage of the functions write_seqcount_{begin,end}() were\nused in NFSv4, which caused the realtime code to try to sleep while locks\nwere held and produced the \"scheduling while atomic\" messages. The code was\nmodified to use the functions __write_seqcount_{begin,end}() that do not\nhold any locks removing the message and allowing correct execution.\n(BZ#1225642)\n\n* Dracut in Red Hat Enterprise Linux 6 has a dependency on a module called\nscsi_wait_scan that no longer exists on 3.x kernels. This caused the system\nto display misleading messages at start-up when the obsoleted\nscsi_wait_scan module was not found. To address this issue, MRG Realtime\nprovides a dummy scsi_wait_scan module so that the requirements for the\ninitramfs created by dracut are met and the boot messages are no longer\ndisplayed. (BZ#1230403)\n\nAll kernel-rt users are advised to upgrade to these updated packages, which\ncorrect these issues and add these enhancements. The system must be\nrebooted for this update to take effect.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Moderate",
-      "updated": {
-        "date": "2015-08-05"
-      },
-      "cve": [
-        {
-          "text": "CVE-2014-9715",
-          "cwe": "CWE-841",
-          "href": "https://access.redhat.com/security/cve/CVE-2014-9715",
-          "impact": "moderate",
-          "public": "20150408",
-          "cvss2": "5.7/AV:A/AC:M/Au:N/C:N/I:N/A:C"
-        },
-        {
-          "text": "CVE-2015-2922",
-          "cwe": "CWE-454",
-          "href": "https://access.redhat.com/security/cve/CVE-2015-2922",
-          "impact": "low",
-          "public": "20150324",
-          "cvss2": "3.3/AV:A/AC:L/Au:N/C:N/I:N/A:P"
-        },
-        {
-          "text": "CVE-2015-3636",
-          "cwe": "CWE-416",
-          "href": "https://access.redhat.com/security/cve/CVE-2015-3636",
-          "impact": "moderate",
-          "public": "20150502",
-          "cvss2": "6.0/AV:L/AC:H/Au:S/C:C/I:C/A:C"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:enterprise_mrg:2",
-          "cpe:/a:redhat:enterprise_mrg:2:computenode:el6",
-          "cpe:/a:redhat:enterprise_mrg:2:server:el6"
-        ]
-      },
-      "rights": "Copyright 2015 Red Hat, Inc.",
-      "issued": {
-        "date": "2015-08-05"
-      },
-      "bugzilla": [
-        {
-          "text": "CVE-2015-2922 kernel: denial of service (DoS) attack against IPv6 network stacks due to improper handling of Router Advertisements.",
-          "href": "https://bugzilla.redhat.com/1203712",
-          "id": "1203712"
-        },
-        {
-          "text": "netfilter connection tracking extensions denial of service",
-          "href": "https://bugzilla.redhat.com/1208684",
-          "id": "1208684"
-        },
-        {
-          "text": "CVE-2015-3636 kernel: ping sockets: use-after-free leading to local privilege escalation",
-          "href": "https://bugzilla.redhat.com/1218074",
-          "id": "1218074"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Enterprise MRG 2"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151564001",
-                    "comment": "kernel-rt is earlier than 1:3.10.0-229.rt56.158.el6rt"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20120496002",
-                    "comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151564003",
-                    "comment": "kernel-rt-debug is earlier than 1:3.10.0-229.rt56.158.el6rt"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20120496004",
-                    "comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151564005",
-                    "comment": "kernel-rt-debug-devel is earlier than 1:3.10.0-229.rt56.158.el6rt"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20120496006",
-                    "comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151564007",
-                    "comment": "kernel-rt-devel is earlier than 1:3.10.0-229.rt56.158.el6rt"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20120496008",
-                    "comment": "kernel-rt-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151564009",
-                    "comment": "kernel-rt-doc is earlier than 1:3.10.0-229.rt56.158.el6rt"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20120496010",
-                    "comment": "kernel-rt-doc is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151564011",
-                    "comment": "kernel-rt-firmware is earlier than 1:3.10.0-229.rt56.158.el6rt"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20120496012",
-                    "comment": "kernel-rt-firmware is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151564013",
-                    "comment": "kernel-rt-trace is earlier than 1:3.10.0-229.rt56.158.el6rt"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20120496014",
-                    "comment": "kernel-rt-trace is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151564015",
-                    "comment": "kernel-rt-trace-devel is earlier than 1:3.10.0-229.rt56.158.el6rt"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20120496016",
-                    "comment": "kernel-rt-trace-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151564017",
-                    "comment": "kernel-rt-vanilla is earlier than 1:3.10.0-229.rt56.158.el6rt"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20120496018",
-                    "comment": "kernel-rt-vanilla is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20151564019",
-                    "comment": "kernel-rt-vanilla-devel is earlier than 1:3.10.0-229.rt56.158.el6rt"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20120496020",
-                    "comment": "kernel-rt-vanilla-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.rhba:tst:20120496021",
-            "comment": "Red Hat Enterprise Linux 6 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.rhba:tst:20120496022",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20151564",
+	"version": "643",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2015:1564: kernel-rt security, bug fix, and enhancement update (Moderate)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2015:1564",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2015:1564",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2014-9715",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2014-9715",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2015-2922",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2015-2922",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2015-3636",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2015-3636",
+				"source": "CVE"
+			}
+		],
+		"description": "The kernel-rt packages contain the Linux kernel, the core of any Linux\noperating system.\n\n* An integer overflow flaw was found in the way the Linux kernel's\nnetfilter connection tracking implementation loaded extensions. An attacker\non a local network could potentially send a sequence of specially crafted\npackets that would initiate the loading of a large number of extensions,\ncausing the targeted system in that network to crash. (CVE-2014-9715,\nModerate)\n\n* It was found that the Linux kernel's ping socket implementation did not\nproperly handle socket unhashing during spurious disconnects, which could\nlead to a use-after-free flaw. On x86-64 architecture systems, a local user\nable to create ping sockets could use this flaw to crash the system.\nOn non-x86-64 architecture systems, a local user able to create ping\nsockets could use this flaw to escalate their privileges on the system.\n(CVE-2015-3636, Moderate)\n\n* It was found that the Linux kernel's TCP/IP protocol suite implementation\nfor IPv6 allowed the Hop Limit value to be set to a smaller value than the\ndefault one. An attacker on a local network could use this flaw to prevent\nsystems on that network from sending or receiving network packets.\n(CVE-2015-2922, Low)\n\nRed Hat would like to thank Nathan Hoad for reporting the CVE-2014-9715\nissue.\n\nThis update provides a build of the kernel-rt package for Red Hat\nEnterprise MRG 2.5 that is layered on Red Hat Enterprise Linux 6, and fixes\nthe following issues:\n\n* drbg: Add stdrng alias and increase priority\n* seqiv / eseqiv / chainiv: Move IV seeding into init function\n* ipv4: kABI fix for 0bbf87d backport\n* ipv4: Convert ipv4.ip_local_port_range to be per netns\n* libceph: tcp_nodelay support\n* ipr: Increase default adapter init stage change timeout\n* fix use-after-free bug in usb_hcd_unlink_urb()\n* libceph: fix double __remove_osd() problem\n* ext4: fix data corruption caused by unwritten and delayed extents\n* sunrpc: Add missing support for RPC_CLNT_CREATE_NO_RETRANS_TIMEOUT\n* nfs: Fixing lease renewal (Benjamin Coddington)\n* control hard lockup detection default\n* Fix print-once on enable\n* watchdog: update watchdog_thresh properly and watchdog attributes\n  atomically\n* module: Call module notifier on failure after complete_formation()\n\n(BZ#1230403)\n\nThis update also fixes the following bugs:\n\n* Non-standard usage of the functions write_seqcount_{begin,end}() were\nused in NFSv4, which caused the realtime code to try to sleep while locks\nwere held and produced the \"scheduling while atomic\" messages. The code was\nmodified to use the functions __write_seqcount_{begin,end}() that do not\nhold any locks removing the message and allowing correct execution.\n(BZ#1225642)\n\n* Dracut in Red Hat Enterprise Linux 6 has a dependency on a module called\nscsi_wait_scan that no longer exists on 3.x kernels. This caused the system\nto display misleading messages at start-up when the obsoleted\nscsi_wait_scan module was not found. To address this issue, MRG Realtime\nprovides a dummy scsi_wait_scan module so that the requirements for the\ninitramfs created by dracut are met and the boot messages are no longer\ndisplayed. (BZ#1230403)\n\nAll kernel-rt users are advised to upgrade to these updated packages, which\ncorrect these issues and add these enhancements. The system must be\nrebooted for this update to take effect.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2015-08-05"
+			},
+			"cve": [
+				{
+					"text": "CVE-2014-9715",
+					"cwe": "CWE-841",
+					"href": "https://access.redhat.com/security/cve/CVE-2014-9715",
+					"impact": "moderate",
+					"public": "20150408",
+					"cvss2": "5.7/AV:A/AC:M/Au:N/C:N/I:N/A:C"
+				},
+				{
+					"text": "CVE-2015-2922",
+					"cwe": "CWE-454",
+					"href": "https://access.redhat.com/security/cve/CVE-2015-2922",
+					"impact": "low",
+					"public": "20150324",
+					"cvss2": "3.3/AV:A/AC:L/Au:N/C:N/I:N/A:P"
+				},
+				{
+					"text": "CVE-2015-3636",
+					"cwe": "CWE-416",
+					"href": "https://access.redhat.com/security/cve/CVE-2015-3636",
+					"impact": "moderate",
+					"public": "20150502",
+					"cvss2": "6.0/AV:L/AC:H/Au:S/C:C/I:C/A:C"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:enterprise_mrg:2",
+					"cpe:/a:redhat:enterprise_mrg:2:computenode:el6",
+					"cpe:/a:redhat:enterprise_mrg:2:server:el6"
+				]
+			},
+			"rights": "Copyright 2015 Red Hat, Inc.",
+			"issued": {
+				"date": "2015-08-05"
+			},
+			"bugzilla": [
+				{
+					"text": "CVE-2015-2922 kernel: denial of service (DoS) attack against IPv6 network stacks due to improper handling of Router Advertisements.",
+					"href": "https://bugzilla.redhat.com/1203712",
+					"id": "1203712"
+				},
+				{
+					"text": "netfilter connection tracking extensions denial of service",
+					"href": "https://bugzilla.redhat.com/1208684",
+					"id": "1208684"
+				},
+				{
+					"text": "CVE-2015-3636 kernel: ping sockets: use-after-free leading to local privilege escalation",
+					"href": "https://bugzilla.redhat.com/1218074",
+					"id": "1218074"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise MRG 2"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151564001",
+										"comment": "kernel-rt is earlier than 1:3.10.0-229.rt56.158.el6rt"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20120496002",
+										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151564003",
+										"comment": "kernel-rt-debug is earlier than 1:3.10.0-229.rt56.158.el6rt"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20120496004",
+										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151564005",
+										"comment": "kernel-rt-debug-devel is earlier than 1:3.10.0-229.rt56.158.el6rt"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20120496006",
+										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151564007",
+										"comment": "kernel-rt-devel is earlier than 1:3.10.0-229.rt56.158.el6rt"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20120496008",
+										"comment": "kernel-rt-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151564009",
+										"comment": "kernel-rt-doc is earlier than 1:3.10.0-229.rt56.158.el6rt"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20120496010",
+										"comment": "kernel-rt-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151564011",
+										"comment": "kernel-rt-firmware is earlier than 1:3.10.0-229.rt56.158.el6rt"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20120496012",
+										"comment": "kernel-rt-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151564013",
+										"comment": "kernel-rt-trace is earlier than 1:3.10.0-229.rt56.158.el6rt"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20120496014",
+										"comment": "kernel-rt-trace is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151564015",
+										"comment": "kernel-rt-trace-devel is earlier than 1:3.10.0-229.rt56.158.el6rt"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20120496016",
+										"comment": "kernel-rt-trace-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151564017",
+										"comment": "kernel-rt-vanilla is earlier than 1:3.10.0-229.rt56.158.el6rt"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20120496018",
+										"comment": "kernel-rt-vanilla is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20151564019",
+										"comment": "kernel-rt-vanilla-devel is earlier than 1:3.10.0-229.rt56.158.el6rt"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20120496020",
+										"comment": "kernel-rt-vanilla-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20120496021",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20120496022",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

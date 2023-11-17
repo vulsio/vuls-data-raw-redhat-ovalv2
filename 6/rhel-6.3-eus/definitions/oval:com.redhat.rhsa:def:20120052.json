@@ -1,259 +1,259 @@
 {
-  "id": "oval:com.redhat.rhsa:def:20120052",
-  "version": "638",
-  "class": "patch",
-  "metadata": {
-    "title": "RHSA-2012:0052: kernel security and bug fix update (Important)",
-    "reference": [
-      {
-        "ref_id": "RHSA-2012:0052",
-        "ref_url": "https://access.redhat.com/errata/RHSA-2012:0052",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2012-0056",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2012-0056",
-        "source": "CVE"
-      }
-    ],
-    "description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\nThis update fixes the following security issue:\n\n* It was found that permissions were not checked properly in the Linux\nkernel when handling the /proc/[pid]/mem writing functionality. A local,\nunprivileged user could use this flaw to escalate their privileges. Refer\nto Red Hat Knowledgebase article DOC-69129, linked to in the References,\nfor further information. (CVE-2012-0056, Important)\n\nRed Hat would like to thank Jüri Aedla for reporting this issue.\n\nThis update fixes the following bugs:\n\n* The RHSA-2011:1849 kernel update introduced a bug in the Linux kernel\nscheduler, causing a \"WARNING: at kernel/sched.c:5915 thread_return\"\nmessage and a call trace to be logged. This message was harmless, and was\nnot due to any system malfunctions or adverse behavior. With this update,\nthe WARN_ON_ONCE() call in the scheduler that caused this harmless message\nhas been removed. (BZ#768288)\n\n* The RHSA-2011:1530 kernel update introduced a regression in the way\nthe Linux kernel maps ELF headers for kernel modules into kernel memory.\nIf a third-party kernel module is compiled on a Red Hat Enterprise Linux\nsystem with a kernel prior to RHSA-2011:1530, then loading that module on\na system with RHSA-2011:1530 kernel would result in corruption of one byte\nin the memory reserved for the module. In some cases, this could prevent\nthe module from functioning correctly. (BZ#769595)\n\n* On some SMP systems the tsc may erroneously be marked as unstable during\nearly system boot or while the system is under heavy load. A \"Clocksource\ntsc unstable\" message was logged when this occurred. As a result the system\nwould switch to the slower access, but higher precision HPET clock.\n\nThe \"tsc=reliable\" kernel parameter is supposed to avoid this problem by\nindicating that the system has a known good clock, however, the parameter\nonly affected run time checks.  A fix has been put in to avoid the boot\ntime checks so that the TSC remains as the clock for the duration of\nsystem runtime. (BZ#755867)\n\nUsers should upgrade to these updated packages, which contain backported\npatches to correct these issues. The system must be rebooted for this\nupdate to take effect.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Important",
-      "updated": {
-        "date": "2012-01-23"
-      },
-      "cve": [
-        {
-          "text": "CVE-2012-0056",
-          "cwe": "CWE-863",
-          "href": "https://access.redhat.com/security/cve/CVE-2012-0056",
-          "impact": "important",
-          "public": "20120118",
-          "cvss2": "7.2/AV:L/AC:L/Au:N/C:C/I:C/A:C"
-        }
-      ],
-      "affected": {},
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/o:redhat:rhel_eus:6.3",
-          "cpe:/o:redhat:rhel_eus:6.3::computenode",
-          "cpe:/o:redhat:rhel_eus:6.3::server"
-        ]
-      },
-      "rights": "Copyright 2012 Red Hat, Inc.",
-      "issued": {
-        "date": "2012-01-23"
-      },
-      "bugzilla": [
-        {
-          "text": "/proc/<pid>/mem mem_write insufficient permission checking",
-          "href": "https://bugzilla.redhat.com/782642",
-          "id": "782642"
-        }
-      ]
-    },
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Enterprise Linux 6"
-      ]
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterions": [
-              {
-                "test_ref": "oval:com.redhat.rhsa:tst:20120052025",
-                "comment": "kernel earlier than 0:2.6.32-220.4.1.el6 is currently running"
-              },
-              {
-                "test_ref": "oval:com.redhat.rhsa:tst:20120052026",
-                "comment": "kernel earlier than 0:2.6.32-220.4.1.el6 is set to boot up on next boot"
-              }
-            ]
-          },
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052001",
-                    "comment": "kernel is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842002",
-                    "comment": "kernel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052003",
-                    "comment": "kernel-bootwrapper is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842004",
-                    "comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052005",
-                    "comment": "kernel-debug is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842006",
-                    "comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052007",
-                    "comment": "kernel-debug-devel is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842008",
-                    "comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052009",
-                    "comment": "kernel-devel is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842010",
-                    "comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052011",
-                    "comment": "kernel-doc is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842012",
-                    "comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052013",
-                    "comment": "kernel-firmware is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842014",
-                    "comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052015",
-                    "comment": "kernel-headers is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842016",
-                    "comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052017",
-                    "comment": "kernel-kdump is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842018",
-                    "comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052019",
-                    "comment": "kernel-kdump-devel is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842020",
-                    "comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052021",
-                    "comment": "perf is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20100842022",
-                    "comment": "perf is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20120052023",
-                    "comment": "python-perf is earlier than 0:2.6.32-220.4.1.el6"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhsa:tst:20111530024",
-                    "comment": "python-perf is signed with Red Hat redhatrelease2 key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.rhba:tst:20111656003",
-            "comment": "Red Hat Enterprise Linux 6 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.rhba:tst:20111656004",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"id": "oval:com.redhat.rhsa:def:20120052",
+	"version": "638",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2012:0052: kernel security and bug fix update (Important)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2012:0052",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2012:0052",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2012-0056",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2012-0056",
+				"source": "CVE"
+			}
+		],
+		"description": "The kernel packages contain the Linux kernel, the core of any Linux\noperating system.\n\nThis update fixes the following security issue:\n\n* It was found that permissions were not checked properly in the Linux\nkernel when handling the /proc/[pid]/mem writing functionality. A local,\nunprivileged user could use this flaw to escalate their privileges. Refer\nto Red Hat Knowledgebase article DOC-69129, linked to in the References,\nfor further information. (CVE-2012-0056, Important)\n\nRed Hat would like to thank Jüri Aedla for reporting this issue.\n\nThis update fixes the following bugs:\n\n* The RHSA-2011:1849 kernel update introduced a bug in the Linux kernel\nscheduler, causing a \"WARNING: at kernel/sched.c:5915 thread_return\"\nmessage and a call trace to be logged. This message was harmless, and was\nnot due to any system malfunctions or adverse behavior. With this update,\nthe WARN_ON_ONCE() call in the scheduler that caused this harmless message\nhas been removed. (BZ#768288)\n\n* The RHSA-2011:1530 kernel update introduced a regression in the way\nthe Linux kernel maps ELF headers for kernel modules into kernel memory.\nIf a third-party kernel module is compiled on a Red Hat Enterprise Linux\nsystem with a kernel prior to RHSA-2011:1530, then loading that module on\na system with RHSA-2011:1530 kernel would result in corruption of one byte\nin the memory reserved for the module. In some cases, this could prevent\nthe module from functioning correctly. (BZ#769595)\n\n* On some SMP systems the tsc may erroneously be marked as unstable during\nearly system boot or while the system is under heavy load. A \"Clocksource\ntsc unstable\" message was logged when this occurred. As a result the system\nwould switch to the slower access, but higher precision HPET clock.\n\nThe \"tsc=reliable\" kernel parameter is supposed to avoid this problem by\nindicating that the system has a known good clock, however, the parameter\nonly affected run time checks.  A fix has been put in to avoid the boot\ntime checks so that the TSC remains as the clock for the duration of\nsystem runtime. (BZ#755867)\n\nUsers should upgrade to these updated packages, which contain backported\npatches to correct these issues. The system must be rebooted for this\nupdate to take effect.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Important",
+			"updated": {
+				"date": "2012-01-23"
+			},
+			"cve": [
+				{
+					"text": "CVE-2012-0056",
+					"cwe": "CWE-863",
+					"href": "https://access.redhat.com/security/cve/CVE-2012-0056",
+					"impact": "important",
+					"public": "20120118",
+					"cvss2": "7.2/AV:L/AC:L/Au:N/C:C/I:C/A:C"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:redhat:rhel_eus:6.3",
+					"cpe:/o:redhat:rhel_eus:6.3::computenode",
+					"cpe:/o:redhat:rhel_eus:6.3::server"
+				]
+			},
+			"rights": "Copyright 2012 Red Hat, Inc.",
+			"issued": {
+				"date": "2012-01-23"
+			},
+			"bugzilla": [
+				{
+					"text": "/proc/<pid>/mem mem_write insufficient permission checking",
+					"href": "https://bugzilla.redhat.com/782642",
+					"id": "782642"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 6"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterions": [
+							{
+								"test_ref": "oval:com.redhat.rhsa:tst:20120052025",
+								"comment": "kernel earlier than 0:2.6.32-220.4.1.el6 is currently running"
+							},
+							{
+								"test_ref": "oval:com.redhat.rhsa:tst:20120052026",
+								"comment": "kernel earlier than 0:2.6.32-220.4.1.el6 is set to boot up on next boot"
+							}
+						]
+					},
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052001",
+										"comment": "kernel is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842002",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052003",
+										"comment": "kernel-bootwrapper is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842004",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052005",
+										"comment": "kernel-debug is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842006",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052007",
+										"comment": "kernel-debug-devel is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842008",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052009",
+										"comment": "kernel-devel is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842010",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052011",
+										"comment": "kernel-doc is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842012",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052013",
+										"comment": "kernel-firmware is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842014",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052015",
+										"comment": "kernel-headers is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842016",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052017",
+										"comment": "kernel-kdump is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842018",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052019",
+										"comment": "kernel-kdump-devel is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842020",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052021",
+										"comment": "perf is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20100842022",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20120052023",
+										"comment": "python-perf is earlier than 0:2.6.32-220.4.1.el6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20111530024",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20111656003",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20111656004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

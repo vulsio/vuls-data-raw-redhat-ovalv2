@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "babel: arbitrary code execution (important)",
+		"title": "babel: arbitrary code execution (moderate)",
 		"reference": [
 			{
 				"ref_id": "CVE-2023-45133",
@@ -14,7 +14,7 @@
 		"description": "DOCUMENTATION: A vulnerability was discovered in the babel package. Using certain plugins with Babel code could lead to arbitrary code execution. This issue could allow a remote attacker to craft code and then trick the user into compiling it. \n            STATEMENT: Red Hat Satellite does not directly use any affected components, but some of the packages it ships with contain them in the form of a dependency. However, the chances of exploitation are low because the build environment for Satellite is restricted, with limited opportunity for injecting untrusted code. Therefore, the impact is reduced to Moderate for Satellite.\n\nThe Babel project with this security vulnerability is some Javascript compiler but the babel component in Red Hat Enterprise Linux contains a collection of tools written in Python for internalization of Python applications and contains no JS/TS files. So RHEL is not affected by this vulnerability.\n            MITIGATION: Mitigation for this issue is either not available or the currently available options do not meet the Red Hat Product Security criteria comprising ease of use and deployment, applicability to widespread installation base or stability.",
 		"advisory": {
 			"from": "secalert@redhat.com",
-			"severity": "Important",
+			"severity": "Moderate",
 			"updated": {
 				"date": "2023-12-12"
 			},
@@ -24,16 +24,19 @@
 					"cvss3": "8.8/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
 					"cwe": "CWE-184",
 					"href": "https://access.redhat.com/security/cve/CVE-2023-45133",
-					"impact": "important",
+					"impact": "moderate",
 					"public": "20231011"
 				}
 			],
 			"affected": {
 				"resolution": [
 					{
-						"state": "Under investigation",
+						"state": "Affected",
 						"component": [
-							"tfm-rubygem-rabl"
+							"nodejs-babel-core",
+							"nodejs-babel-plugin-transform-class-properties",
+							"nodejs-babel-register",
+							"nodejs-theforeman-builder"
 						]
 					}
 				]
@@ -55,18 +58,69 @@
 		"criterias": [
 			{
 				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202225883001",
+										"comment": "nodejs-theforeman-builder is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202225883002",
+										"comment": "nodejs-theforeman-builder is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202345133003",
+										"comment": "nodejs-babel-plugin-transform-class-properties is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202345133004",
+										"comment": "nodejs-babel-plugin-transform-class-properties is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202225883011",
+										"comment": "nodejs-babel-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202225883012",
+										"comment": "nodejs-babel-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202345133007",
+										"comment": "nodejs-babel-register is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202345133008",
+										"comment": "nodejs-babel-register is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
 				"criterions": [
 					{
 						"test_ref": "oval:com.redhat.cve:tst:20134120009",
 						"comment": "Red Hat Enterprise Linux 7 is installed"
-					},
-					{
-						"test_ref": "oval:com.redhat.cve:tst:20213807001",
-						"comment": "tfm-rubygem-rabl is installed"
-					},
-					{
-						"test_ref": "oval:com.redhat.cve:tst:20213807002",
-						"comment": "tfm-rubygem-rabl is signed with Red Hat redhatrelease2 key"
 					}
 				]
 			}

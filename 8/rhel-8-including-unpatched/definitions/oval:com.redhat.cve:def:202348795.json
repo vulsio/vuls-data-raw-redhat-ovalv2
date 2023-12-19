@@ -1,0 +1,553 @@
+{
+	"id": "oval:com.redhat.cve:def:202348795",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "ssh: Prefix truncation attack on Binary Packet Protocol (BPP) (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2023-48795",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2023-48795",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: A flaw was found in the SSH channel integrity. By manipulating sequence numbers during the handshake, an attacker can remove the initial messages on the secure channel without causing a MAC failure. For example, an attacker could disable the ping extension and thus disable the new countermeasure in OpenSSH 9.5 against keystroke timing attacks. \n            STATEMENT: This CVE is classified as moderate because the attack requires an active Man-in-the-Middle (MITM) who can intercept and modify the connection's traffic at the TCP/IP layer.\n\nAlthough the attack is cryptographically innovative, its security impact is fortunately quite limited. It only allows the deletion of consecutive messages, and deleting most messages at this protocol stage prevents user authentication from proceeding, leading to a stalled connection.\n\nThe most significant identified impact is that it enables a MITM to delete the SSH2_MSG_EXT_INFO message sent before authentication begins. This allows the attacker to disable a subset of keystroke timing obfuscation features. However, there is no other observable impact on session secrecy or session integrity.\n            MITIGATION: As an alternate less invasive countermeasure, the affected cipher modes chacha20-poly1305 and any encrypt-then-mac variants (generic EtM) may be (temporarily) disabled. Some cipher modes, in particular AES-GCM, are not affected and can still be used without changes.\n\n\nYou can disable the following ciphers and HMACs as a workaround  on RHEL-8 and RHEL-9:\n1. chacha20-poly1305@openssh.com\n2. hmac-sha2-512-etm@openssh.com\n3. hmac-sha2-256-etm@openssh.com\n4. hmac-sha1-etm@openssh.com\n5. hmac-md5-etm@openssh.com\n\nTo do that through crypto-policies, one can apply a subpolicy with the following content:\n```\ncipher@SSH = -CHACHA20-POLY1305\nssh_etm = 0\n```\ne.g., by putting these lines into `/etc/crypto-policies/policies/modules/CVE-2023-48795.pmod`, applying the resulting subpolicy with `update-crypto-policies --set $(update-crypto-policies --show):CVE-2023-48795` and restarting openssh server.\n\nOne can verify that the changes are in effect by ensuring the ciphers listed above are missing from both `/etc/crypto-policies/back-ends/openssh.config` and `/etc/crypto-policies/back-ends/opensshserver.config`.\n\nFor more details on using crypto-policies, please refer to https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/using-the-system-wide-cryptographic-policies_security-hardening\n\nNote that this procedure does limit the interoperability of the host and is only suggested as a temporary mitigation until the issue is fully resolved with an update.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2023-12-18"
+			},
+			"cve": [
+				{
+					"text": "CVE-2023-48795",
+					"cvss3": "5.9/CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N",
+					"cwe": "CWE-222",
+					"href": "https://access.redhat.com/security/cve/CVE-2023-48795",
+					"impact": "moderate",
+					"public": "20231218"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Affected",
+						"component": [
+							"container-tools:4.0/buildah",
+							"container-tools:4.0/buildah-tests",
+							"container-tools:4.0/podman",
+							"container-tools:4.0/podman-catatonit",
+							"container-tools:4.0/podman-docker",
+							"container-tools:4.0/podman-gvproxy",
+							"container-tools:4.0/podman-manpages",
+							"container-tools:4.0/podman-plugins",
+							"container-tools:4.0/podman-remote",
+							"container-tools:4.0/podman-tests",
+							"container-tools:rhel8/buildah",
+							"container-tools:rhel8/buildah-tests",
+							"container-tools:rhel8/podman",
+							"container-tools:rhel8/podman-catatonit",
+							"container-tools:rhel8/podman-docker",
+							"container-tools:rhel8/podman-gvproxy",
+							"container-tools:rhel8/podman-manpages",
+							"container-tools:rhel8/podman-plugins",
+							"container-tools:rhel8/podman-remote",
+							"container-tools:rhel8/podman-tests",
+							"libssh",
+							"libssh-config",
+							"libssh-devel",
+							"openssh",
+							"openssh-askpass",
+							"openssh-cavs",
+							"openssh-clients",
+							"openssh-keycat",
+							"openssh-ldap",
+							"openssh-server",
+							"pam_ssh_agent_auth"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:enterprise_linux:8",
+					"cpe:/a:redhat:enterprise_linux:8::appstream",
+					"cpe:/a:redhat:enterprise_linux:8::crb",
+					"cpe:/a:redhat:enterprise_linux:8::highavailability",
+					"cpe:/a:redhat:enterprise_linux:8::nfv",
+					"cpe:/a:redhat:enterprise_linux:8::realtime",
+					"cpe:/a:redhat:enterprise_linux:8::resilientstorage",
+					"cpe:/a:redhat:enterprise_linux:8::sap",
+					"cpe:/a:redhat:enterprise_linux:8::sap_hana",
+					"cpe:/a:redhat:enterprise_linux:8::supplementary",
+					"cpe:/o:redhat:enterprise_linux:8",
+					"cpe:/o:redhat:enterprise_linux:8::baseos"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012011",
+										"comment": "openssh-server is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012012",
+										"comment": "openssh-server is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202348795003",
+										"comment": "libssh is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202348795004",
+										"comment": "libssh is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012005",
+										"comment": "openssh-cavs is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012006",
+										"comment": "openssh-cavs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012007",
+										"comment": "openssh-clients is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012008",
+										"comment": "openssh-clients is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202348795009",
+										"comment": "libssh-config is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202348795010",
+										"comment": "libssh-config is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012015",
+										"comment": "openssh-askpass is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012016",
+										"comment": "openssh-askpass is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012001",
+										"comment": "openssh-keycat is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012002",
+										"comment": "openssh-keycat is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012003",
+										"comment": "openssh-ldap is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012004",
+										"comment": "openssh-ldap is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012017",
+										"comment": "openssh is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012018",
+										"comment": "openssh is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202348795019",
+										"comment": "libssh-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202348795020",
+										"comment": "libssh-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012009",
+										"comment": "pam_ssh_agent_auth is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201620012010",
+										"comment": "pam_ssh_agent_auth is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040007",
+														"comment": "buildah is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040008",
+														"comment": "buildah is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040009",
+														"comment": "buildah-tests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040010",
+														"comment": "buildah-tests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067003",
+														"comment": "podman is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067004",
+														"comment": "podman is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067009",
+														"comment": "podman-plugins is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067010",
+														"comment": "podman-plugins is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067011",
+														"comment": "podman-catatonit is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067012",
+														"comment": "podman-catatonit is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067005",
+														"comment": "podman-docker is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067006",
+														"comment": "podman-docker is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067007",
+														"comment": "podman-gvproxy is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067008",
+														"comment": "podman-gvproxy is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067015",
+														"comment": "podman-tests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067016",
+														"comment": "podman-tests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067013",
+														"comment": "podman-remote is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067014",
+														"comment": "podman-remote is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067001",
+														"comment": "podman-manpages is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067002",
+														"comment": "podman-manpages is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201814041040",
+										"comment": "Module container-tools:rhel8 is enabled"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067003",
+														"comment": "podman is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067004",
+														"comment": "podman is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067009",
+														"comment": "podman-plugins is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067010",
+														"comment": "podman-plugins is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067011",
+														"comment": "podman-catatonit is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067012",
+														"comment": "podman-catatonit is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067005",
+														"comment": "podman-docker is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067006",
+														"comment": "podman-docker is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067007",
+														"comment": "podman-gvproxy is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067008",
+														"comment": "podman-gvproxy is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067015",
+														"comment": "podman-tests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067016",
+														"comment": "podman-tests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067013",
+														"comment": "podman-remote is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067014",
+														"comment": "podman-remote is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067001",
+														"comment": "podman-manpages is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067002",
+														"comment": "podman-manpages is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040007",
+														"comment": "buildah is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040008",
+														"comment": "buildah is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040009",
+														"comment": "buildah-tests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040010",
+														"comment": "buildah-tests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202138561025",
+										"comment": "Module container-tools:4.0 is enabled"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20052541003",
+						"comment": "Red Hat Enterprise Linux 8 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20052541004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

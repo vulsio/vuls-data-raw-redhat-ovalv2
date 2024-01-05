@@ -11,7 +11,7 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: A flaw was found in the SSH channel integrity. By manipulating sequence numbers during the handshake, an attacker can remove the initial messages on the secure channel without causing a MAC failure. For example, an attacker could disable the ping extension and thus disable the new countermeasure in OpenSSH 9.5 against keystroke timing attacks. \n            STATEMENT: This CVE is classified as moderate because the attack requires an active Man-in-the-Middle (MITM) who can intercept and modify the connection's traffic at the TCP/IP layer.\n\nAlthough the attack is cryptographically innovative, its security impact is fortunately quite limited. It only allows the deletion of consecutive messages, and deleting most messages at this protocol stage prevents user authentication from proceeding, leading to a stalled connection.\n\nThe most significant identified impact is that it enables a MITM to delete the SSH2_MSG_EXT_INFO message sent before authentication begins. This allows the attacker to disable a subset of keystroke timing obfuscation features. However, there is no other observable impact on session secrecy or session integrity.\n            MITIGATION: As an alternate less invasive countermeasure, the affected cipher modes chacha20-poly1305 and any encrypt-then-mac variants (generic EtM) may be (temporarily) disabled. Some cipher modes, in particular AES-GCM, are not affected and can still be used without changes.\n\n\nYou can disable the following ciphers and HMACs as a workaround  on RHEL-8 and RHEL-9:\n1. chacha20-poly1305@openssh.com\n2. hmac-sha2-512-etm@openssh.com\n3. hmac-sha2-256-etm@openssh.com\n4. hmac-sha1-etm@openssh.com\n5. hmac-md5-etm@openssh.com\n\nTo do that through crypto-policies, one can apply a subpolicy with the following content:\n```\ncipher@SSH = -CHACHA20-POLY1305\nssh_etm = 0\n```\ne.g., by putting these lines into `/etc/crypto-policies/policies/modules/CVE-2023-48795.pmod`, applying the resulting subpolicy with `update-crypto-policies --set $(update-crypto-policies --show):CVE-2023-48795` and restarting openssh server.\n\nOne can verify that the changes are in effect by ensuring the ciphers listed above are missing from both `/etc/crypto-policies/back-ends/openssh.config` and `/etc/crypto-policies/back-ends/opensshserver.config`.\n\nFor more details on using crypto-policies, please refer to https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/using-the-system-wide-cryptographic-policies_security-hardening\n\nNote that this procedure does limit the interoperability of the host and is only suggested as a temporary mitigation until the issue is fully resolved with an update.",
+		"description": "DOCUMENTATION: A flaw was found in the SSH channel integrity. By manipulating sequence numbers during the handshake, an attacker can remove the initial messages on the secure channel without causing a MAC failure. For example, an attacker could disable the ping extension and thus disable the new countermeasure in OpenSSH 9.5 against keystroke timing attacks. \n            STATEMENT: This CVE is classified as moderate because the attack requires an active Man-in-the-Middle (MITM) who can intercept and modify the connection's traffic at the TCP/IP layer.\n\nAlthough the attack is cryptographically innovative, its security impact is fortunately quite limited. It only allows the deletion of consecutive messages, and deleting most messages at this protocol stage prevents user authentication from proceeding, leading to a stalled connection.\n\nThe most significant identified impact is that it enables a MITM to delete the SSH2_MSG_EXT_INFO message sent before authentication begins. This allows the attacker to disable a subset of keystroke timing obfuscation features. However, there is no other observable impact on session secrecy or session integrity.\n            MITIGATION: As an alternate less invasive countermeasure, the affected cipher modes chacha20-poly1305 and any encrypt-then-mac variants (generic EtM) may be (temporarily) disabled. Some cipher modes, in particular AES-GCM, are not affected and can still be used without changes.\n\n\nYou can disable the following ciphers and HMACs as a workaround  on RHEL-8 and RHEL-9:\n1. chacha20-poly1305@openssh.com\n2. hmac-sha2-512-etm@openssh.com\n3. hmac-sha2-256-etm@openssh.com\n4. hmac-sha1-etm@openssh.com\n5. hmac-md5-etm@openssh.com\n\nTo do that through crypto-policies, one can apply a subpolicy with the following content:\n```\ncipher@SSH = -CHACHA20-POLY1305\nssh_etm = 0\n```\ne.g., by putting these lines into `/etc/crypto-policies/policies/modules/CVE-2023-48795.pmod`, applying the resulting subpolicy with `update-crypto-policies --set $(update-crypto-policies --show):CVE-2023-48795` and restarting openssh server.\n\nOne can verify that the changes are in effect by ensuring the ciphers listed above are missing from both `/etc/crypto-policies/back-ends/openssh.config` and `/etc/crypto-policies/back-ends/opensshserver.config`.\n\nFor more details on using crypto-policies, please refer to https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/using-the-system-wide-cryptographic-policies_security-hardening\n\nNote that this procedure does limit the interoperability of the host and is only suggested as a temporary mitigation until the issue is fully resolved with an update.\n\nFor RHEL-7: \nWe can recommend to use strict MACs and Ciphers on RHEL7 in both files /etc/ssh/ssh_config and /etc/ssh/sshd_config.\n\nBelow strict set of Ciphers and MACs can be used as mitigation for RHEL 7.\n\n```\nCiphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com\nMACs umac-64@openssh.com,umac-128@openssh.com,hmac-sha2-256,hmac-sha2-512\n```\n\nOR\n\nRemove the chacha cipher and etm macs from both config options which are currently configured.\n```\nssh -Q cipher\nssh -Q mac\nsshd -T | grep -e '^ciphers ' -e '^macs '\n```",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
@@ -89,181 +89,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026001",
-										"comment": "erlang-inets is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026002",
-										"comment": "erlang-inets is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026019",
-										"comment": "erlang-syntax_tools is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026020",
-										"comment": "erlang-syntax_tools is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026027",
-										"comment": "erlang-mnesia is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026028",
-										"comment": "erlang-mnesia is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026003",
-										"comment": "erlang-tools is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026004",
-										"comment": "erlang-tools is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026007",
-										"comment": "erlang-otp_mibs is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026008",
-										"comment": "erlang-otp_mibs is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026035",
-										"comment": "erlang-ssl is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026036",
-										"comment": "erlang-ssl is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:202237026037",
 										"comment": "erlang-sasl is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:202237026038",
 										"comment": "erlang-sasl is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026015",
-										"comment": "erlang-public_key is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026016",
-										"comment": "erlang-public_key is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026021",
-										"comment": "erlang-parsetools is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026022",
-										"comment": "erlang-parsetools is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202348795019",
-										"comment": "python3-paramiko is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202348795020",
-										"comment": "python3-paramiko is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026023",
-										"comment": "erlang-snmp is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026024",
-										"comment": "erlang-snmp is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026013",
-										"comment": "erlang-asn1 is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026014",
-										"comment": "erlang-asn1 is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026025",
-										"comment": "erlang-erts is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026026",
-										"comment": "erlang-erts is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026033",
-										"comment": "erlang-stdlib is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026034",
-										"comment": "erlang-stdlib is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -297,64 +128,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:202348795033",
-										"comment": "python-paramiko is installed"
+										"test_ref": "oval:com.redhat.cve:tst:202237026021",
+										"comment": "erlang-parsetools is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:202348795034",
-										"comment": "python-paramiko is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026029",
-										"comment": "erlang-os_mon is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026030",
-										"comment": "erlang-os_mon is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026031",
-										"comment": "erlang-eldap is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026032",
-										"comment": "erlang-eldap is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026041",
-										"comment": "erlang-runtime_tools is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026042",
-										"comment": "erlang-runtime_tools is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026039",
-										"comment": "erlang-xmerl is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202237026040",
-										"comment": "erlang-xmerl is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:202237026022",
+										"comment": "erlang-parsetools is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -375,6 +154,32 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026029",
+										"comment": "erlang-os_mon is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026030",
+										"comment": "erlang-os_mon is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026015",
+										"comment": "erlang-public_key is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026016",
+										"comment": "erlang-public_key is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:202237026011",
 										"comment": "erlang-crypto is installed"
 									},
@@ -388,12 +193,207 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026001",
+										"comment": "erlang-inets is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026002",
+										"comment": "erlang-inets is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026003",
+										"comment": "erlang-tools is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026004",
+										"comment": "erlang-tools is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026013",
+										"comment": "erlang-asn1 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026014",
+										"comment": "erlang-asn1 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202348795023",
+										"comment": "python3-paramiko is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202348795024",
+										"comment": "python3-paramiko is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026041",
+										"comment": "erlang-runtime_tools is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026042",
+										"comment": "erlang-runtime_tools is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026035",
+										"comment": "erlang-ssl is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026036",
+										"comment": "erlang-ssl is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026033",
+										"comment": "erlang-stdlib is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026034",
+										"comment": "erlang-stdlib is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026025",
+										"comment": "erlang-erts is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026026",
+										"comment": "erlang-erts is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:202237026005",
 										"comment": "erlang-kernel is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:202237026006",
 										"comment": "erlang-kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026031",
+										"comment": "erlang-eldap is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026032",
+										"comment": "erlang-eldap is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026007",
+										"comment": "erlang-otp_mibs is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026008",
+										"comment": "erlang-otp_mibs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202348795039",
+										"comment": "python-paramiko is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202348795040",
+										"comment": "python-paramiko is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026019",
+										"comment": "erlang-syntax_tools is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026020",
+										"comment": "erlang-syntax_tools is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026039",
+										"comment": "erlang-xmerl is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026040",
+										"comment": "erlang-xmerl is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026027",
+										"comment": "erlang-mnesia is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026028",
+										"comment": "erlang-mnesia is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026023",
+										"comment": "erlang-snmp is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202237026024",
+										"comment": "erlang-snmp is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

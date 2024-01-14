@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "Rootless runc makes `/sys/fs/cgroup` writable (low)",
+		"title": "runc: Rootless runc makes `/sys/fs/cgroup` writable (moderate)",
 		"reference": [
 			{
 				"ref_id": "CVE-2023-25809",
@@ -11,20 +11,20 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: runc is a CLI tool for spawning and running containers according to the OCI specification. In affected versions it was found that rootless runc makes `/sys/fs/cgroup` writable in following conditons: 1. when runc is executed inside the user namespace, and the `config.json` does not specify the cgroup namespace to be unshared (e.g.., `(docker|podman|nerdctl) run --cgroupns=host`, with Rootless Docker/Podman/nerdctl) or 2. when runc is executed outside the user namespace, and `/sys` is mounted with `rbind, ro` (e.g., `runc spec --rootless`; this condition is very rare). A container may gain the write access to user-owned cgroup hierarchy `/sys/fs/cgroup/user.slice/...` on the host . Other users's cgroup hierarchies are not affected. Users are advised to upgrade to version 1.1.5. Users unable to upgrade may unshare the cgroup namespace (`(docker|podman|nerdctl) run --cgroupns=private)`. This is the default behavior of Docker/Podman/nerdctl on cgroup v2 hosts. or add `/sys/fs/cgroup` to `maskedPaths`.",
+		"description": "DOCUMENTATION: A flaw was found in runc, where it is vulnerable to a denial of service caused by improper access control in the /sys/fs/cgroup endpoint. This flaw allows a local authenticated attacker to cause a denial of service. \n            \n            MITIGATION: Condition 1: Unshare the cgroup namespace ((docker|podman|nerdctl) run --cgroupns=private). This is the default behavior of Docker/Podman/nerdctl on cgroup v2 hosts.\nCondition 2 (very rare): add /sys/fs/cgroup to maskedPaths",
 		"advisory": {
 			"from": "secalert@redhat.com",
-			"severity": "Low",
+			"severity": "Moderate",
 			"updated": {
-				"date": "2023-07-07"
+				"date": "2023-11-14"
 			},
 			"cve": [
 				{
 					"text": "CVE-2023-25809",
-					"cvss3": "2.5/CVSS:3.1/AV:L/AC:H/PR:H/UI:N/S:C/C:N/I:N/A:L",
+					"cvss3": "6.3/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:L/I:L/A:L",
 					"cwe": "CWE-276",
 					"href": "https://access.redhat.com/security/cve/CVE-2023-25809",
-					"impact": "low",
+					"impact": "moderate",
 					"public": "20230329"
 				}
 			],
@@ -34,26 +34,21 @@
 						"state": "Affected",
 						"component": [
 							"openshift",
-							"openshift-hyperkube",
 							"runc"
 						]
 					},
 					{
 						"state": "Will not fix",
 						"component": [
-							"microshift",
-							"microshift-greenboot",
-							"microshift-networking",
-							"microshift-release-info",
-							"microshift-selinux"
+							"microshift"
 						]
 					}
 				]
 			},
 			"affected_cpe_list": {
 				"cpe": [
-					"cpe:/a:redhat:openshift:4.13",
-					"cpe:/a:redhat:openshift:4.13::el9"
+					"cpe:/a:redhat:openshift:4.16",
+					"cpe:/a:redhat:openshift:4.16::el9"
 				]
 			},
 			"issued": {}
@@ -73,50 +68,11 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20223294001",
-										"comment": "microshift-greenboot is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20223294002",
-										"comment": "microshift-greenboot is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20223294003",
-										"comment": "microshift-release-info is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20223294004",
-										"comment": "microshift-release-info is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20223294005",
-										"comment": "microshift-networking is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20223294006",
-										"comment": "microshift-networking is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20223294007",
+										"test_ref": "oval:com.redhat.cve:tst:20221962003",
 										"comment": "microshift is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20223294008",
+										"test_ref": "oval:com.redhat.cve:tst:20221962004",
 										"comment": "microshift is signed with Red Hat redhatrelease2 key"
 									}
 								]
@@ -125,12 +81,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20223294009",
-										"comment": "microshift-selinux is installed"
+										"test_ref": "oval:com.redhat.cve:tst:202325809003",
+										"comment": "runc is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20223294010",
-										"comment": "microshift-selinux is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:202325809004",
+										"comment": "runc is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -144,32 +100,6 @@
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20181002101002",
 										"comment": "openshift is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20208562003",
-										"comment": "openshift-hyperkube is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20208562004",
-										"comment": "openshift-hyperkube is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202325809015",
-										"comment": "runc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202325809016",
-										"comment": "runc is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

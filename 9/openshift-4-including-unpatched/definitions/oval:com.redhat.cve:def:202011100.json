@@ -1,0 +1,79 @@
+{
+	"id": "oval:com.redhat.cve:def:202011100",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "CVE-2020-11100 haproxy: malformed HTTP/2 requests can lead to out-of-bounds writes (low)",
+		"reference": [
+			{
+				"ref_id": "CVE-2020-11100",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2020-11100",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: A flaw was found in the way HAProxy processed certain HTTP/2 request packets. This flaw allows an attacker to send crafted HTTP/2 request packets, which cause memory corruption, leading to a crash or potential remote arbitrary code execution with the permissions of the user running HAProxy. \n            STATEMENT: HAProxy packages shipped with Red Hat Enterprise Linux 6 and 7 do not contain support for HTTP/2; therefore, they are not affected by this flaw.\n\nOpenShift Container Platform versions through 4.3 contain the vulnerable code; exploitation requires setting ROUTER_USE_HTTP2 in the OpenShift Ingress Operator, which is not currently possible. The impact of this vulnerability is therefore reduced in OCP 4.x, prior to version 4.4, to low.\n\nOpenShift Container Platform 3.11 added a configuration option to ose-haproxy-router that made enabling HTTP/2 support easy. However, it is not enabled by default on that version.\n            MITIGATION: This issue can be mitigated by not enabling support for HTTP/2 protocol. Upstream suggests that HTTP/2 can be enabled per front-end server by using the following documentation: https://www.haproxy.com/documentation/hapee/1-8r1/traffic-management/enable-http2-protocol/.\n\nYou can check if http2 is enabled by searching your haproxy configuration files for a line containing 'h2'.\n\nTo mitigate this vulnerability in OpenShift Container Platform 3.11, keep HTTP/2 disabled as it is by default. You can verify if HTTP/2 support is enabled or not by following the instructions in following article: https://access.redhat.com/security/vulnerabilities/haproxy\n\nOn Red Hat Enterprise Linux 8, haproxy is confined by SELinux, which should mitigate remote arbitrary code execution.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Low",
+			"updated": {
+				"date": "2021-02-16"
+			},
+			"cve": [
+				{
+					"text": "CVE-2020-11100",
+					"cvss3": "8.8/CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+					"cwe": "CWE-20->CWE-787",
+					"href": "https://access.redhat.com/security/cve/CVE-2020-11100",
+					"impact": "low",
+					"public": "20200402:1300"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Affected",
+						"component": [
+							"haproxy"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:openshift:4.12",
+					"cpe:/a:redhat:openshift:4.12::el9"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20143577003",
+						"comment": "Red Hat Enterprise Linux 9 is installed"
+					},
+					{
+						"test_ref": "oval:com.redhat.cve:tst:201918277001",
+						"comment": "haproxy is installed"
+					},
+					{
+						"test_ref": "oval:com.redhat.cve:tst:201918277002",
+						"comment": "haproxy is signed with Red Hat redhatrelease2 key"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20143577004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

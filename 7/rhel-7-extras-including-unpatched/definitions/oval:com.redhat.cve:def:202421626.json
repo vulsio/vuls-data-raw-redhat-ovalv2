@@ -1,0 +1,272 @@
+{
+	"id": "oval:com.redhat.cve:def:202421626",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "runc: file descriptor leak (important)",
+		"reference": [
+			{
+				"ref_id": "CVE-2024-21626",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-21626",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: A file descriptor leak issue was found in the runc package. While a user performs `O_CLOEXEC` all file descriptors before executing the container code, the file descriptor is open when performing `setcwd(2)`, which means that the reference can be kept alive in the container by configuring the working directory to be a path resolved through the file descriptor. The non-dumpable bit is unset after `execve`, meaning there are multiple ways to attack this other than bad configurations. The only way to defend against it entirely is to close all unneeded file descriptors. \n            STATEMENT: These vulnerabilities not only enable malicious actors to escape containerized environments but also allow for full control over the underlying host system. With the widespread adoption of containerization technologies in both development and production environments, such exploits pose significant risks to data integrity, confidentiality, and system stability.\n\nOpenShift Container Platform ships with SELinux in targeted enforcing mode, which prevents the container processes from accessing host content and mitigates this attack, and disabling SELinux on the Openshift container platform is not supported. Hence, the impact of the Openshift Container Platform is reduced to Moderate.\n            MITIGATION: Red Hat Enterprise Linux (RHEL) and OpenShift ships with SELinux in targeted enforcing mode, which prevents the container processes from accessing host content and mitigates this attack. Dockerfiles can be inspected on the 'RUN' and 'WORKDIR' directives to ensure that there are no escapes or malicious paths, which are an indication of compromise. Limiting access and only using trusted container images can help prevent unauthorized access and malicious attacks.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Important",
+			"updated": {
+				"date": "2024-02-28"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-21626",
+					"cvss3": "8.6/CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+					"cwe": "CWE-200",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-21626",
+					"impact": "important",
+					"public": "20240131:2001"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Affected",
+						"component": [
+							"atomic",
+							"container-selinux",
+							"docker",
+							"docker-client",
+							"docker-common",
+							"docker-forward-journald",
+							"docker-logrotate",
+							"docker-lvm-plugin",
+							"docker-novolume-plugin",
+							"docker-python",
+							"docker-rhel-push-plugin",
+							"docker-selinux",
+							"docker-v1.10-migrator",
+							"python-websocket-client"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras_other:7"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047027",
+										"comment": "docker-forward-journald is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047028",
+										"comment": "docker-forward-journald is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047015",
+										"comment": "python-websocket-client is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047016",
+										"comment": "python-websocket-client is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047001",
+										"comment": "docker-v1.10-migrator is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047002",
+										"comment": "docker-v1.10-migrator is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047007",
+										"comment": "docker-rhel-push-plugin is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047008",
+										"comment": "docker-rhel-push-plugin is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047017",
+										"comment": "docker is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047018",
+										"comment": "docker is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047021",
+										"comment": "docker-selinux is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047022",
+										"comment": "docker-selinux is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047009",
+										"comment": "atomic is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047010",
+										"comment": "atomic is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047025",
+										"comment": "docker-client is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047026",
+										"comment": "docker-client is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047023",
+										"comment": "docker-common is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047024",
+										"comment": "docker-common is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047013",
+										"comment": "docker-lvm-plugin is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047014",
+										"comment": "docker-lvm-plugin is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047003",
+										"comment": "container-selinux is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047004",
+										"comment": "container-selinux is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047019",
+										"comment": "docker-novolume-plugin is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047020",
+										"comment": "docker-novolume-plugin is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047005",
+										"comment": "docker-python is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047006",
+										"comment": "docker-python is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047011",
+										"comment": "docker-logrotate is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20140047012",
+										"comment": "docker-logrotate is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20140047029",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20140047030",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

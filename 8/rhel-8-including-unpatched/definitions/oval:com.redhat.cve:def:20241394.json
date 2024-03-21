@@ -1,0 +1,961 @@
+{
+	"id": "oval:com.redhat.cve:def:20241394",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "golang-fips/openssl: Memory leaks in code encrypting and decrypting RSA payloads (important)",
+		"reference": [
+			{
+				"ref_id": "CVE-2024-1394",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-1394",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: A memory leak flaw was found in Golang in the RSA encrypting/decrypting code, which might lead to a resource exhaustion vulnerability using attacker-controlled inputs​. The memory leak happens in github.com/golang-fips/openssl/openssl/rsa.go#L113. The objects leaked are pkey​ and ctx​. That function uses named return parameters to free pkey​ and ctx​ if there is an error initializing the context or setting the different properties. All return statements related to error cases follow the \"return nil, nil, fail(...)\" pattern, meaning that pkey​ and ctx​ will be nil inside the deferred function that should free them.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Important",
+			"updated": {
+				"date": "2024-03-20"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-1394",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+					"cwe": "CWE-401",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-1394",
+					"impact": "important",
+					"public": "20240320"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Under investigation",
+						"component": [
+							"container-tools:4.0/buildah",
+							"container-tools:4.0/buildah-tests",
+							"container-tools:4.0/conmon",
+							"container-tools:4.0/containernetworking-plugins",
+							"container-tools:4.0/containers-common",
+							"container-tools:4.0/podman",
+							"container-tools:4.0/podman-catatonit",
+							"container-tools:4.0/podman-docker",
+							"container-tools:4.0/podman-gvproxy",
+							"container-tools:4.0/podman-manpages",
+							"container-tools:4.0/podman-plugins",
+							"container-tools:4.0/podman-remote",
+							"container-tools:4.0/podman-tests",
+							"container-tools:4.0/runc",
+							"container-tools:4.0/skopeo",
+							"container-tools:4.0/skopeo-tests",
+							"container-tools:rhel8/buildah",
+							"container-tools:rhel8/buildah-tests",
+							"container-tools:rhel8/conmon",
+							"container-tools:rhel8/containernetworking-plugins",
+							"container-tools:rhel8/containers-common",
+							"container-tools:rhel8/podman",
+							"container-tools:rhel8/podman-catatonit",
+							"container-tools:rhel8/podman-docker",
+							"container-tools:rhel8/podman-gvproxy",
+							"container-tools:rhel8/podman-manpages",
+							"container-tools:rhel8/podman-plugins",
+							"container-tools:rhel8/podman-remote",
+							"container-tools:rhel8/podman-tests",
+							"container-tools:rhel8/runc",
+							"container-tools:rhel8/skopeo",
+							"container-tools:rhel8/skopeo-tests",
+							"go-toolset:rhel8/golang",
+							"go-toolset:rhel8/golang-bin",
+							"go-toolset:rhel8/golang-docs",
+							"go-toolset:rhel8/golang-misc",
+							"go-toolset:rhel8/golang-race",
+							"go-toolset:rhel8/golang-src",
+							"go-toolset:rhel8/golang-tests",
+							"grafana",
+							"grafana-azure-monitor",
+							"grafana-cloudwatch",
+							"grafana-elasticsearch",
+							"grafana-graphite",
+							"grafana-influxdb",
+							"grafana-loki",
+							"grafana-mssql",
+							"grafana-mysql",
+							"grafana-opentsdb",
+							"grafana-pcp",
+							"grafana-postgres",
+							"grafana-prometheus",
+							"grafana-stackdriver",
+							"osbuild-composer",
+							"osbuild-composer-core",
+							"osbuild-composer-dnf-json",
+							"osbuild-composer-worker",
+							"rhc",
+							"weldr-client"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:enterprise_linux:8",
+					"cpe:/a:redhat:enterprise_linux:8::appstream",
+					"cpe:/a:redhat:enterprise_linux:8::crb",
+					"cpe:/a:redhat:enterprise_linux:8::highavailability",
+					"cpe:/a:redhat:enterprise_linux:8::nfv",
+					"cpe:/a:redhat:enterprise_linux:8::realtime",
+					"cpe:/a:redhat:enterprise_linux:8::resilientstorage",
+					"cpe:/a:redhat:enterprise_linux:8::sap",
+					"cpe:/a:redhat:enterprise_linux:8::sap_hana",
+					"cpe:/a:redhat:enterprise_linux:8::supplementary",
+					"cpe:/o:redhat:enterprise_linux:8",
+					"cpe:/o:redhat:enterprise_linux:8::baseos"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362017",
+										"comment": "grafana-opentsdb is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362018",
+										"comment": "grafana-opentsdb is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362015",
+										"comment": "grafana-loki is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362016",
+										"comment": "grafana-loki is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362019",
+										"comment": "grafana-prometheus is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362020",
+										"comment": "grafana-prometheus is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202138561003",
+										"comment": "osbuild-composer-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202138561004",
+										"comment": "osbuild-composer-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202123362001",
+										"comment": "grafana-pcp is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202123362002",
+										"comment": "grafana-pcp is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362001",
+										"comment": "grafana-elasticsearch is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362002",
+										"comment": "grafana-elasticsearch is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362023",
+										"comment": "grafana is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362024",
+										"comment": "grafana is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202138561007",
+										"comment": "osbuild-composer is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202138561008",
+										"comment": "osbuild-composer is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362007",
+										"comment": "grafana-mysql is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362008",
+										"comment": "grafana-mysql is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362025",
+										"comment": "grafana-stackdriver is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362026",
+										"comment": "grafana-stackdriver is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20223064001",
+										"comment": "rhc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20223064002",
+										"comment": "rhc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362013",
+										"comment": "grafana-postgres is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362014",
+										"comment": "grafana-postgres is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362011",
+										"comment": "grafana-graphite is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362012",
+										"comment": "grafana-graphite is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20221705009",
+										"comment": "weldr-client is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20221705010",
+										"comment": "weldr-client is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362009",
+										"comment": "grafana-azure-monitor is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362010",
+										"comment": "grafana-azure-monitor is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362005",
+										"comment": "grafana-influxdb is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362006",
+										"comment": "grafana-influxdb is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202138561001",
+										"comment": "osbuild-composer-dnf-json is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202138561002",
+										"comment": "osbuild-composer-dnf-json is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362021",
+										"comment": "grafana-cloudwatch is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362022",
+										"comment": "grafana-cloudwatch is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362003",
+										"comment": "grafana-mssql is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202028362004",
+										"comment": "grafana-mssql is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202138561005",
+										"comment": "osbuild-composer-worker is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202138561006",
+										"comment": "osbuild-composer-worker is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040009",
+														"comment": "buildah-tests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040010",
+														"comment": "buildah-tests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040007",
+														"comment": "buildah is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040008",
+														"comment": "buildah is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201916884001",
+														"comment": "runc is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201916884002",
+														"comment": "runc is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20199946001",
+														"comment": "containernetworking-plugins is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20199946002",
+														"comment": "containernetworking-plugins is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202230629064",
+														"comment": "conmon is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202230629065",
+														"comment": "conmon is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040005",
+														"comment": "containers-common is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040006",
+														"comment": "containers-common is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040003",
+														"comment": "skopeo is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040004",
+														"comment": "skopeo is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040001",
+														"comment": "skopeo-tests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040002",
+														"comment": "skopeo-tests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067013",
+														"comment": "podman-remote is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067014",
+														"comment": "podman-remote is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067003",
+														"comment": "podman is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067004",
+														"comment": "podman is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067007",
+														"comment": "podman-gvproxy is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067008",
+														"comment": "podman-gvproxy is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067005",
+														"comment": "podman-docker is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067006",
+														"comment": "podman-docker is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067001",
+														"comment": "podman-manpages is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067002",
+														"comment": "podman-manpages is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067015",
+														"comment": "podman-tests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067016",
+														"comment": "podman-tests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067009",
+														"comment": "podman-plugins is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067010",
+														"comment": "podman-plugins is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067011",
+														"comment": "podman-catatonit is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067012",
+														"comment": "podman-catatonit is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201814041040",
+										"comment": "Module container-tools:rhel8 is enabled"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202230629064",
+														"comment": "conmon is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202230629065",
+														"comment": "conmon is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040005",
+														"comment": "containers-common is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040006",
+														"comment": "containers-common is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040003",
+														"comment": "skopeo is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040004",
+														"comment": "skopeo is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040001",
+														"comment": "skopeo-tests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040002",
+														"comment": "skopeo-tests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20199946001",
+														"comment": "containernetworking-plugins is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20199946002",
+														"comment": "containernetworking-plugins is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201916884001",
+														"comment": "runc is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201916884002",
+														"comment": "runc is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067013",
+														"comment": "podman-remote is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067014",
+														"comment": "podman-remote is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067003",
+														"comment": "podman is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067004",
+														"comment": "podman is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067007",
+														"comment": "podman-gvproxy is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067008",
+														"comment": "podman-gvproxy is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067005",
+														"comment": "podman-docker is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067006",
+														"comment": "podman-docker is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067001",
+														"comment": "podman-manpages is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067002",
+														"comment": "podman-manpages is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067015",
+														"comment": "podman-tests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067016",
+														"comment": "podman-tests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067009",
+														"comment": "podman-plugins is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067010",
+														"comment": "podman-plugins is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067011",
+														"comment": "podman-catatonit is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:201925067012",
+														"comment": "podman-catatonit is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040009",
+														"comment": "buildah-tests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040010",
+														"comment": "buildah-tests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040007",
+														"comment": "buildah is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202014040008",
+														"comment": "buildah is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202138561025",
+										"comment": "Module container-tools:4.0 is enabled"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486013",
+														"comment": "golang is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486014",
+														"comment": "golang is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486001",
+														"comment": "golang-docs is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486002",
+														"comment": "golang-docs is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486007",
+														"comment": "golang-src is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486008",
+														"comment": "golang-src is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486011",
+														"comment": "golang-misc is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486012",
+														"comment": "golang-misc is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486009",
+														"comment": "golang-race is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486010",
+														"comment": "golang-race is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486005",
+														"comment": "golang-tests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486006",
+														"comment": "golang-tests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486003",
+														"comment": "golang-bin is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:20196486004",
+														"comment": "golang-bin is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20196486015",
+										"comment": "Module go-toolset:rhel8 is enabled"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20052541003",
+						"comment": "Red Hat Enterprise Linux 8 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20052541004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

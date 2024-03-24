@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "kernel: bpf: Fix re-attachment branch in bpf_tracing_prog_attach (moderate)",
+		"title": "kernel: bpf: Fix re-attachment branch in bpf_tracing_prog_attach (low)",
 		"reference": [
 			{
 				"ref_id": "CVE-2024-26591",
@@ -11,18 +11,18 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: No description is available for this CVE. \n            \n            MITIGATION: No mitigation is currently available for this vulnerability. Make sure to perform the updates as they become available.",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nbpf: Fix re-attachment branch in bpf_tracing_prog_attach\n\nThe following case can cause a crash due to missing attach_btf:\n\n1) load rawtp program\n2) load fentry program with rawtp as target_fd\n3) create tracing link for fentry program with target_fd = 0\n4) repeat 3\n\nIn the end we have:\n\n- prog->aux->dst_trampoline == NULL\n- tgt_prog == NULL (because we did not provide target_fd to link_create)\n- prog->aux->attach_btf == NULL (the program was loaded with attach_prog_fd=X)\n- the program was loaded for tgt_prog but we have no way to find out which one\n\n    BUG: kernel NULL pointer dereference, address: 0000000000000058\n    Call Trace:\n     <TASK>\n     ? __die+0x20/0x70\n     ? page_fault_oops+0x15b/0x430\n     ? fixup_exception+0x22/0x330\n     ? exc_page_fault+0x6f/0x170\n     ? asm_exc_page_fault+0x22/0x30\n     ? bpf_tracing_prog_attach+0x279/0x560\n     ? btf_obj_id+0x5/0x10\n     bpf_tracing_prog_attach+0x439/0x560\n     __sys_bpf+0x1cf4/0x2de0\n     __x64_sys_bpf+0x1c/0x30\n     do_syscall_64+0x41/0xf0\n     entry_SYSCALL_64_after_hwframe+0x6e/0x76\n\nReturn -EINVAL in this situation. \n            \n            MITIGATION: No mitigation is currently available for this vulnerability. Make sure to perform the updates as they become available.",
 		"advisory": {
 			"from": "secalert@redhat.com",
-			"severity": "Moderate",
+			"severity": "Low",
 			"updated": {
-				"date": "2024-02-28"
+				"date": "2024-03-24"
 			},
 			"cve": [
 				{
 					"text": "CVE-2024-26591",
 					"href": "https://access.redhat.com/security/cve/CVE-2024-26591",
-					"impact": "moderate",
+					"impact": "low",
 					"public": "20240222"
 				}
 			],
@@ -79,6 +79,19 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764019",
 										"comment": "kernel-bootwrapper is installed"
 									},
@@ -105,12 +118,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -131,64 +144,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -209,6 +170,58 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764001",
 										"comment": "kernel-kdump-devel is installed"
 									},
@@ -222,25 +235,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

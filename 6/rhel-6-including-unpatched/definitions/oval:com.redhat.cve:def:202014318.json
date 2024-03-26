@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "CVE-2020-14318 samba: Missing handle permissions check in SMB1/2/3 ChangeNotify (moderate)",
+		"title": "samba: Missing handle permissions check in SMB1/2/3 ChangeNotify (moderate)",
 		"reference": [
 			{
 				"ref_id": "CVE-2020-14318",
@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: A flaw was found in the way Samba handled file and directory permissions. This flaw allows an authenticated user to gain access to certain file and directory information, which otherwise would be unavailable. The highest threat from this vulnerability is to confidentiality.\n            \n            MITIGATION: As Samba internally opens an underlying file system handle on a directory when a client requests an open, even for FILE_READ_ATTRIBUTES then if the underlying file system permissions don't allow \"r\" (read) access for the connected user, then the handle open request will be denied.\n\n\"r\" access is the normal permission needed to list or otherwise reveal the contents of a directory, so if a connected user has \"r\" access then they will be able to list the directory contents normally, and the information received by a ChangeNofity request is already available to the user.\n\nThe security issue occurs if the Administrator or directory owner had set more restrictive Windows ACL permissions on the directory to disallow read access to the user, and this permissions change was not reflected in the underlying file system permissions.\n\nThis will only occur if Samba is configured with VFS modules to decouple the underlying file system permissions from the Windows ACLs, by setting up a share with the settings:\n\n[vulnerable_share]\n        vfs_objects = vfs_acl_xattr\n        acl_xattr:ignore system acls = yes",
+		"description": "DOCUMENTATION: A flaw was found in the way Samba handled file and directory permissions. This flaw allows an authenticated user to gain access to certain file and directory information, which otherwise would be unavailable. The highest threat from this vulnerability is to confidentiality. \n            \n            MITIGATION: As Samba internally opens an underlying file system handle on a directory when a client requests an open, even for FILE_READ_ATTRIBUTES then if the underlying file system permissions don't allow \"r\" (read) access for the connected user, then the handle open request will be denied.\n\n\"r\" access is the normal permission needed to list or otherwise reveal the contents of a directory, so if a connected user has \"r\" access then they will be able to list the directory contents normally, and the information received by a ChangeNofity request is already available to the user.\n\nThe security issue occurs if the Administrator or directory owner had set more restrictive Windows ACL permissions on the directory to disallow read access to the user, and this permissions change was not reflected in the underlying file system permissions.\n\nThis will only occur if Samba is configured with VFS modules to decouple the underlying file system permissions from the Windows ACLs, by setting up a share with the settings:\n\n[vulnerable_share]\n        vfs_objects = vfs_acl_xattr\n        acl_xattr:ignore system acls = yes",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2021-10-05"
+				"date": "2024-03-25"
 			},
 			"cve": [
 				{
@@ -61,8 +61,7 @@
 					"cpe:/o:redhat:enterprise_linux:6::client",
 					"cpe:/o:redhat:enterprise_linux:6::computenode",
 					"cpe:/o:redhat:enterprise_linux:6::server",
-					"cpe:/o:redhat:enterprise_linux:6::workstation",
-					"cpe:/o:redhat:rhel_eus:6.0"
+					"cpe:/o:redhat:enterprise_linux:6::workstation"
 				]
 			},
 			"issued": {}
@@ -82,12 +81,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124053",
-										"comment": "samba-swat is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20162124007",
+										"comment": "samba-winbind-clients is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124054",
-										"comment": "samba-swat is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20162124008",
+										"comment": "samba-winbind-clients is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124037",
+										"comment": "samba-domainjoin-gui is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124038",
+										"comment": "samba-domainjoin-gui is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -108,103 +120,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124045",
-										"comment": "samba-winbind-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124046",
-										"comment": "samba-winbind-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124035",
-										"comment": "samba-winbind is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124036",
-										"comment": "samba-winbind is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124047",
-										"comment": "samba-common is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124048",
-										"comment": "samba-common is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20162124051",
 										"comment": "samba-glusterfs is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20162124052",
 										"comment": "samba-glusterfs is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124043",
-										"comment": "samba is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124044",
-										"comment": "samba is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124019",
-										"comment": "libsmbclient is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124020",
-										"comment": "libsmbclient is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124007",
-										"comment": "samba-winbind-clients is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124008",
-										"comment": "samba-winbind-clients is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124015",
-										"comment": "libsmbclient-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124016",
-										"comment": "libsmbclient-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -225,6 +146,84 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124035",
+										"comment": "samba-winbind is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124036",
+										"comment": "samba-winbind is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124053",
+										"comment": "samba-swat is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124054",
+										"comment": "samba-swat is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124045",
+										"comment": "samba-winbind-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124046",
+										"comment": "samba-winbind-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124015",
+										"comment": "libsmbclient-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124016",
+										"comment": "libsmbclient-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124019",
+										"comment": "libsmbclient is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124020",
+										"comment": "libsmbclient is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124043",
+										"comment": "samba is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20162124044",
+										"comment": "samba is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20162124039",
 										"comment": "samba-winbind-krb5-locator is installed"
 									},
@@ -238,12 +237,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124037",
-										"comment": "samba-domainjoin-gui is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20162124047",
+										"comment": "samba-common is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20162124038",
-										"comment": "samba-domainjoin-gui is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20162124048",
+										"comment": "samba-common is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

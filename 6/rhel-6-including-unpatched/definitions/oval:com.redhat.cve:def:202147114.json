@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: No description is available for this CVE.",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nocfs2: fix data corruption by fallocate\n\nWhen fallocate punches holes out of inode size, if original isize is in\nthe middle of last cluster, then the part from isize to the end of the\ncluster will be zeroed with buffer write, at that time isize is not yet\nupdated to match the new size, if writeback is kicked in, it will invoke\nocfs2_writepage()->block_write_full_page() where the pages out of inode\nsize will be dropped.  That will cause file corruption.  Fix this by\nzero out eof blocks when extending the inode size.\n\nRunning the following command with qemu-image 4.2.1 can get a corrupted\ncoverted image file easily.\n\n    qemu-img convert -p -t none -T none -f qcow2 $qcow_image \\\n             -O qcow2 -o compat=1.1 $qcow_image.conv\n\nThe usage of fallocate in qemu is like this, it first punches holes out\nof inode size, then extend the inode size.\n\n    fallocate(11, FALLOC_FL_KEEP_SIZE|FALLOC_FL_PUNCH_HOLE, 2276196352, 65536) = 0\n    fallocate(11, 0, 2276196352, 65536) = 0\n\nv1: https://www.spinics.net/lists/linux-fsdevel/msg193999.html\nv2: https://lore.kernel.org/linux-fsdevel/20210525093034.GB4112@quack2.suse.cz/T/",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Low",
 			"updated": {
-				"date": "2024-03-19"
+				"date": "2024-03-26"
 			},
 			"cve": [
 				{
@@ -81,6 +81,19 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764023",
 										"comment": "kernel-firmware is installed"
 									},
@@ -94,12 +107,51 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764013",
 										"comment": "kernel-kdump is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764014",
 										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -133,51 +185,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764005",
-										"comment": "kernel-headers is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764006",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -198,12 +211,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -211,25 +224,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764019",
-										"comment": "kernel-bootwrapper is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764020",
-										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},

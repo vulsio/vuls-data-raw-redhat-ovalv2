@@ -11,17 +11,18 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: No description is available for this CVE.",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nPCI: switchtec: Fix stdev_release() crash after surprise hot remove\n\nA PCI device hot removal may occur while stdev->cdev is held open. The call\nto stdev_release() then happens during close or exit, at a point way past\nswitchtec_pci_remove(). Otherwise the last ref would vanish with the\ntrailing put_device(), just before return.\n\nAt that later point in time, the devm cleanup has already removed the\nstdev->mmio_mrpc mapping. Also, the stdev->pdev reference was not a counted\none. Therefore, in DMA mode, the iowrite32() in stdev_release() will cause\na fatal page fault, and the subsequent dma_free_coherent(), if reached,\nwould pass a stale &stdev->pdev->dev pointer.\n\nFix by moving MRPC DMA shutdown into switchtec_pci_remove(), after\nstdev_kill(). Counting the stdev->pdev ref is now optional, but may prevent\nfuture accidents.\n\nReproducible via the script at\nhttps://lore.kernel.org/r/20231113212150.96410-1-dns@arista.com",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-03-18"
+				"date": "2024-03-26"
 			},
 			"cve": [
 				{
 					"text": "CVE-2023-52617",
-					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"cvss3": "4.4/CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H",
+					"cwe": "CWE-20",
 					"href": "https://access.redhat.com/security/cve/CVE-2023-52617",
 					"impact": "moderate",
 					"public": "20240318"
@@ -80,12 +81,51 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764019",
-										"comment": "kernel-bootwrapper is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764020",
-										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -106,12 +146,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -145,19 +185,6 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764015",
 										"comment": "kernel-devel is installed"
 									},
@@ -171,25 +198,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764005",
-										"comment": "kernel-headers is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764006",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -210,12 +224,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -229,19 +243,6 @@
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764010",
 										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

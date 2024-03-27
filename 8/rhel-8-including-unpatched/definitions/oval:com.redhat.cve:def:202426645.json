@@ -1,0 +1,730 @@
+{
+	"id": "oval:com.redhat.cve:def:202426645",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "kernel: tracing: Ensure visibility when inserting an element into tracing_map (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2024-26645",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-26645",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\ntracing: Ensure visibility when inserting an element into tracing_map\n\nRunning the following two commands in parallel on a multi-processor\nAArch64 machine can sporadically produce an unexpected warning about\nduplicate histogram entries:\n\n $ while true; do\n     echo hist:key=id.syscall:val=hitcount > \\\n       /sys/kernel/debug/tracing/events/raw_syscalls/sys_enter/trigger\n     cat /sys/kernel/debug/tracing/events/raw_syscalls/sys_enter/hist\n     sleep 0.001\n   done\n $ stress-ng --sysbadaddr $(nproc)\n\nThe warning looks as follows:\n\n[ 2911.172474] ------------[ cut here ]------------\n[ 2911.173111] Duplicates detected: 1\n[ 2911.173574] WARNING: CPU: 2 PID: 12247 at kernel/trace/tracing_map.c:983 tracing_map_sort_entries+0x3e0/0x408\n[ 2911.174702] Modules linked in: iscsi_ibft(E) iscsi_boot_sysfs(E) rfkill(E) af_packet(E) nls_iso8859_1(E) nls_cp437(E) vfat(E) fat(E) ena(E) tiny_power_button(E) qemu_fw_cfg(E) button(E) fuse(E) efi_pstore(E) ip_tables(E) x_tables(E) xfs(E) libcrc32c(E) aes_ce_blk(E) aes_ce_cipher(E) crct10dif_ce(E) polyval_ce(E) polyval_generic(E) ghash_ce(E) gf128mul(E) sm4_ce_gcm(E) sm4_ce_ccm(E) sm4_ce(E) sm4_ce_cipher(E) sm4(E) sm3_ce(E) sm3(E) sha3_ce(E) sha512_ce(E) sha512_arm64(E) sha2_ce(E) sha256_arm64(E) nvme(E) sha1_ce(E) nvme_core(E) nvme_auth(E) t10_pi(E) sg(E) scsi_mod(E) scsi_common(E) efivarfs(E)\n[ 2911.174738] Unloaded tainted modules: cppc_cpufreq(E):1\n[ 2911.180985] CPU: 2 PID: 12247 Comm: cat Kdump: loaded Tainted: G            E      6.7.0-default #2 1b58bbb22c97e4399dc09f92d309344f69c44a01\n[ 2911.182398] Hardware name: Amazon EC2 c7g.8xlarge/, BIOS 1.0 11/1/2018\n[ 2911.183208] pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)\n[ 2911.184038] pc : tracing_map_sort_entries+0x3e0/0x408\n[ 2911.184667] lr : tracing_map_sort_entries+0x3e0/0x408\n[ 2911.185310] sp : ffff8000a1513900\n[ 2911.185750] x29: ffff8000a1513900 x28: ffff0003f272fe80 x27: 0000000000000001\n[ 2911.186600] x26: ffff0003f272fe80 x25: 0000000000000030 x24: 0000000000000008\n[ 2911.187458] x23: ffff0003c5788000 x22: ffff0003c16710c8 x21: ffff80008017f180\n[ 2911.188310] x20: ffff80008017f000 x19: ffff80008017f180 x18: ffffffffffffffff\n[ 2911.189160] x17: 0000000000000000 x16: 0000000000000000 x15: ffff8000a15134b8\n[ 2911.190015] x14: 0000000000000000 x13: 205d373432323154 x12: 5b5d313131333731\n[ 2911.190844] x11: 00000000fffeffff x10: 00000000fffeffff x9 : ffffd1b78274a13c\n[ 2911.191716] x8 : 000000000017ffe8 x7 : c0000000fffeffff x6 : 000000000057ffa8\n[ 2911.192554] x5 : ffff0012f6c24ec0 x4 : 0000000000000000 x3 : ffff2e5b72b5d000\n[ 2911.193404] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0003ff254480\n[ 2911.194259] Call trace:\n[ 2911.194626]  tracing_map_sort_entries+0x3e0/0x408\n[ 2911.195220]  hist_show+0x124/0x800\n[ 2911.195692]  seq_read_iter+0x1d4/0x4e8\n[ 2911.196193]  seq_read+0xe8/0x138\n[ 2911.196638]  vfs_read+0xc8/0x300\n[ 2911.197078]  ksys_read+0x70/0x108\n[ 2911.197534]  __arm64_sys_read+0x24/0x38\n[ 2911.198046]  invoke_syscall+0x78/0x108\n[ 2911.198553]  el0_svc_common.constprop.0+0xd0/0xf8\n[ 2911.199157]  do_el0_svc+0x28/0x40\n[ 2911.199613]  el0_svc+0x40/0x178\n[ 2911.200048]  el0t_64_sync_handler+0x13c/0x158\n[ 2911.200621]  el0t_64_sync+0x1a8/0x1b0\n[ 2911.201115] ---[ end trace 0000000000000000 ]---\n\nThe problem appears to be caused by CPU reordering of writes issued from\n__tracing_map_insert().\n\nThe check for the presence of an element with a given key in this\nfunction is:\n\n val = READ_ONCE(entry->val);\n if (val && keys_match(key, val->key, map->key_size)) ...\n\nThe write of a new entry is:\n\n elt = get_free_elt(map);\n memcpy(elt->key, key, map->key_size);\n entry->val = elt;\n\nThe \"memcpy(elt->key, key, map->key_size);\" and \"entry->val = elt;\"\nstores may become visible in the reversed order on another CPU. This\nsecond CPU might then incorrectly determine that a new key doesn't match\nan already present val->key and subse\n---truncated---",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2024-03-26"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-26645",
+					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-26645",
+					"impact": "moderate",
+					"public": "20240326"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Under investigation",
+						"component": [
+							"bpftool",
+							"kernel",
+							"kernel-abi-stablelists",
+							"kernel-abi-whitelists",
+							"kernel-core",
+							"kernel-cross-headers",
+							"kernel-debug",
+							"kernel-debug-core",
+							"kernel-debug-devel",
+							"kernel-debug-modules",
+							"kernel-debug-modules-extra",
+							"kernel-debug-modules-internal",
+							"kernel-devel",
+							"kernel-doc",
+							"kernel-headers",
+							"kernel-ipaclones-internal",
+							"kernel-modules",
+							"kernel-modules-extra",
+							"kernel-modules-internal",
+							"kernel-rt",
+							"kernel-rt-core",
+							"kernel-rt-debug",
+							"kernel-rt-debug-core",
+							"kernel-rt-debug-devel",
+							"kernel-rt-debug-kvm",
+							"kernel-rt-debug-modules",
+							"kernel-rt-debug-modules-extra",
+							"kernel-rt-debug-modules-internal",
+							"kernel-rt-devel",
+							"kernel-rt-kvm",
+							"kernel-rt-modules",
+							"kernel-rt-modules-extra",
+							"kernel-rt-modules-internal",
+							"kernel-rt-selftests-internal",
+							"kernel-selftests-internal",
+							"kernel-tools",
+							"kernel-tools-libs",
+							"kernel-tools-libs-devel",
+							"kernel-zfcpdump",
+							"kernel-zfcpdump-core",
+							"kernel-zfcpdump-devel",
+							"kernel-zfcpdump-modules",
+							"kernel-zfcpdump-modules-extra",
+							"kernel-zfcpdump-modules-internal",
+							"perf",
+							"python3-perf"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:enterprise_linux:8",
+					"cpe:/a:redhat:enterprise_linux:8::appstream",
+					"cpe:/a:redhat:enterprise_linux:8::crb",
+					"cpe:/a:redhat:enterprise_linux:8::highavailability",
+					"cpe:/a:redhat:enterprise_linux:8::nfv",
+					"cpe:/a:redhat:enterprise_linux:8::realtime",
+					"cpe:/a:redhat:enterprise_linux:8::resilientstorage",
+					"cpe:/a:redhat:enterprise_linux:8::sap",
+					"cpe:/a:redhat:enterprise_linux:8::sap_hana",
+					"cpe:/a:redhat:enterprise_linux:8::supplementary",
+					"cpe:/o:redhat:enterprise_linux:8",
+					"cpe:/o:redhat:enterprise_linux:8::baseos"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594023",
+										"comment": "kernel-debug-modules-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594024",
+										"comment": "kernel-debug-modules-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862005",
+										"comment": "kernel-rt is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862006",
+										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594051",
+										"comment": "kernel-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594052",
+										"comment": "kernel-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594021",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594022",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862051",
+										"comment": "kernel-rt-modules is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862052",
+										"comment": "kernel-rt-modules is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594003",
+										"comment": "kernel-ipaclones-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594004",
+										"comment": "kernel-ipaclones-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594009",
+										"comment": "kernel-modules is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594010",
+										"comment": "kernel-modules is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862027",
+										"comment": "kernel-rt-kvm is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862028",
+										"comment": "kernel-rt-kvm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594017",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594018",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594019",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594020",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594055",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594056",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594015",
+										"comment": "kernel-zfcpdump-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594016",
+										"comment": "kernel-zfcpdump-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862035",
+										"comment": "kernel-rt-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862036",
+										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862069",
+										"comment": "kernel-rt-debug-kvm is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862070",
+										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594007",
+										"comment": "kernel-abi-stablelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594008",
+										"comment": "kernel-abi-stablelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862009",
+										"comment": "kernel-rt-modules-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862010",
+										"comment": "kernel-rt-modules-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594049",
+										"comment": "kernel-modules-extra is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594050",
+										"comment": "kernel-modules-extra is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862083",
+										"comment": "kernel-rt-modules-extra is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862084",
+										"comment": "kernel-rt-modules-extra is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594001",
+										"comment": "kernel-debug-modules-extra is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594002",
+										"comment": "kernel-debug-modules-extra is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594047",
+										"comment": "kernel-zfcpdump-modules-extra is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594048",
+										"comment": "kernel-zfcpdump-modules-extra is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862055",
+										"comment": "kernel-rt-debug-modules-extra is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862056",
+										"comment": "kernel-rt-debug-modules-extra is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594031",
+										"comment": "kernel-tools-libs is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594032",
+										"comment": "kernel-tools-libs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594013",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594014",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594045",
+										"comment": "kernel-tools-libs-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594046",
+										"comment": "kernel-tools-libs-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862037",
+										"comment": "kernel-rt-selftests-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862038",
+										"comment": "kernel-rt-selftests-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594053",
+										"comment": "kernel-modules-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594054",
+										"comment": "kernel-modules-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594005",
+										"comment": "kernel-zfcpdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594006",
+										"comment": "kernel-zfcpdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594035",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594036",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594057",
+										"comment": "python3-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594058",
+										"comment": "python3-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594039",
+										"comment": "kernel-selftests-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594040",
+										"comment": "kernel-selftests-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862041",
+										"comment": "kernel-rt-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862042",
+										"comment": "kernel-rt-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594059",
+										"comment": "kernel-cross-headers is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594060",
+										"comment": "kernel-cross-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594037",
+										"comment": "kernel-headers is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594038",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594043",
+										"comment": "kernel-zfcpdump-modules-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594044",
+										"comment": "kernel-zfcpdump-modules-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862045",
+										"comment": "kernel-rt-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862046",
+										"comment": "kernel-rt-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862003",
+										"comment": "kernel-rt-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862004",
+										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594025",
+										"comment": "kernel-tools is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594026",
+										"comment": "kernel-tools is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862065",
+										"comment": "kernel-rt-debug-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862066",
+										"comment": "kernel-rt-debug-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594027",
+										"comment": "kernel-debug-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594028",
+										"comment": "kernel-debug-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862075",
+										"comment": "kernel-rt-debug-modules is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862076",
+										"comment": "kernel-rt-debug-modules is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594041",
+										"comment": "kernel-zfcpdump-modules is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594042",
+										"comment": "kernel-zfcpdump-modules is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594061",
+										"comment": "kernel-zfcpdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594062",
+										"comment": "kernel-zfcpdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594033",
+										"comment": "bpftool is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594034",
+										"comment": "bpftool is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594029",
+										"comment": "kernel-debug-modules is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201815594030",
+										"comment": "kernel-debug-modules is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862047",
+										"comment": "kernel-rt-debug-modules-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862048",
+										"comment": "kernel-rt-debug-modules-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20052541003",
+						"comment": "Red Hat Enterprise Linux 8 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20052541004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

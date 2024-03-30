@@ -1,139 +1,34 @@
 {
-	"id": "oval:com.redhat.cve:def:202147118",
-	"version": "636",
+	"id": "oval:com.redhat.unaffected:def:202426632",
+	"version": "635",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "kernel: pid: take a reference when initializing `cad_pid` (moderate)",
+		"title": "Unaffected components for: kernel: block: Fix iterating over an empty bio with bio_for_each_folio_all (moderate)",
 		"reference": [
 			{
-				"ref_id": "CVE-2021-47118",
-				"ref_url": "https://access.redhat.com/security/cve/CVE-2021-47118",
+				"ref_id": "CVE-2024-26632",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-26632",
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\npid: take a reference when initializing `cad_pid`\n\nDuring boot, kernel_init_freeable() initializes `cad_pid` to the init\ntask's struct pid.  Later on, we may change `cad_pid` via a sysctl, and\nwhen this happens proc_do_cad_pid() will increment the refcount on the\nnew pid via get_pid(), and will decrement the refcount on the old pid\nvia put_pid().  As we never called get_pid() when we initialized\n`cad_pid`, we decrement a reference we never incremented, can therefore\nfree the init task's struct pid early.  As there can be dangling\nreferences to the struct pid, we can later encounter a use-after-free\n(e.g.  when delivering signals).\n\nThis was spotted when fuzzing v5.13-rc3 with Syzkaller, but seems to\nhave been around since the conversion of `cad_pid` to struct pid in\ncommit 9ec52099e4b8 (\"[PATCH] replace cad_pid by a struct pid\") from the\npre-KASAN stone age of v2.6.19.\n\nFix this by getting a reference to the init task's struct pid when we\nassign it to `cad_pid`.\n\nFull KASAN splat below.\n\n   ==================================================================\n   BUG: KASAN: use-after-free in ns_of_pid include/linux/pid.h:153 [inline]\n   BUG: KASAN: use-after-free in task_active_pid_ns+0xc0/0xc8 kernel/pid.c:509\n   Read of size 4 at addr ffff23794dda0004 by task syz-executor.0/273\n\n   CPU: 1 PID: 273 Comm: syz-executor.0 Not tainted 5.12.0-00001-g9aef892b2d15 #1\n   Hardware name: linux,dummy-virt (DT)\n   Call trace:\n    ns_of_pid include/linux/pid.h:153 [inline]\n    task_active_pid_ns+0xc0/0xc8 kernel/pid.c:509\n    do_notify_parent+0x308/0xe60 kernel/signal.c:1950\n    exit_notify kernel/exit.c:682 [inline]\n    do_exit+0x2334/0x2bd0 kernel/exit.c:845\n    do_group_exit+0x108/0x2c8 kernel/exit.c:922\n    get_signal+0x4e4/0x2a88 kernel/signal.c:2781\n    do_signal arch/arm64/kernel/signal.c:882 [inline]\n    do_notify_resume+0x300/0x970 arch/arm64/kernel/signal.c:936\n    work_pending+0xc/0x2dc\n\n   Allocated by task 0:\n    slab_post_alloc_hook+0x50/0x5c0 mm/slab.h:516\n    slab_alloc_node mm/slub.c:2907 [inline]\n    slab_alloc mm/slub.c:2915 [inline]\n    kmem_cache_alloc+0x1f4/0x4c0 mm/slub.c:2920\n    alloc_pid+0xdc/0xc00 kernel/pid.c:180\n    copy_process+0x2794/0x5e18 kernel/fork.c:2129\n    kernel_clone+0x194/0x13c8 kernel/fork.c:2500\n    kernel_thread+0xd4/0x110 kernel/fork.c:2552\n    rest_init+0x44/0x4a0 init/main.c:687\n    arch_call_rest_init+0x1c/0x28\n    start_kernel+0x520/0x554 init/main.c:1064\n    0x0\n\n   Freed by task 270:\n    slab_free_hook mm/slub.c:1562 [inline]\n    slab_free_freelist_hook+0x98/0x260 mm/slub.c:1600\n    slab_free mm/slub.c:3161 [inline]\n    kmem_cache_free+0x224/0x8e0 mm/slub.c:3177\n    put_pid.part.4+0xe0/0x1a8 kernel/pid.c:114\n    put_pid+0x30/0x48 kernel/pid.c:109\n    proc_do_cad_pid+0x190/0x1b0 kernel/sysctl.c:1401\n    proc_sys_call_handler+0x338/0x4b0 fs/proc/proc_sysctl.c:591\n    proc_sys_write+0x34/0x48 fs/proc/proc_sysctl.c:617\n    call_write_iter include/linux/fs.h:1977 [inline]\n    new_sync_write+0x3ac/0x510 fs/read_write.c:518\n    vfs_write fs/read_write.c:605 [inline]\n    vfs_write+0x9c4/0x1018 fs/read_write.c:585\n    ksys_write+0x124/0x240 fs/read_write.c:658\n    __do_sys_write fs/read_write.c:670 [inline]\n    __se_sys_write fs/read_write.c:667 [inline]\n    __arm64_sys_write+0x78/0xb0 fs/read_write.c:667\n    __invoke_syscall arch/arm64/kernel/syscall.c:37 [inline]\n    invoke_syscall arch/arm64/kernel/syscall.c:49 [inline]\n    el0_svc_common.constprop.1+0x16c/0x388 arch/arm64/kernel/syscall.c:129\n    do_el0_svc+0xf8/0x150 arch/arm64/kernel/syscall.c:168\n    el0_svc+0x28/0x38 arch/arm64/kernel/entry-common.c:416\n    el0_sync_handler+0x134/0x180 arch/arm64/kernel/entry-common.c:432\n    el0_sync+0x154/0x180 arch/arm64/kernel/entry.S:701\n\n   The buggy address belongs to the object at ffff23794dda0000\n    which belongs to the cache pid of size 224\n   The buggy address is located 4 bytes inside of\n    224-byte region [ff\n---truncated---",
+		"description": "Red Hat's versions of the associated software have been determined to NOT be affected by CVE-2024-26632.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-03-26"
+				"date": "2024-03-29"
 			},
 			"cve": [
 				{
-					"text": "CVE-2021-47118",
-					"cvss3": "4.4/CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H",
-					"cwe": "CWE-416",
-					"href": "https://access.redhat.com/security/cve/CVE-2021-47118",
+					"text": "CVE-2024-26632",
+					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"cwe": "CWE-476",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-26632",
 					"impact": "moderate",
-					"public": "20240315"
+					"public": "20240318"
 				}
 			],
-			"affected": {
-				"resolution": [
-					{
-						"state": "Under investigation",
-						"component": [
-							"bpftool",
-							"kernel",
-							"kernel-64k",
-							"kernel-64k-core",
-							"kernel-64k-debug",
-							"kernel-64k-debug-core",
-							"kernel-64k-debug-devel",
-							"kernel-64k-debug-devel-matched",
-							"kernel-64k-debug-modules",
-							"kernel-64k-debug-modules-core",
-							"kernel-64k-debug-modules-extra",
-							"kernel-64k-debug-modules-internal",
-							"kernel-64k-debug-modules-partner",
-							"kernel-64k-devel",
-							"kernel-64k-devel-matched",
-							"kernel-64k-modules",
-							"kernel-64k-modules-core",
-							"kernel-64k-modules-extra",
-							"kernel-64k-modules-internal",
-							"kernel-64k-modules-partner",
-							"kernel-abi-stablelists",
-							"kernel-core",
-							"kernel-cross-headers",
-							"kernel-debug",
-							"kernel-debug-core",
-							"kernel-debug-devel",
-							"kernel-debug-devel-matched",
-							"kernel-debug-modules",
-							"kernel-debug-modules-core",
-							"kernel-debug-modules-extra",
-							"kernel-debug-modules-internal",
-							"kernel-debug-modules-partner",
-							"kernel-debug-uki-virt",
-							"kernel-devel",
-							"kernel-devel-matched",
-							"kernel-doc",
-							"kernel-headers",
-							"kernel-ipaclones-internal",
-							"kernel-modules",
-							"kernel-modules-core",
-							"kernel-modules-extra",
-							"kernel-modules-internal",
-							"kernel-modules-partner",
-							"kernel-rt",
-							"kernel-rt",
-							"kernel-rt-core",
-							"kernel-rt-core",
-							"kernel-rt-debug",
-							"kernel-rt-debug",
-							"kernel-rt-debug-core",
-							"kernel-rt-debug-core",
-							"kernel-rt-debug-devel",
-							"kernel-rt-debug-devel",
-							"kernel-rt-debug-devel-matched",
-							"kernel-rt-debug-kvm",
-							"kernel-rt-debug-kvm",
-							"kernel-rt-debug-modules",
-							"kernel-rt-debug-modules",
-							"kernel-rt-debug-modules-core",
-							"kernel-rt-debug-modules-core",
-							"kernel-rt-debug-modules-extra",
-							"kernel-rt-debug-modules-extra",
-							"kernel-rt-debug-modules-internal",
-							"kernel-rt-debug-modules-partner",
-							"kernel-rt-devel",
-							"kernel-rt-devel",
-							"kernel-rt-devel-matched",
-							"kernel-rt-kvm",
-							"kernel-rt-kvm",
-							"kernel-rt-modules",
-							"kernel-rt-modules",
-							"kernel-rt-modules-core",
-							"kernel-rt-modules-core",
-							"kernel-rt-modules-extra",
-							"kernel-rt-modules-extra",
-							"kernel-rt-modules-internal",
-							"kernel-rt-modules-partner",
-							"kernel-rt-selftests-internal",
-							"kernel-selftests-internal",
-							"kernel-tools",
-							"kernel-tools-libs",
-							"kernel-tools-libs-devel",
-							"kernel-uki-virt",
-							"kernel-zfcpdump",
-							"kernel-zfcpdump-core",
-							"kernel-zfcpdump-devel",
-							"kernel-zfcpdump-devel-matched",
-							"kernel-zfcpdump-modules",
-							"kernel-zfcpdump-modules-core",
-							"kernel-zfcpdump-modules-extra",
-							"kernel-zfcpdump-modules-internal",
-							"kernel-zfcpdump-modules-partner",
-							"libperf",
-							"perf",
-							"python3-perf",
-							"rtla",
-							"rv"
-						]
-					}
-				]
-			},
+			"affected": {},
 			"affected_cpe_list": {
 				"cpe": [
 					"cpe:/a:redhat:enterprise_linux:9",
@@ -171,8 +66,8 @@
 										"comment": "kernel-zfcpdump is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089004",
-										"comment": "kernel-zfcpdump is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001012",
+										"comment": "kernel-zfcpdump is not installed"
 									}
 								]
 							},
@@ -184,8 +79,8 @@
 										"comment": "kernel-rt-modules is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160020",
-										"comment": "kernel-rt-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001054",
+										"comment": "kernel-rt-modules is not installed"
 									}
 								]
 							},
@@ -197,8 +92,8 @@
 										"comment": "kernel-64k-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089094",
-										"comment": "kernel-64k-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794104",
+										"comment": "kernel-64k-devel is not installed"
 									}
 								]
 							},
@@ -210,8 +105,8 @@
 										"comment": "kernel-64k-debug-devel-matched is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089068",
-										"comment": "kernel-64k-debug-devel-matched is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794086",
+										"comment": "kernel-64k-debug-devel-matched is not installed"
 									}
 								]
 							},
@@ -223,8 +118,8 @@
 										"comment": "rtla is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089026",
-										"comment": "rtla is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794012",
+										"comment": "rtla is not installed"
 									}
 								]
 							},
@@ -236,8 +131,8 @@
 										"comment": "kernel-modules-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089048",
-										"comment": "kernel-modules-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794022",
+										"comment": "kernel-modules-core is not installed"
 									}
 								]
 							},
@@ -249,8 +144,8 @@
 										"comment": "kernel-rt-debug-modules-internal is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160114",
-										"comment": "kernel-rt-debug-modules-internal is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:202027418158",
+										"comment": "kernel-rt-debug-modules-internal is not installed"
 									}
 								]
 							},
@@ -262,8 +157,8 @@
 										"comment": "kernel-rt-debug-modules-partner is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160118",
-										"comment": "kernel-rt-debug-modules-partner is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:202027418126",
+										"comment": "kernel-rt-debug-modules-partner is not installed"
 									}
 								]
 							},
@@ -275,8 +170,8 @@
 										"comment": "kernel-debug-modules-partner is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160120",
-										"comment": "kernel-debug-modules-partner is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794026",
+										"comment": "kernel-debug-modules-partner is not installed"
 									}
 								]
 							},
@@ -288,8 +183,8 @@
 										"comment": "kernel-modules-extra is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089072",
-										"comment": "kernel-modules-extra is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001032",
+										"comment": "kernel-modules-extra is not installed"
 									}
 								]
 							},
@@ -301,8 +196,8 @@
 										"comment": "kernel-debug-modules-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089088",
-										"comment": "kernel-debug-modules-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794120",
+										"comment": "kernel-debug-modules-core is not installed"
 									}
 								]
 							},
@@ -314,8 +209,8 @@
 										"comment": "kernel-rt-debug-kvm is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160152",
-										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001022",
+										"comment": "kernel-rt-debug-kvm is not installed"
 									}
 								]
 							},
@@ -327,8 +222,8 @@
 										"comment": "kernel-modules is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089064",
-										"comment": "kernel-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001002",
+										"comment": "kernel-modules is not installed"
 									}
 								]
 							},
@@ -340,8 +235,8 @@
 										"comment": "kernel-64k-debug is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089050",
-										"comment": "kernel-64k-debug is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794102",
+										"comment": "kernel-64k-debug is not installed"
 									}
 								]
 							},
@@ -353,8 +248,8 @@
 										"comment": "kernel-abi-stablelists is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089092",
-										"comment": "kernel-abi-stablelists is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001064",
+										"comment": "kernel-abi-stablelists is not installed"
 									}
 								]
 							},
@@ -366,8 +261,8 @@
 										"comment": "kernel-devel-matched is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089032",
-										"comment": "kernel-devel-matched is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001050",
+										"comment": "kernel-devel-matched is not installed"
 									}
 								]
 							},
@@ -379,8 +274,8 @@
 										"comment": "kernel-modules-partner is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160004",
-										"comment": "kernel-modules-partner is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794042",
+										"comment": "kernel-modules-partner is not installed"
 									}
 								]
 							},
@@ -392,8 +287,8 @@
 										"comment": "kernel-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089044",
-										"comment": "kernel-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001056",
+										"comment": "kernel-core is not installed"
 									}
 								]
 							},
@@ -405,8 +300,8 @@
 										"comment": "kernel-64k-debug-modules-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089062",
-										"comment": "kernel-64k-debug-modules-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794084",
+										"comment": "kernel-64k-debug-modules-core is not installed"
 									}
 								]
 							},
@@ -418,8 +313,8 @@
 										"comment": "kernel-64k-modules is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089036",
-										"comment": "kernel-64k-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794146",
+										"comment": "kernel-64k-modules is not installed"
 									}
 								]
 							},
@@ -431,8 +326,8 @@
 										"comment": "kernel-rt-debug-modules is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160048",
-										"comment": "kernel-rt-debug-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001080",
+										"comment": "kernel-rt-debug-modules is not installed"
 									}
 								]
 							},
@@ -444,8 +339,8 @@
 										"comment": "kernel-modules-internal is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160100",
-										"comment": "kernel-modules-internal is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794098",
+										"comment": "kernel-modules-internal is not installed"
 									}
 								]
 							},
@@ -457,8 +352,8 @@
 										"comment": "kernel-debug-modules-extra is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089038",
-										"comment": "kernel-debug-modules-extra is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001048",
+										"comment": "kernel-debug-modules-extra is not installed"
 									}
 								]
 							},
@@ -470,8 +365,8 @@
 										"comment": "kernel-rt-modules-partner is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160108",
-										"comment": "kernel-rt-modules-partner is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:202027418096",
+										"comment": "kernel-rt-modules-partner is not installed"
 									}
 								]
 							},
@@ -483,8 +378,8 @@
 										"comment": "kernel-zfcpdump-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089014",
-										"comment": "kernel-zfcpdump-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001026",
+										"comment": "kernel-zfcpdump-devel is not installed"
 									}
 								]
 							},
@@ -496,8 +391,8 @@
 										"comment": "kernel-doc is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089040",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001078",
+										"comment": "kernel-doc is not installed"
 									}
 								]
 							},
@@ -509,8 +404,8 @@
 										"comment": "rv is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160010",
-										"comment": "rv is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794112",
+										"comment": "rv is not installed"
 									}
 								]
 							},
@@ -522,8 +417,8 @@
 										"comment": "kernel-zfcpdump-devel-matched is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089024",
-										"comment": "kernel-zfcpdump-devel-matched is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001042",
+										"comment": "kernel-zfcpdump-devel-matched is not installed"
 									}
 								]
 							},
@@ -535,8 +430,8 @@
 										"comment": "kernel-rt-kvm is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160160",
-										"comment": "kernel-rt-kvm is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001068",
+										"comment": "kernel-rt-kvm is not installed"
 									}
 								]
 							},
@@ -548,8 +443,8 @@
 										"comment": "kernel-zfcpdump-modules is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089052",
-										"comment": "kernel-zfcpdump-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001014",
+										"comment": "kernel-zfcpdump-modules is not installed"
 									}
 								]
 							},
@@ -561,8 +456,8 @@
 										"comment": "kernel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089006",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001058",
+										"comment": "kernel is not installed"
 									}
 								]
 							},
@@ -574,8 +469,8 @@
 										"comment": "kernel-rt-debug-modules-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160070",
-										"comment": "kernel-rt-debug-modules-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794078",
+										"comment": "kernel-rt-debug-modules-core is not installed"
 									}
 								]
 							},
@@ -587,8 +482,8 @@
 										"comment": "kernel-rt-debug-modules-extra is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160032",
-										"comment": "kernel-rt-debug-modules-extra is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001040",
+										"comment": "kernel-rt-debug-modules-extra is not installed"
 									}
 								]
 							},
@@ -600,8 +495,8 @@
 										"comment": "kernel-rt-modules-extra is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160052",
-										"comment": "kernel-rt-modules-extra is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001060",
+										"comment": "kernel-rt-modules-extra is not installed"
 									}
 								]
 							},
@@ -613,8 +508,8 @@
 										"comment": "kernel-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089090",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001016",
+										"comment": "kernel-headers is not installed"
 									}
 								]
 							},
@@ -626,8 +521,8 @@
 										"comment": "kernel-64k-modules-partner is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160034",
-										"comment": "kernel-64k-modules-partner is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794018",
+										"comment": "kernel-64k-modules-partner is not installed"
 									}
 								]
 							},
@@ -639,8 +534,8 @@
 										"comment": "kernel-64k-debug-modules-extra is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089060",
-										"comment": "kernel-64k-debug-modules-extra is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794130",
+										"comment": "kernel-64k-debug-modules-extra is not installed"
 									}
 								]
 							},
@@ -652,8 +547,8 @@
 										"comment": "kernel-debug-devel-matched is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089086",
-										"comment": "kernel-debug-devel-matched is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001008",
+										"comment": "kernel-debug-devel-matched is not installed"
 									}
 								]
 							},
@@ -665,8 +560,8 @@
 										"comment": "kernel-rt-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160016",
-										"comment": "kernel-rt-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001028",
+										"comment": "kernel-rt-devel is not installed"
 									}
 								]
 							},
@@ -678,8 +573,8 @@
 										"comment": "kernel-64k-debug-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089010",
-										"comment": "kernel-64k-debug-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794060",
+										"comment": "kernel-64k-debug-core is not installed"
 									}
 								]
 							},
@@ -691,8 +586,8 @@
 										"comment": "kernel-rt-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160132",
-										"comment": "kernel-rt-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001046",
+										"comment": "kernel-rt-core is not installed"
 									}
 								]
 							},
@@ -704,8 +599,8 @@
 										"comment": "kernel-debug-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089070",
-										"comment": "kernel-debug-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001030",
+										"comment": "kernel-debug-core is not installed"
 									}
 								]
 							},
@@ -717,8 +612,8 @@
 										"comment": "kernel-rt-debug-devel-matched is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160014",
-										"comment": "kernel-rt-debug-devel-matched is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:202027418030",
+										"comment": "kernel-rt-debug-devel-matched is not installed"
 									}
 								]
 							},
@@ -730,8 +625,8 @@
 										"comment": "kernel-zfcpdump-modules-extra is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089080",
-										"comment": "kernel-zfcpdump-modules-extra is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001034",
+										"comment": "kernel-zfcpdump-modules-extra is not installed"
 									}
 								]
 							},
@@ -743,8 +638,8 @@
 										"comment": "kernel-debug-uki-virt is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089042",
-										"comment": "kernel-debug-uki-virt is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794014",
+										"comment": "kernel-debug-uki-virt is not installed"
 									}
 								]
 							},
@@ -756,8 +651,8 @@
 										"comment": "kernel-debug is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089058",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001018",
+										"comment": "kernel-debug is not installed"
 									}
 								]
 							},
@@ -769,8 +664,8 @@
 										"comment": "python3-perf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089012",
-										"comment": "python3-perf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001020",
+										"comment": "python3-perf is not installed"
 									}
 								]
 							},
@@ -782,8 +677,8 @@
 										"comment": "kernel-uki-virt is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089078",
-										"comment": "kernel-uki-virt is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794056",
+										"comment": "kernel-uki-virt is not installed"
 									}
 								]
 							},
@@ -795,8 +690,8 @@
 										"comment": "kernel-debug-modules-internal is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160148",
-										"comment": "kernel-debug-modules-internal is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794126",
+										"comment": "kernel-debug-modules-internal is not installed"
 									}
 								]
 							},
@@ -808,8 +703,8 @@
 										"comment": "perf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089046",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001070",
+										"comment": "perf is not installed"
 									}
 								]
 							},
@@ -821,8 +716,8 @@
 										"comment": "kernel-zfcpdump-modules-internal is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160002",
-										"comment": "kernel-zfcpdump-modules-internal is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794136",
+										"comment": "kernel-zfcpdump-modules-internal is not installed"
 									}
 								]
 							},
@@ -834,8 +729,8 @@
 										"comment": "kernel-zfcpdump-modules-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089020",
-										"comment": "kernel-zfcpdump-modules-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794030",
+										"comment": "kernel-zfcpdump-modules-core is not installed"
 									}
 								]
 							},
@@ -847,8 +742,8 @@
 										"comment": "kernel-cross-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089008",
-										"comment": "kernel-cross-headers is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001004",
+										"comment": "kernel-cross-headers is not installed"
 									}
 								]
 							},
@@ -860,8 +755,8 @@
 										"comment": "kernel-64k-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089018",
-										"comment": "kernel-64k-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794108",
+										"comment": "kernel-64k-core is not installed"
 									}
 								]
 							},
@@ -873,8 +768,8 @@
 										"comment": "kernel-rt-debug is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160162",
-										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001038",
+										"comment": "kernel-rt-debug is not installed"
 									}
 								]
 							},
@@ -886,8 +781,8 @@
 										"comment": "kernel-rt-selftests-internal is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160124",
-										"comment": "kernel-rt-selftests-internal is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:202027418066",
+										"comment": "kernel-rt-selftests-internal is not installed"
 									}
 								]
 							},
@@ -899,8 +794,8 @@
 										"comment": "kernel-64k is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089096",
-										"comment": "kernel-64k is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794094",
+										"comment": "kernel-64k is not installed"
 									}
 								]
 							},
@@ -912,8 +807,8 @@
 										"comment": "kernel-rt-devel-matched is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160006",
-										"comment": "kernel-rt-devel-matched is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:202027418112",
+										"comment": "kernel-rt-devel-matched is not installed"
 									}
 								]
 							},
@@ -925,8 +820,8 @@
 										"comment": "kernel-rt-debug-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160090",
-										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001072",
+										"comment": "kernel-rt-debug-devel is not installed"
 									}
 								]
 							},
@@ -938,8 +833,8 @@
 										"comment": "kernel-rt is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160068",
-										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001076",
+										"comment": "kernel-rt is not installed"
 									}
 								]
 							},
@@ -951,8 +846,8 @@
 										"comment": "kernel-rt-modules-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160140",
-										"comment": "kernel-rt-modules-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794148",
+										"comment": "kernel-rt-modules-core is not installed"
 									}
 								]
 							},
@@ -964,8 +859,8 @@
 										"comment": "kernel-debug-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089028",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001024",
+										"comment": "kernel-debug-devel is not installed"
 									}
 								]
 							},
@@ -977,8 +872,8 @@
 										"comment": "kernel-rt-modules-internal is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160164",
-										"comment": "kernel-rt-modules-internal is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:202027418090",
+										"comment": "kernel-rt-modules-internal is not installed"
 									}
 								]
 							},
@@ -990,8 +885,8 @@
 										"comment": "kernel-64k-debug-modules is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089016",
-										"comment": "kernel-64k-debug-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794152",
+										"comment": "kernel-64k-debug-modules is not installed"
 									}
 								]
 							},
@@ -1003,8 +898,8 @@
 										"comment": "kernel-tools-libs is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089054",
-										"comment": "kernel-tools-libs is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001006",
+										"comment": "kernel-tools-libs is not installed"
 									}
 								]
 							},
@@ -1016,8 +911,8 @@
 										"comment": "bpftool is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089030",
-										"comment": "bpftool is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001062",
+										"comment": "bpftool is not installed"
 									}
 								]
 							},
@@ -1029,8 +924,8 @@
 										"comment": "kernel-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089084",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001074",
+										"comment": "kernel-devel is not installed"
 									}
 								]
 							},
@@ -1042,8 +937,8 @@
 										"comment": "kernel-64k-modules-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089056",
-										"comment": "kernel-64k-modules-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794114",
+										"comment": "kernel-64k-modules-core is not installed"
 									}
 								]
 							},
@@ -1055,8 +950,8 @@
 										"comment": "kernel-64k-debug-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089022",
-										"comment": "kernel-64k-debug-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794082",
+										"comment": "kernel-64k-debug-devel is not installed"
 									}
 								]
 							},
@@ -1068,8 +963,8 @@
 										"comment": "kernel-zfcpdump-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089074",
-										"comment": "kernel-zfcpdump-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001044",
+										"comment": "kernel-zfcpdump-core is not installed"
 									}
 								]
 							},
@@ -1081,8 +976,8 @@
 										"comment": "kernel-64k-debug-modules-internal is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160046",
-										"comment": "kernel-64k-debug-modules-internal is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794088",
+										"comment": "kernel-64k-debug-modules-internal is not installed"
 									}
 								]
 							},
@@ -1094,8 +989,8 @@
 										"comment": "kernel-64k-modules-internal is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160146",
-										"comment": "kernel-64k-modules-internal is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794150",
+										"comment": "kernel-64k-modules-internal is not installed"
 									}
 								]
 							},
@@ -1107,8 +1002,8 @@
 										"comment": "kernel-debug-modules is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089034",
-										"comment": "kernel-debug-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001052",
+										"comment": "kernel-debug-modules is not installed"
 									}
 								]
 							},
@@ -1120,8 +1015,8 @@
 										"comment": "kernel-selftests-internal is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160116",
-										"comment": "kernel-selftests-internal is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794038",
+										"comment": "kernel-selftests-internal is not installed"
 									}
 								]
 							},
@@ -1133,8 +1028,8 @@
 										"comment": "kernel-tools is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089076",
-										"comment": "kernel-tools is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001066",
+										"comment": "kernel-tools is not installed"
 									}
 								]
 							},
@@ -1146,8 +1041,8 @@
 										"comment": "kernel-ipaclones-internal is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160130",
-										"comment": "kernel-ipaclones-internal is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794118",
+										"comment": "kernel-ipaclones-internal is not installed"
 									}
 								]
 							},
@@ -1159,8 +1054,8 @@
 										"comment": "kernel-zfcpdump-modules-partner is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160012",
-										"comment": "kernel-zfcpdump-modules-partner is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794032",
+										"comment": "kernel-zfcpdump-modules-partner is not installed"
 									}
 								]
 							},
@@ -1172,8 +1067,8 @@
 										"comment": "kernel-64k-debug-modules-partner is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160076",
-										"comment": "kernel-64k-debug-modules-partner is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794062",
+										"comment": "kernel-64k-debug-modules-partner is not installed"
 									}
 								]
 							},
@@ -1185,8 +1080,8 @@
 										"comment": "kernel-64k-devel-matched is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089066",
-										"comment": "kernel-64k-devel-matched is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794010",
+										"comment": "kernel-64k-devel-matched is not installed"
 									}
 								]
 							},
@@ -1198,8 +1093,8 @@
 										"comment": "kernel-tools-libs-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089002",
-										"comment": "kernel-tools-libs-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001010",
+										"comment": "kernel-tools-libs-devel is not installed"
 									}
 								]
 							},
@@ -1211,8 +1106,8 @@
 										"comment": "libperf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160122",
-										"comment": "libperf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794046",
+										"comment": "libperf is not installed"
 									}
 								]
 							},
@@ -1224,8 +1119,8 @@
 										"comment": "kernel-64k-modules-extra is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089082",
-										"comment": "kernel-64k-modules-extra is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:201920794124",
+										"comment": "kernel-64k-modules-extra is not installed"
 									}
 								]
 							},
@@ -1237,8 +1132,8 @@
 										"comment": "kernel-rt-debug-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925160072",
-										"comment": "kernel-rt-debug-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.unaffected:tst:20154001036",
+										"comment": "kernel-rt-debug-core is not installed"
 									}
 								]
 							}

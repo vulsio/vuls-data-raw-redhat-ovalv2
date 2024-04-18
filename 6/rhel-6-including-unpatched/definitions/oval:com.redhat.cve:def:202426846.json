@@ -1,0 +1,266 @@
+{
+	"id": "oval:com.redhat.cve:def:202426846",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "kernel: nvme-fc: do not wait in vain when unloading module (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2024-26846",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-26846",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nnvme-fc: do not wait in vain when unloading module\n\nThe module exit path has race between deleting all controllers and\nfreeing 'left over IDs'. To prevent double free a synchronization\nbetween nvme_delete_ctrl and ida_destroy has been added by the initial\ncommit.\n\nThere is some logic around trying to prevent from hanging forever in\nwait_for_completion, though it does not handling all cases. E.g.\nblktests is able to reproduce the situation where the module unload\nhangs forever.\n\nIf we completely rely on the cleanup code executed from the\nnvme_delete_ctrl path, all IDs will be freed eventually. This makes\ncalling ida_destroy unnecessary. We only have to ensure that all\nnvme_delete_ctrl code has been executed before we leave\nnvme_fc_exit_module. This is done by flushing the nvme_delete_wq\nworkqueue.\n\nWhile at it, remove the unused nvme_fc_wq workqueue too.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2024-04-17"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-26846",
+					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-26846",
+					"impact": "moderate",
+					"public": "20240417"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Out of support scope",
+						"component": [
+							"kernel",
+							"kernel-abi-whitelists",
+							"kernel-bootwrapper",
+							"kernel-debug",
+							"kernel-debug-devel",
+							"kernel-devel",
+							"kernel-doc",
+							"kernel-firmware",
+							"kernel-headers",
+							"kernel-kdump",
+							"kernel-kdump-devel",
+							"perf",
+							"python-perf"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras:6",
+					"cpe:/a:redhat:rhel_extras_hpn:6",
+					"cpe:/a:redhat:rhel_extras_oracle_java:6",
+					"cpe:/a:redhat:rhel_extras_sap:6",
+					"cpe:/a:redhat:rhel_extras_sap_hana:6",
+					"cpe:/o:redhat:enterprise_linux:6",
+					"cpe:/o:redhat:enterprise_linux:6::client",
+					"cpe:/o:redhat:enterprise_linux:6::computenode",
+					"cpe:/o:redhat:enterprise_linux:6::server",
+					"cpe:/o:redhat:enterprise_linux:6::workstation"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20022439069",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20022439070",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

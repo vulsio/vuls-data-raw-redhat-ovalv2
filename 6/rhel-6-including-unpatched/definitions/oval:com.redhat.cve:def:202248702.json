@@ -1,0 +1,266 @@
+{
+	"id": "oval:com.redhat.cve:def:202248702",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "kernel: ALSA: emu10k1: Fix out of bounds access in snd_emu10k1_pcm_channel_alloc() (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2022-48702",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2022-48702",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nALSA: emu10k1: Fix out of bounds access in snd_emu10k1_pcm_channel_alloc()\n\nThe voice allocator sometimes begins allocating from near the end of the\narray and then wraps around, however snd_emu10k1_pcm_channel_alloc()\naccesses the newly allocated voices as if it never wrapped around.\n\nThis results in out of bounds access if the first voice has a high enough\nindex so that first_voice + requested_voice_count > NUM_G (64).\nThe more voices are requested, the more likely it is for this to occur.\n\nThis was initially discovered using PipeWire, however it can be reproduced\nby calling aplay multiple times with 16 channels:\naplay -r 48000 -D plughw:CARD=Live,DEV=3 -c 16 /dev/zero\n\nUBSAN: array-index-out-of-bounds in sound/pci/emu10k1/emupcm.c:127:40\nindex 65 is out of range for type 'snd_emu10k1_voice [64]'\nCPU: 1 PID: 31977 Comm: aplay Tainted: G        W IOE      6.0.0-rc2-emu10k1+ #7\nHardware name: ASUSTEK COMPUTER INC P5W DH Deluxe/P5W DH Deluxe, BIOS 3002    07/22/2010\nCall Trace:\n<TASK>\ndump_stack_lvl+0x49/0x63\ndump_stack+0x10/0x16\nubsan_epilogue+0x9/0x3f\n__ubsan_handle_out_of_bounds.cold+0x44/0x49\nsnd_emu10k1_playback_hw_params+0x3bc/0x420 [snd_emu10k1]\nsnd_pcm_hw_params+0x29f/0x600 [snd_pcm]\nsnd_pcm_common_ioctl+0x188/0x1410 [snd_pcm]\n? exit_to_user_mode_prepare+0x35/0x170\n? do_syscall_64+0x69/0x90\n? syscall_exit_to_user_mode+0x26/0x50\n? do_syscall_64+0x69/0x90\n? exit_to_user_mode_prepare+0x35/0x170\nsnd_pcm_ioctl+0x27/0x40 [snd_pcm]\n__x64_sys_ioctl+0x95/0xd0\ndo_syscall_64+0x5c/0x90\n? do_syscall_64+0x69/0x90\n? do_syscall_64+0x69/0x90\nentry_SYSCALL_64_after_hwframe+0x63/0xcd",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2024-05-03"
+			},
+			"cve": [
+				{
+					"text": "CVE-2022-48702",
+					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"href": "https://access.redhat.com/security/cve/CVE-2022-48702",
+					"impact": "moderate",
+					"public": "20240503"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Out of support scope",
+						"component": [
+							"kernel",
+							"kernel-abi-whitelists",
+							"kernel-bootwrapper",
+							"kernel-debug",
+							"kernel-debug-devel",
+							"kernel-devel",
+							"kernel-doc",
+							"kernel-firmware",
+							"kernel-headers",
+							"kernel-kdump",
+							"kernel-kdump-devel",
+							"perf",
+							"python-perf"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras:6",
+					"cpe:/a:redhat:rhel_extras_hpn:6",
+					"cpe:/a:redhat:rhel_extras_oracle_java:6",
+					"cpe:/a:redhat:rhel_extras_sap:6",
+					"cpe:/a:redhat:rhel_extras_sap_hana:6",
+					"cpe:/o:redhat:enterprise_linux:6",
+					"cpe:/o:redhat:enterprise_linux:6::client",
+					"cpe:/o:redhat:enterprise_linux:6::computenode",
+					"cpe:/o:redhat:enterprise_linux:6::server",
+					"cpe:/o:redhat:enterprise_linux:6::workstation"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20022439069",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20022439070",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

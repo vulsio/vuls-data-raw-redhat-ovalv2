@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: A memory exhaustion flaw was found in the otelgrpc handler of open-telemetry. This flaw may allow a remote unauthenticated attacker to flood the peer address and port and exhaust the server's memory by sending multiple malicious requests, affecting the availability of the system. \n            STATEMENT: While no authentication is required, there are a significant number of non-default factors that prevent widespread exploitation of this issue. To affect a service, all of the following must be true:\n- The go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc package must be in use\n- Configured a metrics pipeline that uses the UnaryServerInterceptor wrapper function\n- No filtering of unknown HTTP methods or user agents at a higher level, such as Content Delivery Network\n\nDue to the limited attack surface, Red Hat Product Security rates the impact of this flaw as Moderate.\n            MITIGATION: As a workaround, use a view removing the attributes. Another possibility is to disable grpc metrics instrumentation by passing otelgrpc.WithMeterProvider option with noop.NewMeterProvider.",
+		"description": "DOCUMENTATION: A memory exhaustion flaw was found in the otelgrpc handler of open-telemetry. This flaw may allow a remote unauthenticated attacker to flood the peer address and port and exhaust the server's memory by sending multiple malicious requests, affecting the availability of the system. \n            STATEMENT: While no authentication is required, there are a significant number of non-default factors that prevent widespread exploitation of this issue. To affect a service, all of the following must be true:\n- The go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc package must be in use\n- Configured a metrics pipeline that uses the UnaryServerInterceptor wrapper function\n- No filtering of unknown HTTP methods or user agents at a higher level, such as Content Delivery Network\n\nDue to the limited attack surface, Red Hat Product Security rates the impact of this flaw as Moderate.\n\ncluster-network-operator-container in Openshift Container Platform 4 is rated as low and Won't Fix as the stats are behind an RBAC proxy and isn't available to unauthenticated users.\n            MITIGATION: As a workaround, use a view removing the attributes. Another possibility is to disable grpc metrics instrumentation by passing otelgrpc.WithMeterProvider option with noop.NewMeterProvider.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-04-26"
+				"date": "2024-05-08"
 			},
 			"cve": [
 				{
@@ -33,15 +33,8 @@
 					{
 						"state": "Affected",
 						"component": [
-							"cri-o"
-						]
-					},
-					{
-						"state": "Under investigation",
-						"component": [
-							"cri-tools",
-							"microshift",
-							"openshift"
+							"openshift",
+							"ose-gcp-gcr-image-credential-provider"
 						]
 					}
 				]
@@ -69,51 +62,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:202127918005",
-										"comment": "cri-o is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202127918006",
-										"comment": "cri-o is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202127918001",
-										"comment": "cri-tools is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:202127918002",
-										"comment": "cri-tools is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20214235001",
-										"comment": "microshift is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20214235002",
-										"comment": "microshift is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20181002101001",
 										"comment": "openshift is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20181002101002",
 										"comment": "openshift is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202345290013",
+										"comment": "ose-gcp-gcr-image-credential-provider is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202345290014",
+										"comment": "ose-gcp-gcr-image-credential-provider is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

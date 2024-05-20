@@ -1,0 +1,266 @@
+{
+	"id": "oval:com.redhat.cve:def:202435944",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "kernel: VMCI: Fix memcpy() run-time warning in dg_dispatch_as_host() (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2024-35944",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-35944",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nVMCI: Fix memcpy() run-time warning in dg_dispatch_as_host()\n\nSyzkaller hit 'WARNING in dg_dispatch_as_host' bug.\n\nmemcpy: detected field-spanning write (size 56) of single field \"&dg_info->msg\"\nat drivers/misc/vmw_vmci/vmci_datagram.c:237 (size 24)\n\nWARNING: CPU: 0 PID: 1555 at drivers/misc/vmw_vmci/vmci_datagram.c:237\ndg_dispatch_as_host+0x88e/0xa60 drivers/misc/vmw_vmci/vmci_datagram.c:237\n\nSome code commentry, based on my understanding:\n\n544 #define VMCI_DG_SIZE(_dg) (VMCI_DG_HEADERSIZE + (size_t)(_dg)->payload_size)\n/// This is 24 + payload_size\n\nmemcpy(&dg_info->msg, dg, dg_size);\n\tDestination = dg_info->msg ---> this is a 24 byte\n\t\t\t\t\tstructure(struct vmci_datagram)\n\tSource = dg --> this is a 24 byte structure (struct vmci_datagram)\n\tSize = dg_size = 24 + payload_size\n\n{payload_size = 56-24 =32} -- Syzkaller managed to set payload_size to 32.\n\n 35 struct delayed_datagram_info {\n 36         struct datagram_entry *entry;\n 37         struct work_struct work;\n 38         bool in_dg_host_queue;\n 39         /* msg and msg_payload must be together. */\n 40         struct vmci_datagram msg;\n 41         u8 msg_payload[];\n 42 };\n\nSo those extra bytes of payload are copied into msg_payload[], a run time\nwarning is seen while fuzzing with Syzkaller.\n\nOne possible way to fix the warning is to split the memcpy() into\ntwo parts -- one -- direct assignment of msg and second taking care of payload.\n\nGustavo quoted:\n\"Under FORTIFY_SOURCE we should not copy data across multiple members\nin a structure.\" \n            \n            MITIGATION: null",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2024-05-20"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-35944",
+					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-35944",
+					"impact": "moderate",
+					"public": "20240519"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Out of support scope",
+						"component": [
+							"kernel",
+							"kernel-abi-whitelists",
+							"kernel-bootwrapper",
+							"kernel-debug",
+							"kernel-debug-devel",
+							"kernel-devel",
+							"kernel-doc",
+							"kernel-firmware",
+							"kernel-headers",
+							"kernel-kdump",
+							"kernel-kdump-devel",
+							"perf",
+							"python-perf"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras:6",
+					"cpe:/a:redhat:rhel_extras_hpn:6",
+					"cpe:/a:redhat:rhel_extras_oracle_java:6",
+					"cpe:/a:redhat:rhel_extras_sap:6",
+					"cpe:/a:redhat:rhel_extras_sap_hana:6",
+					"cpe:/o:redhat:enterprise_linux:6",
+					"cpe:/o:redhat:enterprise_linux:6::client",
+					"cpe:/o:redhat:enterprise_linux:6::computenode",
+					"cpe:/o:redhat:enterprise_linux:6::server",
+					"cpe:/o:redhat:enterprise_linux:6::workstation"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20022439069",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20022439070",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

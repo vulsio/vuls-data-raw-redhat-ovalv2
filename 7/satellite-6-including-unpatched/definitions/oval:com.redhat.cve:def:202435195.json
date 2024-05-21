@@ -11,7 +11,7 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: An incorrect control flow implementation was found in Requests. If the first request in a session is made with verify=False, all subsequent requests to the same host will continue to ignore cert verification. \n            \n            MITIGATION: null",
+		"description": "DOCUMENTATION: An incorrect control flow implementation vulnerability was found in Requests. If the first request in a session is made with verify=False, all subsequent requests to the same host will continue to ignore cert verification. \n            \n            MITIGATION: null",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
@@ -33,7 +33,11 @@
 					{
 						"state": "Under investigation",
 						"component": [
-							"ansiblerole-foreman_scap_client"
+							"ansiblerole-foreman_scap_client",
+							"satellite-capsule:el8/python-requests",
+							"satellite-capsule:el8/python3-requests",
+							"satellite:el8/python-requests",
+							"satellite:el8/python3-requests"
 						]
 					}
 				]
@@ -55,18 +59,114 @@
 		"criterias": [
 			{
 				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202435195001",
+										"comment": "ansiblerole-foreman_scap_client is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202435195002",
+										"comment": "ansiblerole-foreman_scap_client is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202435195003",
+														"comment": "python3-requests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202435195004",
+														"comment": "python3-requests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202435195005",
+														"comment": "python-requests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202435195006",
+														"comment": "python-requests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202241323005",
+										"comment": "Module satellite:el8 is enabled"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202435195003",
+														"comment": "python3-requests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202435195004",
+														"comment": "python3-requests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202435195005",
+														"comment": "python-requests is installed"
+													},
+													{
+														"test_ref": "oval:com.redhat.cve:tst:202435195006",
+														"comment": "python-requests is signed with Red Hat redhatrelease2 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202241323006",
+										"comment": "Module satellite-capsule:el8 is enabled"
+									}
+								]
+							}
+						]
+					}
+				],
 				"criterions": [
 					{
 						"test_ref": "oval:com.redhat.cve:tst:20134120009",
 						"comment": "Red Hat Enterprise Linux 7 is installed"
-					},
-					{
-						"test_ref": "oval:com.redhat.cve:tst:202435195001",
-						"comment": "ansiblerole-foreman_scap_client is installed"
-					},
-					{
-						"test_ref": "oval:com.redhat.cve:tst:202435195002",
-						"comment": "ansiblerole-foreman_scap_client is signed with Red Hat redhatrelease2 key"
 					}
 				]
 			}

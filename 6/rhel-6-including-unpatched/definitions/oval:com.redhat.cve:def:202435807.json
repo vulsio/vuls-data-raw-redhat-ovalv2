@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\next4: fix corruption during on-line resize\n\nWe observed a corruption during on-line resize of a file system that is\nlarger than 16 TiB with 4k block size. With having more then 2^32 blocks\nresize_inode is turned off by default by mke2fs. The issue can be\nreproduced on a smaller file system for convenience by explicitly\nturning off resize_inode. An on-line resize across an 8 GiB boundary (the\nsize of a meta block group in this setup) then leads to a corruption:\n\n  dev=/dev/<some_dev> # should be >= 16 GiB\n  mkdir -p /corruption\n  /sbin/mke2fs -t ext4 -b 4096 -O ^resize_inode $dev $((2 * 2**21 - 2**15))\n  mount -t ext4 $dev /corruption\n\n  dd if=/dev/zero bs=4096 of=/corruption/test count=$((2*2**21 - 4*2**15))\n  sha1sum /corruption/test\n  # 79d2658b39dcfd77274e435b0934028adafaab11  /corruption/test\n\n  /sbin/resize2fs $dev $((2*2**21))\n  # drop page cache to force reload the block from disk\n  echo 1 > /proc/sys/vm/drop_caches\n\n  sha1sum /corruption/test\n  # 3c2abc63cbf1a94c9e6977e0fbd72cd832c4d5c3  /corruption/test\n\n2^21 = 2^15*2^6 equals 8 GiB whereof 2^15 is the number of blocks per\nblock group and 2^6 are the number of block groups that make a meta\nblock group.\n\nThe last checksum might be different depending on how the file is laid\nout across the physical blocks. The actual corruption occurs at physical\nblock 63*2^15 = 2064384 which would be the location of the backup of the\nmeta block group's block descriptor. During the on-line resize the file\nsystem will be converted to meta_bg starting at s_first_meta_bg which is\n2 in the example - meaning all block groups after 16 GiB. However, in\next4_flex_group_add we might add block groups that are not part of the\nfirst meta block group yet. In the reproducer we achieved this by\nsubstracting the size of a whole block group from the point where the\nmeta block group would start. This must be considered when updating the\nbackup block group descriptors to follow the non-meta_bg layout. The fix\nis to add a test whether the group to add is already part of the meta\nblock group or not. \n            \n            MITIGATION: null",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\next4: fix corruption during on-line resize\n\nWe observed a corruption during on-line resize of a file system that is\nlarger than 16 TiB with 4k block size. With having more then 2^32 blocks\nresize_inode is turned off by default by mke2fs. The issue can be\nreproduced on a smaller file system for convenience by explicitly\nturning off resize_inode. An on-line resize across an 8 GiB boundary (the\nsize of a meta block group in this setup) then leads to a corruption:\n\n  dev=/dev/<some_dev> # should be >= 16 GiB\n  mkdir -p /corruption\n  /sbin/mke2fs -t ext4 -b 4096 -O ^resize_inode $dev $((2 * 2**21 - 2**15))\n  mount -t ext4 $dev /corruption\n\n  dd if=/dev/zero bs=4096 of=/corruption/test count=$((2*2**21 - 4*2**15))\n  sha1sum /corruption/test\n  # 79d2658b39dcfd77274e435b0934028adafaab11  /corruption/test\n\n  /sbin/resize2fs $dev $((2*2**21))\n  # drop page cache to force reload the block from disk\n  echo 1 > /proc/sys/vm/drop_caches\n\n  sha1sum /corruption/test\n  # 3c2abc63cbf1a94c9e6977e0fbd72cd832c4d5c3  /corruption/test\n\n2^21 = 2^15*2^6 equals 8 GiB whereof 2^15 is the number of blocks per\nblock group and 2^6 are the number of block groups that make a meta\nblock group.\n\nThe last checksum might be different depending on how the file is laid\nout across the physical blocks. The actual corruption occurs at physical\nblock 63*2^15 = 2064384 which would be the location of the backup of the\nmeta block group's block descriptor. During the on-line resize the file\nsystem will be converted to meta_bg starting at s_first_meta_bg which is\n2 in the example - meaning all block groups after 16 GiB. However, in\next4_flex_group_add we might add block groups that are not part of the\nfirst meta block group yet. In the reproducer we achieved this by\nsubstracting the size of a whole block group from the point where the\nmeta block group would start. This must be considered when updating the\nbackup block group descriptors to follow the non-meta_bg layout. The fix\nis to add a test whether the group to add is already part of the meta\nblock group or not.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-05-20"
+				"date": "2024-05-30"
 			},
 			"cve": [
 				{
@@ -80,19 +80,6 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764001",
-										"comment": "kernel-kdump-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764002",
-										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764009",
 										"comment": "kernel-debug is installed"
 									},
@@ -106,12 +93,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -119,12 +106,38 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -158,25 +171,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -197,12 +197,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -223,25 +236,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764005",
-										"comment": "kernel-headers is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764006",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

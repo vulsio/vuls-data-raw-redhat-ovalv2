@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nPCI/PM: Drain runtime-idle callbacks before driver removal\n\nA race condition between the .runtime_idle() callback and the .remove()\ncallback in the rtsx_pcr PCI driver leads to a kernel crash due to an\nunhandled page fault [1].\n\nThe problem is that rtsx_pci_runtime_idle() is not expected to be running\nafter pm_runtime_get_sync() has been called, but the latter doesn't really\nguarantee that.  It only guarantees that the suspend and resume callbacks\nwill not be running when it returns.\n\nHowever, if a .runtime_idle() callback is already running when\npm_runtime_get_sync() is called, the latter will notice that the runtime PM\nstatus of the device is RPM_ACTIVE and it will return right away without\nwaiting for the former to complete.  In fact, it cannot wait for\n.runtime_idle() to complete because it may be called from that callback (it\narguably does not make much sense to do that, but it is not strictly\nprohibited).\n\nThus in general, whoever is providing a .runtime_idle() callback needs\nto protect it from running in parallel with whatever code runs after\npm_runtime_get_sync().  [Note that .runtime_idle() will not start after\npm_runtime_get_sync() has returned, but it may continue running then if it\nhas started earlier.]\n\nOne way to address that race condition is to call pm_runtime_barrier()\nafter pm_runtime_get_sync() (not before it, because a nonzero value of the\nruntime PM usage counter is necessary to prevent runtime PM callbacks from\nbeing invoked) to wait for the .runtime_idle() callback to complete should\nit be running at that point.  A suitable place for doing that is in\npci_device_remove() which calls pm_runtime_get_sync() before removing the\ndriver, so it may as well call pm_runtime_barrier() subsequently, which\nwill prevent the race in question from occurring, not just in the rtsx_pcr\ndriver, but in any PCI drivers providing .runtime_idle() callbacks. \n            \n            MITIGATION: null",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nPCI/PM: Drain runtime-idle callbacks before driver removal\n\nA race condition between the .runtime_idle() callback and the .remove()\ncallback in the rtsx_pcr PCI driver leads to a kernel crash due to an\nunhandled page fault [1].\n\nThe problem is that rtsx_pci_runtime_idle() is not expected to be running\nafter pm_runtime_get_sync() has been called, but the latter doesn't really\nguarantee that.  It only guarantees that the suspend and resume callbacks\nwill not be running when it returns.\n\nHowever, if a .runtime_idle() callback is already running when\npm_runtime_get_sync() is called, the latter will notice that the runtime PM\nstatus of the device is RPM_ACTIVE and it will return right away without\nwaiting for the former to complete.  In fact, it cannot wait for\n.runtime_idle() to complete because it may be called from that callback (it\narguably does not make much sense to do that, but it is not strictly\nprohibited).\n\nThus in general, whoever is providing a .runtime_idle() callback needs\nto protect it from running in parallel with whatever code runs after\npm_runtime_get_sync().  [Note that .runtime_idle() will not start after\npm_runtime_get_sync() has returned, but it may continue running then if it\nhas started earlier.]\n\nOne way to address that race condition is to call pm_runtime_barrier()\nafter pm_runtime_get_sync() (not before it, because a nonzero value of the\nruntime PM usage counter is necessary to prevent runtime PM callbacks from\nbeing invoked) to wait for the .runtime_idle() callback to complete should\nit be running at that point.  A suitable place for doing that is in\npci_device_remove() which calls pm_runtime_get_sync() before removing the\ndriver, so it may as well call pm_runtime_barrier() subsequently, which\nwill prevent the race in question from occurring, not just in the rtsx_pcr\ndriver, but in any PCI drivers providing .runtime_idle() callbacks.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-05-20"
+				"date": "2024-06-09"
 			},
 			"cve": [
 				{
@@ -80,12 +80,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764001",
-										"comment": "kernel-kdump-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764002",
-										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -93,38 +93,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -145,12 +119,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -158,12 +132,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -171,12 +145,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -210,6 +184,19 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764019",
 										"comment": "kernel-bootwrapper is installed"
 									},
@@ -223,12 +210,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764005",
-										"comment": "kernel-headers is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764006",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -236,12 +223,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

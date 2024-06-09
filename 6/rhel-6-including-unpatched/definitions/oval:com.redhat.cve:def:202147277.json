@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nkvm: avoid speculation-based attacks from out-of-range memslot accesses\n\nKVM's mechanism for accessing guest memory translates a guest physical\naddress (gpa) to a host virtual address using the right-shifted gpa\n(also known as gfn) and a struct kvm_memory_slot.  The translation is\nperformed in __gfn_to_hva_memslot using the following formula:\n\n      hva = slot->userspace_addr + (gfn - slot->base_gfn) * PAGE_SIZE\n\nIt is expected that gfn falls within the boundaries of the guest's\nphysical memory.  However, a guest can access invalid physical addresses\nin such a way that the gfn is invalid.\n\n__gfn_to_hva_memslot is called from kvm_vcpu_gfn_to_hva_prot, which first\nretrieves a memslot through __gfn_to_memslot.  While __gfn_to_memslot\ndoes check that the gfn falls within the boundaries of the guest's\nphysical memory or not, a CPU can speculate the result of the check and\ncontinue execution speculatively using an illegal gfn. The speculation\ncan result in calculating an out-of-bounds hva.  If the resulting host\nvirtual address is used to load another guest physical address, this\nis effectively a Spectre gadget consisting of two consecutive reads,\nthe second of which is data dependent on the first.\n\nRight now it's not clear if there are any cases in which this is\nexploitable.  One interesting case was reported by the original author\nof this patch, and involves visiting guest page tables on x86.  Right\nnow these are not vulnerable because the hva read goes through get_user(),\nwhich contains an LFENCE speculation barrier.  However, there are\npatches in progress for x86 uaccess.h to mask kernel addresses instead of\nusing LFENCE; once these land, a guest could use speculation to read\nfrom the VMM's ring 3 address space.  Other architectures such as ARM\nalready use the address masking method, and would be susceptible to\nthis same kind of data-dependent access gadgets.  Therefore, this patch\nproactively protects from these attacks by masking out-of-bounds gfns\nin __gfn_to_hva_memslot, which blocks speculation of invalid hvas.\n\nSean Christopherson noted that this patch does not cover\nkvm_read_guest_offset_cached.  This however is limited to a few bytes\npast the end of the cache, and therefore it is unlikely to be useful in\nthe context of building a chain of data dependent accesses. \n            \n            MITIGATION: null",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nkvm: avoid speculation-based attacks from out-of-range memslot accesses\n\nKVM's mechanism for accessing guest memory translates a guest physical\naddress (gpa) to a host virtual address using the right-shifted gpa\n(also known as gfn) and a struct kvm_memory_slot.  The translation is\nperformed in __gfn_to_hva_memslot using the following formula:\n\n      hva = slot->userspace_addr + (gfn - slot->base_gfn) * PAGE_SIZE\n\nIt is expected that gfn falls within the boundaries of the guest's\nphysical memory.  However, a guest can access invalid physical addresses\nin such a way that the gfn is invalid.\n\n__gfn_to_hva_memslot is called from kvm_vcpu_gfn_to_hva_prot, which first\nretrieves a memslot through __gfn_to_memslot.  While __gfn_to_memslot\ndoes check that the gfn falls within the boundaries of the guest's\nphysical memory or not, a CPU can speculate the result of the check and\ncontinue execution speculatively using an illegal gfn. The speculation\ncan result in calculating an out-of-bounds hva.  If the resulting host\nvirtual address is used to load another guest physical address, this\nis effectively a Spectre gadget consisting of two consecutive reads,\nthe second of which is data dependent on the first.\n\nRight now it's not clear if there are any cases in which this is\nexploitable.  One interesting case was reported by the original author\nof this patch, and involves visiting guest page tables on x86.  Right\nnow these are not vulnerable because the hva read goes through get_user(),\nwhich contains an LFENCE speculation barrier.  However, there are\npatches in progress for x86 uaccess.h to mask kernel addresses instead of\nusing LFENCE; once these land, a guest could use speculation to read\nfrom the VMM's ring 3 address space.  Other architectures such as ARM\nalready use the address masking method, and would be susceptible to\nthis same kind of data-dependent access gadgets.  Therefore, this patch\nproactively protects from these attacks by masking out-of-bounds gfns\nin __gfn_to_hva_memslot, which blocks speculation of invalid hvas.\n\nSean Christopherson noted that this patch does not cover\nkvm_read_guest_offset_cached.  This however is limited to a few bytes\npast the end of the cache, and therefore it is unlikely to be useful in\nthe context of building a chain of data dependent accesses.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-05-23"
+				"date": "2024-06-09"
 			},
 			"cve": [
 				{
@@ -80,12 +80,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764001",
-										"comment": "kernel-kdump-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764002",
-										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -93,51 +93,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -171,19 +132,6 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764017",
 										"comment": "kernel-doc is installed"
 									},
@@ -197,25 +145,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764019",
-										"comment": "kernel-bootwrapper is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764020",
-										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -236,12 +171,77 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

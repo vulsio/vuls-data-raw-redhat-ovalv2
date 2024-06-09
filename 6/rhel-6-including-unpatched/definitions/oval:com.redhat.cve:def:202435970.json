@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\naf_unix: Clear stale u->oob_skb.\n\nsyzkaller started to report deadlock of unix_gc_lock after commit\n4090fa373f0e (\"af_unix: Replace garbage collection algorithm.\"), but\nit just uncovers the bug that has been there since commit 314001f0bf92\n(\"af_unix: Add OOB support\").\n\nThe repro basically does the following.\n\n  from socket import *\n  from array import array\n\n  c1, c2 = socketpair(AF_UNIX, SOCK_STREAM)\n  c1.sendmsg([b'a'], [(SOL_SOCKET, SCM_RIGHTS, array(\"i\", [c2.fileno()]))], MSG_OOB)\n  c2.recv(1)  # blocked as no normal data in recv queue\n\n  c2.close()  # done async and unblock recv()\n  c1.close()  # done async and trigger GC\n\nA socket sends its file descriptor to itself as OOB data and tries to\nreceive normal data, but finally recv() fails due to async close().\n\nThe problem here is wrong handling of OOB skb in manage_oob().  When\nrecvmsg() is called without MSG_OOB, manage_oob() is called to check\nif the peeked skb is OOB skb.  In such a case, manage_oob() pops it\nout of the receive queue but does not clear unix_sock(sk)->oob_skb.\nThis is wrong in terms of uAPI.\n\nLet's say we send \"hello\" with MSG_OOB, and \"world\" without MSG_OOB.\nThe 'o' is handled as OOB data.  When recv() is called twice without\nMSG_OOB, the OOB data should be lost.\n\n  >>> from socket import *\n  >>> c1, c2 = socketpair(AF_UNIX, SOCK_STREAM, 0)\n  >>> c1.send(b'hello', MSG_OOB)  # 'o' is OOB data\n  5\n  >>> c1.send(b'world')\n  5\n  >>> c2.recv(5)  # OOB data is not received\n  b'hell'\n  >>> c2.recv(5)  # OOB date is skipped\n  b'world'\n  >>> c2.recv(5, MSG_OOB)  # This should return an error\n  b'o'\n\nIn the same situation, TCP actually returns -EINVAL for the last\nrecv().\n\nAlso, if we do not clear unix_sk(sk)->oob_skb, unix_poll() always set\nEPOLLPRI even though the data has passed through by previous recv().\n\nTo avoid these issues, we must clear unix_sk(sk)->oob_skb when dequeuing\nit from recv queue.\n\nThe reason why the old GC did not trigger the deadlock is because the\nold GC relied on the receive queue to detect the loop.\n\nWhen it is triggered, the socket with OOB data is marked as GC candidate\nbecause file refcount == inflight count (1).  However, after traversing\nall inflight sockets, the socket still has a positive inflight count (1),\nthus the socket is excluded from candidates.  Then, the old GC lose the\nchance to garbage-collect the socket.\n\nWith the old GC, the repro continues to create true garbage that will\nnever be freed nor detected by kmemleak as it's linked to the global\ninflight list.  That's why we couldn't even notice the issue. \n            \n            MITIGATION: null",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\naf_unix: Clear stale u->oob_skb.\n\nsyzkaller started to report deadlock of unix_gc_lock after commit\n4090fa373f0e (\"af_unix: Replace garbage collection algorithm.\"), but\nit just uncovers the bug that has been there since commit 314001f0bf92\n(\"af_unix: Add OOB support\").\n\nThe repro basically does the following.\n\n  from socket import *\n  from array import array\n\n  c1, c2 = socketpair(AF_UNIX, SOCK_STREAM)\n  c1.sendmsg([b'a'], [(SOL_SOCKET, SCM_RIGHTS, array(\"i\", [c2.fileno()]))], MSG_OOB)\n  c2.recv(1)  # blocked as no normal data in recv queue\n\n  c2.close()  # done async and unblock recv()\n  c1.close()  # done async and trigger GC\n\nA socket sends its file descriptor to itself as OOB data and tries to\nreceive normal data, but finally recv() fails due to async close().\n\nThe problem here is wrong handling of OOB skb in manage_oob().  When\nrecvmsg() is called without MSG_OOB, manage_oob() is called to check\nif the peeked skb is OOB skb.  In such a case, manage_oob() pops it\nout of the receive queue but does not clear unix_sock(sk)->oob_skb.\nThis is wrong in terms of uAPI.\n\nLet's say we send \"hello\" with MSG_OOB, and \"world\" without MSG_OOB.\nThe 'o' is handled as OOB data.  When recv() is called twice without\nMSG_OOB, the OOB data should be lost.\n\n  >>> from socket import *\n  >>> c1, c2 = socketpair(AF_UNIX, SOCK_STREAM, 0)\n  >>> c1.send(b'hello', MSG_OOB)  # 'o' is OOB data\n  5\n  >>> c1.send(b'world')\n  5\n  >>> c2.recv(5)  # OOB data is not received\n  b'hell'\n  >>> c2.recv(5)  # OOB date is skipped\n  b'world'\n  >>> c2.recv(5, MSG_OOB)  # This should return an error\n  b'o'\n\nIn the same situation, TCP actually returns -EINVAL for the last\nrecv().\n\nAlso, if we do not clear unix_sk(sk)->oob_skb, unix_poll() always set\nEPOLLPRI even though the data has passed through by previous recv().\n\nTo avoid these issues, we must clear unix_sk(sk)->oob_skb when dequeuing\nit from recv queue.\n\nThe reason why the old GC did not trigger the deadlock is because the\nold GC relied on the receive queue to detect the loop.\n\nWhen it is triggered, the socket with OOB data is marked as GC candidate\nbecause file refcount == inflight count (1).  However, after traversing\nall inflight sockets, the socket still has a positive inflight count (1),\nthus the socket is excluded from candidates.  Then, the old GC lose the\nchance to garbage-collect the socket.\n\nWith the old GC, the repro continues to create true garbage that will\nnever be freed nor detected by kmemleak as it's linked to the global\ninflight list.  That's why we couldn't even notice the issue.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-05-20"
+				"date": "2024-06-09"
 			},
 			"cve": [
 				{
@@ -80,12 +80,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764019",
-										"comment": "kernel-bootwrapper is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764020",
-										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -119,77 +119,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764017",
 										"comment": "kernel-doc is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764018",
 										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764005",
-										"comment": "kernel-headers is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764006",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -210,6 +158,19 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764009",
 										"comment": "kernel-debug is installed"
 									},
@@ -223,12 +184,51 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},

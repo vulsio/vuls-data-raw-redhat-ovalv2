@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\ndm btree remove: assign new_root only when removal succeeds\n\nremove_raw() in dm_btree_remove() may fail due to IO read error\n(e.g. read the content of origin block fails during shadowing),\nand the value of shadow_spine::root is uninitialized, but\nthe uninitialized value is still assign to new_root in the\nend of dm_btree_remove().\n\nFor dm-thin, the value of pmd->details_root or pmd->root will become\nan uninitialized value, so if trying to read details_info tree again\nout-of-bound memory may occur as showed below:\n\n  general protection fault, probably for non-canonical address 0x3fdcb14c8d7520\n  CPU: 4 PID: 515 Comm: dmsetup Not tainted 5.13.0-rc6\n  Hardware name: QEMU Standard PC\n  RIP: 0010:metadata_ll_load_ie+0x14/0x30\n  Call Trace:\n   sm_metadata_count_is_more_than_one+0xb9/0xe0\n   dm_tm_shadow_block+0x52/0x1c0\n   shadow_step+0x59/0xf0\n   remove_raw+0xb2/0x170\n   dm_btree_remove+0xf4/0x1c0\n   dm_pool_delete_thin_device+0xc3/0x140\n   pool_message+0x218/0x2b0\n   target_message+0x251/0x290\n   ctl_ioctl+0x1c4/0x4d0\n   dm_ctl_ioctl+0xe/0x20\n   __x64_sys_ioctl+0x7b/0xb0\n   do_syscall_64+0x40/0xb0\n   entry_SYSCALL_64_after_hwframe+0x44/0xae\n\nFixing it by only assign new_root when removal succeeds \n            \n            MITIGATION: null",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\ndm btree remove: assign new_root only when removal succeeds\n\nremove_raw() in dm_btree_remove() may fail due to IO read error\n(e.g. read the content of origin block fails during shadowing),\nand the value of shadow_spine::root is uninitialized, but\nthe uninitialized value is still assign to new_root in the\nend of dm_btree_remove().\n\nFor dm-thin, the value of pmd->details_root or pmd->root will become\nan uninitialized value, so if trying to read details_info tree again\nout-of-bound memory may occur as showed below:\n\n  general protection fault, probably for non-canonical address 0x3fdcb14c8d7520\n  CPU: 4 PID: 515 Comm: dmsetup Not tainted 5.13.0-rc6\n  Hardware name: QEMU Standard PC\n  RIP: 0010:metadata_ll_load_ie+0x14/0x30\n  Call Trace:\n   sm_metadata_count_is_more_than_one+0xb9/0xe0\n   dm_tm_shadow_block+0x52/0x1c0\n   shadow_step+0x59/0xf0\n   remove_raw+0xb2/0x170\n   dm_btree_remove+0xf4/0x1c0\n   dm_pool_delete_thin_device+0xc3/0x140\n   pool_message+0x218/0x2b0\n   target_message+0x251/0x290\n   ctl_ioctl+0x1c4/0x4d0\n   dm_ctl_ioctl+0xe/0x20\n   __x64_sys_ioctl+0x7b/0xb0\n   do_syscall_64+0x40/0xb0\n   entry_SYSCALL_64_after_hwframe+0x44/0xae\n\nFixing it by only assign new_root when removal succeeds",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-05-22"
+				"date": "2024-06-09"
 			},
 			"cve": [
 				{
@@ -80,12 +80,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -106,90 +106,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764013",
 										"comment": "kernel-kdump is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764014",
 										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764005",
-										"comment": "kernel-headers is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764006",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764001",
-										"comment": "kernel-kdump-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764002",
-										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -210,12 +145,38 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764017",
 										"comment": "kernel-doc is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764018",
 										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -242,6 +203,45 @@
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764020",
 										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

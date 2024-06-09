@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nixgbe: Fix NULL pointer dereference in ixgbe_xdp_setup\n\nThe ixgbe driver currently generates a NULL pointer dereference with\nsome machine (online cpus < 63). This is due to the fact that the\nmaximum value of num_xdp_queues is nr_cpu_ids. Code is in\n\"ixgbe_set_rss_queues\"\".\n\nHere's how the problem repeats itself:\nSome machine (online cpus < 63), And user set num_queues to 63 through\nethtool. Code is in the \"ixgbe_set_channels\",\n\tadapter->ring_feature[RING_F_FDIR].limit = count;\n\nIt becomes 63.\n\nWhen user use xdp, \"ixgbe_set_rss_queues\" will set queues num.\n\tadapter->num_rx_queues = rss_i;\n\tadapter->num_tx_queues = rss_i;\n\tadapter->num_xdp_queues = ixgbe_xdp_queues(adapter);\n\nAnd rss_i's value is from\n\tf = &adapter->ring_feature[RING_F_FDIR];\n\trss_i = f->indices = f->limit;\n\nSo \"num_rx_queues\" > \"num_xdp_queues\", when run to \"ixgbe_xdp_setup\",\n\tfor (i = 0; i < adapter->num_rx_queues; i++)\n\t\tif (adapter->xdp_ring[i]->xsk_umem)\n\nIt leads to panic.\n\nCall trace:\n[exception RIP: ixgbe_xdp+368]\nRIP: ffffffffc02a76a0  RSP: ffff9fe16202f8d0  RFLAGS: 00010297\nRAX: 0000000000000000  RBX: 0000000000000020  RCX: 0000000000000000\nRDX: 0000000000000000  RSI: 000000000000001c  RDI: ffffffffa94ead90\nRBP: ffff92f8f24c0c18   R8: 0000000000000000   R9: 0000000000000000\nR10: ffff9fe16202f830  R11: 0000000000000000  R12: ffff92f8f24c0000\nR13: ffff9fe16202fc01  R14: 000000000000000a  R15: ffffffffc02a7530\nORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018\n 7 [ffff9fe16202f8f0] dev_xdp_install at ffffffffa89fbbcc\n 8 [ffff9fe16202f920] dev_change_xdp_fd at ffffffffa8a08808\n 9 [ffff9fe16202f960] do_setlink at ffffffffa8a20235\n10 [ffff9fe16202fa88] rtnl_setlink at ffffffffa8a20384\n11 [ffff9fe16202fc78] rtnetlink_rcv_msg at ffffffffa8a1a8dd\n12 [ffff9fe16202fcf0] netlink_rcv_skb at ffffffffa8a717eb\n13 [ffff9fe16202fd40] netlink_unicast at ffffffffa8a70f88\n14 [ffff9fe16202fd80] netlink_sendmsg at ffffffffa8a71319\n15 [ffff9fe16202fdf0] sock_sendmsg at ffffffffa89df290\n16 [ffff9fe16202fe08] __sys_sendto at ffffffffa89e19c8\n17 [ffff9fe16202ff30] __x64_sys_sendto at ffffffffa89e1a64\n18 [ffff9fe16202ff38] do_syscall_64 at ffffffffa84042b9\n19 [ffff9fe16202ff50] entry_SYSCALL_64_after_hwframe at ffffffffa8c0008c\n\nSo I fix ixgbe_max_channels so that it will not allow a setting of queues\nto be higher than the num_online_cpus(). And when run to ixgbe_xdp_setup,\ntake the smaller value of num_rx_queues and num_xdp_queues. \n            \n            MITIGATION: null",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nixgbe: Fix NULL pointer dereference in ixgbe_xdp_setup\n\nThe ixgbe driver currently generates a NULL pointer dereference with\nsome machine (online cpus < 63). This is due to the fact that the\nmaximum value of num_xdp_queues is nr_cpu_ids. Code is in\n\"ixgbe_set_rss_queues\"\".\n\nHere's how the problem repeats itself:\nSome machine (online cpus < 63), And user set num_queues to 63 through\nethtool. Code is in the \"ixgbe_set_channels\",\n\tadapter->ring_feature[RING_F_FDIR].limit = count;\n\nIt becomes 63.\n\nWhen user use xdp, \"ixgbe_set_rss_queues\" will set queues num.\n\tadapter->num_rx_queues = rss_i;\n\tadapter->num_tx_queues = rss_i;\n\tadapter->num_xdp_queues = ixgbe_xdp_queues(adapter);\n\nAnd rss_i's value is from\n\tf = &adapter->ring_feature[RING_F_FDIR];\n\trss_i = f->indices = f->limit;\n\nSo \"num_rx_queues\" > \"num_xdp_queues\", when run to \"ixgbe_xdp_setup\",\n\tfor (i = 0; i < adapter->num_rx_queues; i++)\n\t\tif (adapter->xdp_ring[i]->xsk_umem)\n\nIt leads to panic.\n\nCall trace:\n[exception RIP: ixgbe_xdp+368]\nRIP: ffffffffc02a76a0  RSP: ffff9fe16202f8d0  RFLAGS: 00010297\nRAX: 0000000000000000  RBX: 0000000000000020  RCX: 0000000000000000\nRDX: 0000000000000000  RSI: 000000000000001c  RDI: ffffffffa94ead90\nRBP: ffff92f8f24c0c18   R8: 0000000000000000   R9: 0000000000000000\nR10: ffff9fe16202f830  R11: 0000000000000000  R12: ffff92f8f24c0000\nR13: ffff9fe16202fc01  R14: 000000000000000a  R15: ffffffffc02a7530\nORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018\n 7 [ffff9fe16202f8f0] dev_xdp_install at ffffffffa89fbbcc\n 8 [ffff9fe16202f920] dev_change_xdp_fd at ffffffffa8a08808\n 9 [ffff9fe16202f960] do_setlink at ffffffffa8a20235\n10 [ffff9fe16202fa88] rtnl_setlink at ffffffffa8a20384\n11 [ffff9fe16202fc78] rtnetlink_rcv_msg at ffffffffa8a1a8dd\n12 [ffff9fe16202fcf0] netlink_rcv_skb at ffffffffa8a717eb\n13 [ffff9fe16202fd40] netlink_unicast at ffffffffa8a70f88\n14 [ffff9fe16202fd80] netlink_sendmsg at ffffffffa8a71319\n15 [ffff9fe16202fdf0] sock_sendmsg at ffffffffa89df290\n16 [ffff9fe16202fe08] __sys_sendto at ffffffffa89e19c8\n17 [ffff9fe16202ff30] __x64_sys_sendto at ffffffffa89e1a64\n18 [ffff9fe16202ff38] do_syscall_64 at ffffffffa84042b9\n19 [ffff9fe16202ff50] entry_SYSCALL_64_after_hwframe at ffffffffa8c0008c\n\nSo I fix ixgbe_max_channels so that it will not allow a setting of queues\nto be higher than the num_online_cpus(). And when run to ixgbe_xdp_setup,\ntake the smaller value of num_rx_queues and num_xdp_queues.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-05-22"
+				"date": "2024-06-09"
 			},
 			"cve": [
 				{
@@ -93,38 +93,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542011",
-										"comment": "perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20124542031",
+										"comment": "kernel-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542012",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446001",
-										"comment": "kernel-rt-doc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446002",
-										"comment": "kernel-rt-doc is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446017",
-										"comment": "kernel-rt-trace-kvm is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446018",
-										"comment": "kernel-rt-trace-kvm is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20124542032",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -145,12 +119,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446027",
-										"comment": "kernel-rt is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20137446021",
+										"comment": "kernel-rt-debug is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446028",
-										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20137446022",
+										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -158,12 +132,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542013",
-										"comment": "kernel-bootwrapper is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20124542019",
+										"comment": "kernel-kdump-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542014",
-										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20124542020",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542005",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542006",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -184,25 +171,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542017",
-										"comment": "kernel-tools-libs-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20137446045",
+										"comment": "kernel-rt-kvm is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542018",
-										"comment": "kernel-tools-libs-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446009",
-										"comment": "kernel-rt-debug-kvm is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446010",
-										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20137446046",
+										"comment": "kernel-rt-kvm is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -223,12 +197,38 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542001",
-										"comment": "kernel-debug-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20124542003",
+										"comment": "kernel-debug is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542002",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20124542004",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542007",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542008",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542017",
+										"comment": "kernel-tools-libs-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542018",
+										"comment": "kernel-tools-libs-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -262,32 +262,6 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542029",
-										"comment": "kernel-tools-libs is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542030",
-										"comment": "kernel-tools-libs is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446045",
-										"comment": "kernel-rt-kvm is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446046",
-										"comment": "kernel-rt-kvm is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20137446015",
 										"comment": "kernel-rt-devel is installed"
 									},
@@ -301,103 +275,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542023",
-										"comment": "kernel-abi-whitelists is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20124542013",
+										"comment": "kernel-bootwrapper is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542024",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542003",
-										"comment": "kernel-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542004",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542019",
-										"comment": "kernel-kdump-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542020",
-										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446021",
-										"comment": "kernel-rt-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446022",
-										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446031",
-										"comment": "kernel-rt-trace-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20137446032",
-										"comment": "kernel-rt-trace-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542015",
-										"comment": "kernel-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542005",
-										"comment": "kernel-doc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542006",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542007",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542008",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20124542014",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -418,12 +301,129 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542031",
-										"comment": "kernel-headers is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20137446009",
+										"comment": "kernel-rt-debug-kvm is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20124542032",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20137446010",
+										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542001",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542002",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446027",
+										"comment": "kernel-rt is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446028",
+										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446017",
+										"comment": "kernel-rt-trace-kvm is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446018",
+										"comment": "kernel-rt-trace-kvm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542023",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542024",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542011",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542012",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446031",
+										"comment": "kernel-rt-trace-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446032",
+										"comment": "kernel-rt-trace-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446001",
+										"comment": "kernel-rt-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446002",
+										"comment": "kernel-rt-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542029",
+										"comment": "kernel-tools-libs is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542030",
+										"comment": "kernel-tools-libs is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "kernel: x86/hyperv: Fix NULL deref in set_hv_tscchange_cb() if Hyper-V setup fails (moderate)",
+		"title": "kernel: x86/hyperv: Fix NULL deref in set_hv_tscchange_cb() if Hyper-V setup fails (low)",
 		"reference": [
 			{
 				"ref_id": "CVE-2021-47217",
@@ -14,7 +14,7 @@
 		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nx86/hyperv: Fix NULL deref in set_hv_tscchange_cb() if Hyper-V setup fails\n\nCheck for a valid hv_vp_index array prior to derefencing hv_vp_index when\nsetting Hyper-V's TSC change callback.  If Hyper-V setup failed in\nhyperv_init(), the kernel will still report that it's running under\nHyper-V, but will have silently disabled nearly all functionality.\n\n  BUG: kernel NULL pointer dereference, address: 0000000000000010\n  #PF: supervisor read access in kernel mode\n  #PF: error_code(0x0000) - not-present page\n  PGD 0 P4D 0\n  Oops: 0000 [#1] SMP\n  CPU: 4 PID: 1 Comm: swapper/0 Not tainted 5.15.0-rc2+ #75\n  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015\n  RIP: 0010:set_hv_tscchange_cb+0x15/0xa0\n  Code: <8b> 04 82 8b 15 12 17 85 01 48 c1 e0 20 48 0d ee 00 01 00 f6 c6 08\n  ...\n  Call Trace:\n   kvm_arch_init+0x17c/0x280\n   kvm_init+0x31/0x330\n   vmx_init+0xba/0x13a\n   do_one_initcall+0x41/0x1c0\n   kernel_init_freeable+0x1f2/0x23b\n   kernel_init+0x16/0x120\n   ret_from_fork+0x22/0x30",
 		"advisory": {
 			"from": "secalert@redhat.com",
-			"severity": "Moderate",
+			"severity": "Low",
 			"updated": {
 				"date": "2024-04-16"
 			},
@@ -24,7 +24,7 @@
 					"cvss3": "4.4/CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H",
 					"cwe": "CWE-476",
 					"href": "https://access.redhat.com/security/cve/CVE-2021-47217",
-					"impact": "moderate",
+					"impact": "low",
 					"public": "20240410"
 				}
 			],
@@ -81,90 +81,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764011",
 										"comment": "kernel is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764012",
 										"comment": "kernel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764005",
-										"comment": "kernel-headers is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764006",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -185,12 +120,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -211,12 +159,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -224,12 +172,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -243,6 +191,58 @@
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764016",
 										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "kernel: powerpc/64s: Fix crashes when toggling entry flush barrier (moderate)",
+		"title": "kernel: powerpc/64s: Fix crashes when toggling entry flush barrier (low)",
 		"reference": [
 			{
 				"ref_id": "CVE-2021-46990",
@@ -14,9 +14,9 @@
 		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\npowerpc/64s: Fix crashes when toggling entry flush barrier\n\nThe entry flush mitigation can be enabled/disabled at runtime via a\ndebugfs file (entry_flush), which causes the kernel to patch itself to\nenable/disable the relevant mitigations.\n\nHowever depending on which mitigation we're using, it may not be safe to\ndo that patching while other CPUs are active. For example the following\ncrash:\n\n  sleeper[15639]: segfault (11) at c000000000004c20 nip c000000000004c20 lr c000000000004c20\n\nShows that we returned to userspace with a corrupted LR that points into\nthe kernel, due to executing the partially patched call to the fallback\nentry flush (ie. we missed the LR restore).\n\nFix it by doing the patching under stop machine. The CPUs that aren't\ndoing the patching will be spinning in the core of the stop machine\nlogic. That is currently sufficient for our purposes, because none of\nthe patching we do is to that code or anywhere in the vicinity.",
 		"advisory": {
 			"from": "secalert@redhat.com",
-			"severity": "Moderate",
+			"severity": "Low",
 			"updated": {
-				"date": "2024-04-16"
+				"date": "2024-06-09"
 			},
 			"cve": [
 				{
@@ -24,7 +24,7 @@
 					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
 					"cwe": "CWE-20",
 					"href": "https://access.redhat.com/security/cve/CVE-2021-46990",
-					"impact": "moderate",
+					"impact": "low",
 					"public": "20240228"
 				}
 			],
@@ -81,38 +81,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -133,12 +107,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -159,12 +133,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764005",
-										"comment": "kernel-headers is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764006",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -172,12 +146,38 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764019",
-										"comment": "kernel-bootwrapper is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764020",
-										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -198,12 +198,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764001",
-										"comment": "kernel-kdump-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764002",
-										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -237,12 +237,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

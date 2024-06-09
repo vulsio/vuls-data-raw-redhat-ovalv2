@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "kernel: mm/slab_common: fix possible double free of kmem_cache (moderate)",
+		"title": "kernel: mm/slab_common: fix possible double free of kmem_cache (low)",
 		"reference": [
 			{
 				"ref_id": "CVE-2022-48649",
@@ -14,16 +14,16 @@
 		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nmm/slab_common: fix possible double free of kmem_cache\n\nWhen doing slub_debug test, kfence's 'test_memcache_typesafe_by_rcu'\nkunit test case cause a use-after-free error:\n\n  BUG: KASAN: use-after-free in kobject_del+0x14/0x30\n  Read of size 8 at addr ffff888007679090 by task kunit_try_catch/261\n\n  CPU: 1 PID: 261 Comm: kunit_try_catch Tainted: G    B            N 6.0.0-rc5-next-20220916 #17\n  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014\n  Call Trace:\n   <TASK>\n   dump_stack_lvl+0x34/0x48\n   print_address_description.constprop.0+0x87/0x2a5\n   print_report+0x103/0x1ed\n   kasan_report+0xb7/0x140\n   kobject_del+0x14/0x30\n   kmem_cache_destroy+0x130/0x170\n   test_exit+0x1a/0x30\n   kunit_try_run_case+0xad/0xc0\n   kunit_generic_run_threadfn_adapter+0x26/0x50\n   kthread+0x17b/0x1b0\n   </TASK>\n\nThe cause is inside kmem_cache_destroy():\n\nkmem_cache_destroy\n    acquire lock/mutex\n    shutdown_cache\n        schedule_work(kmem_cache_release) (if RCU flag set)\n    release lock/mutex\n    kmem_cache_release (if RCU flag not set)\n\nIn some certain timing, the scheduled work could be run before\nthe next RCU flag checking, which can then get a wrong value\nand lead to double kmem_cache_release().\n\nFix it by caching the RCU flag inside protected area, just like 'refcnt'",
 		"advisory": {
 			"from": "secalert@redhat.com",
-			"severity": "Moderate",
+			"severity": "Low",
 			"updated": {
-				"date": "2024-04-29"
+				"date": "2024-06-09"
 			},
 			"cve": [
 				{
 					"text": "CVE-2022-48649",
 					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
 					"href": "https://access.redhat.com/security/cve/CVE-2022-48649",
-					"impact": "moderate",
+					"impact": "low",
 					"public": "20240428"
 				}
 			],
@@ -80,103 +80,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764001",
-										"comment": "kernel-kdump-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764002",
-										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764005",
 										"comment": "kernel-headers is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764006",
 										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -197,6 +106,32 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764011",
 										"comment": "kernel is installed"
 									},
@@ -210,12 +145,51 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -242,6 +216,32 @@
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764022",
 										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

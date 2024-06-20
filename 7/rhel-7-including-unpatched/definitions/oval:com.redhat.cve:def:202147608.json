@@ -1,0 +1,448 @@
+{
+	"id": "oval:com.redhat.cve:def:202147608",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "kernel: bpf: Fix kernel address leakage in atomic fetch (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2021-47608",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2021-47608",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nbpf: Fix kernel address leakage in atomic fetch\n\nThe change in commit 37086bfdc737 (\"bpf: Propagate stack bounds to registers\nin atomics w/ BPF_FETCH\") around check_mem_access() handling is buggy since\nthis would allow for unprivileged users to leak kernel pointers. For example,\nan atomic fetch/and with -1 on a stack destination which holds a spilled\npointer will migrate the spilled register type into a scalar, which can then\nbe exported out of the program (since scalar != pointer) by dumping it into\na map value.\n\nThe original implementation of XADD was preventing this situation by using\na double call to check_mem_access() one with BPF_READ and a subsequent one\nwith BPF_WRITE, in both cases passing -1 as a placeholder value instead of\nregister as per XADD semantics since it didn't contain a value fetch. The\nBPF_READ also included a check in check_stack_read_fixed_off() which rejects\nthe program if the stack slot is of __is_pointer_value() if dst_regno < 0.\nThe latter is to distinguish whether we're dealing with a regular stack spill/\nfill or some arithmetical operation which is disallowed on non-scalars, see\nalso 6e7e63cbb023 (\"bpf: Forbid XADD on spilled pointers for unprivileged\nusers\") for more context on check_mem_access() and its handling of placeholder\nvalue -1.\n\nOne minimally intrusive option to fix the leak is for the BPF_FETCH case to\ninitially check the BPF_READ case via check_mem_access() with -1 as register,\nfollowed by the actual load case with non-negative load_reg to propagate\nstack bounds to registers.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2024-06-20"
+			},
+			"cve": [
+				{
+					"text": "CVE-2021-47608",
+					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"href": "https://access.redhat.com/security/cve/CVE-2021-47608",
+					"impact": "moderate",
+					"public": "20240619"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Out of support scope",
+						"component": [
+							"bpftool",
+							"kernel",
+							"kernel-abi-whitelists",
+							"kernel-bootwrapper",
+							"kernel-debug",
+							"kernel-debug-devel",
+							"kernel-devel",
+							"kernel-doc",
+							"kernel-headers",
+							"kernel-kdump",
+							"kernel-kdump-devel",
+							"kernel-rt",
+							"kernel-rt-debug",
+							"kernel-rt-debug-devel",
+							"kernel-rt-debug-kvm",
+							"kernel-rt-devel",
+							"kernel-rt-doc",
+							"kernel-rt-kvm",
+							"kernel-rt-trace",
+							"kernel-rt-trace-devel",
+							"kernel-rt-trace-kvm",
+							"kernel-tools",
+							"kernel-tools-libs",
+							"kernel-tools-libs-devel",
+							"perf",
+							"python-perf"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras:7",
+					"cpe:/a:redhat:rhel_extras_oracle_java:7",
+					"cpe:/a:redhat:rhel_extras_rt:7",
+					"cpe:/a:redhat:rhel_extras_sap:7",
+					"cpe:/a:redhat:rhel_extras_sap_hana:7",
+					"cpe:/o:redhat:enterprise_linux:7",
+					"cpe:/o:redhat:enterprise_linux:7::client",
+					"cpe:/o:redhat:enterprise_linux:7::computenode",
+					"cpe:/o:redhat:enterprise_linux:7::server",
+					"cpe:/o:redhat:enterprise_linux:7::workstation"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446001",
+										"comment": "kernel-rt-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446002",
+										"comment": "kernel-rt-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446045",
+										"comment": "kernel-rt-kvm is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446046",
+										"comment": "kernel-rt-kvm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446043",
+										"comment": "kernel-rt-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446044",
+										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446051",
+										"comment": "kernel-rt-trace is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446052",
+										"comment": "kernel-rt-trace is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542031",
+										"comment": "kernel-headers is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542032",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542017",
+										"comment": "kernel-tools-libs-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542018",
+										"comment": "kernel-tools-libs-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542005",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542006",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542029",
+										"comment": "kernel-tools-libs is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542030",
+										"comment": "kernel-tools-libs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542011",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542012",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446009",
+										"comment": "kernel-rt-debug-kvm is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446010",
+										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542027",
+										"comment": "kernel-tools is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542028",
+										"comment": "kernel-tools is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542025",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542026",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542003",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542004",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542023",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542024",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446027",
+										"comment": "kernel-rt is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446028",
+										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542009",
+										"comment": "bpftool is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542010",
+										"comment": "bpftool is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542013",
+										"comment": "kernel-bootwrapper is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542014",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446015",
+										"comment": "kernel-rt-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446016",
+										"comment": "kernel-rt-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542007",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542008",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446017",
+										"comment": "kernel-rt-trace-kvm is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446018",
+										"comment": "kernel-rt-trace-kvm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446021",
+										"comment": "kernel-rt-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446022",
+										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542019",
+										"comment": "kernel-kdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542020",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542001",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20124542002",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446031",
+										"comment": "kernel-rt-trace-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20137446032",
+										"comment": "kernel-rt-trace-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20042779005",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20042779006",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

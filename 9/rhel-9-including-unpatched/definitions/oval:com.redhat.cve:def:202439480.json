@@ -1,17 +1,17 @@
 {
-	"id": "oval:com.redhat.cve:def:202439476",
+	"id": "oval:com.redhat.cve:def:202439480",
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "kernel: md/raid5: fix deadlock that raid5d() wait for itself to clear MD_SB_CHANGE_PENDING (moderate)",
+		"title": "kernel: kdb: Fix buffer overflow during tab-complete (moderate)",
 		"reference": [
 			{
-				"ref_id": "CVE-2024-39476",
-				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-39476",
+				"ref_id": "CVE-2024-39480",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-39480",
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nmd/raid5: fix deadlock that raid5d() wait for itself to clear MD_SB_CHANGE_PENDING\n\nXiao reported that lvm2 test lvconvert-raid-takeover.sh can hang with\nsmall possibility, the root cause is exactly the same as commit\nbed9e27baf52 (\"Revert \"md/raid5: Wait for MD_SB_CHANGE_PENDING in raid5d\"\")\n\nHowever, Dan reported another hang after that, and junxiao investigated\nthe problem and found out that this is caused by plugged bio can't issue\nfrom raid5d().\n\nCurrent implementation in raid5d() has a weird dependence:\n\n1) md_check_recovery() from raid5d() must hold 'reconfig_mutex' to clear\n   MD_SB_CHANGE_PENDING;\n2) raid5d() handles IO in a deadloop, until all IO are issued;\n3) IO from raid5d() must wait for MD_SB_CHANGE_PENDING to be cleared;\n\nThis behaviour is introduce before v2.6, and for consequence, if other\ncontext hold 'reconfig_mutex', and md_check_recovery() can't update\nsuper_block, then raid5d() will waste one cpu 100% by the deadloop, until\n'reconfig_mutex' is released.\n\nRefer to the implementation from raid1 and raid10, fix this problem by\nskipping issue IO if MD_SB_CHANGE_PENDING is still set after\nmd_check_recovery(), daemon thread will be woken up when 'reconfig_mutex'\nis released. Meanwhile, the hang problem will be fixed as well.",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nkdb: Fix buffer overflow during tab-complete\n\nCurrently, when the user attempts symbol completion with the Tab key, kdb\nwill use strncpy() to insert the completed symbol into the command buffer.\nUnfortunately it passes the size of the source buffer rather than the\ndestination to strncpy() with predictably horrible results. Most obviously\nif the command buffer is already full but cp, the cursor position, is in\nthe middle of the buffer, then we will write past the end of the supplied\nbuffer.\n\nFix this by replacing the dubious strncpy() calls with memmove()/memcpy()\ncalls plus explicit boundary checks to make sure we have enough space\nbefore we start moving characters around.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
@@ -20,9 +20,9 @@
 			},
 			"cve": [
 				{
-					"text": "CVE-2024-39476",
+					"text": "CVE-2024-39480",
 					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
-					"href": "https://access.redhat.com/security/cve/CVE-2024-39476",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-39480",
 					"impact": "moderate",
 					"public": "20240705"
 				}

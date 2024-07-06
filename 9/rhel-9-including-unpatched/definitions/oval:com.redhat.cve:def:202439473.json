@@ -1,17 +1,17 @@
 {
-	"id": "oval:com.redhat.cve:def:202439476",
+	"id": "oval:com.redhat.cve:def:202439473",
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "kernel: md/raid5: fix deadlock that raid5d() wait for itself to clear MD_SB_CHANGE_PENDING (moderate)",
+		"title": "kernel: ASoC: SOF: ipc4-topology: Fix input format query of process modules without base extension (moderate)",
 		"reference": [
 			{
-				"ref_id": "CVE-2024-39476",
-				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-39476",
+				"ref_id": "CVE-2024-39473",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-39473",
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nmd/raid5: fix deadlock that raid5d() wait for itself to clear MD_SB_CHANGE_PENDING\n\nXiao reported that lvm2 test lvconvert-raid-takeover.sh can hang with\nsmall possibility, the root cause is exactly the same as commit\nbed9e27baf52 (\"Revert \"md/raid5: Wait for MD_SB_CHANGE_PENDING in raid5d\"\")\n\nHowever, Dan reported another hang after that, and junxiao investigated\nthe problem and found out that this is caused by plugged bio can't issue\nfrom raid5d().\n\nCurrent implementation in raid5d() has a weird dependence:\n\n1) md_check_recovery() from raid5d() must hold 'reconfig_mutex' to clear\n   MD_SB_CHANGE_PENDING;\n2) raid5d() handles IO in a deadloop, until all IO are issued;\n3) IO from raid5d() must wait for MD_SB_CHANGE_PENDING to be cleared;\n\nThis behaviour is introduce before v2.6, and for consequence, if other\ncontext hold 'reconfig_mutex', and md_check_recovery() can't update\nsuper_block, then raid5d() will waste one cpu 100% by the deadloop, until\n'reconfig_mutex' is released.\n\nRefer to the implementation from raid1 and raid10, fix this problem by\nskipping issue IO if MD_SB_CHANGE_PENDING is still set after\nmd_check_recovery(), daemon thread will be woken up when 'reconfig_mutex'\nis released. Meanwhile, the hang problem will be fixed as well.",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nASoC: SOF: ipc4-topology: Fix input format query of process modules without base extension\n\nIf a process module does not have base config extension then the same\nformat applies to all of it's inputs and the process->base_config_ext is\nNULL, causing NULL dereference when specifically crafted topology and\nsequences used.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
@@ -20,9 +20,9 @@
 			},
 			"cve": [
 				{
-					"text": "CVE-2024-39476",
+					"text": "CVE-2024-39473",
 					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
-					"href": "https://access.redhat.com/security/cve/CVE-2024-39476",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-39473",
 					"impact": "moderate",
 					"public": "20240705"
 				}
@@ -491,12 +491,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089063",
-										"comment": "kernel-modules is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162131",
+										"comment": "kernel-rt-debug-modules-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089064",
-										"comment": "kernel-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162132",
+										"comment": "kernel-rt-debug-modules-core is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -504,12 +504,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162131",
-										"comment": "kernel-rt-debug-modules-core is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201916089063",
+										"comment": "kernel-modules is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162132",
-										"comment": "kernel-rt-debug-modules-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201916089064",
+										"comment": "kernel-modules is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -725,12 +725,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089075",
-										"comment": "kernel-tools is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162065",
+										"comment": "kernel-rt-modules-partner is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089076",
-										"comment": "kernel-tools is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162066",
+										"comment": "kernel-rt-modules-partner is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -738,12 +738,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162065",
-										"comment": "kernel-rt-modules-partner is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201916089075",
+										"comment": "kernel-tools is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162066",
-										"comment": "kernel-rt-modules-partner is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201916089076",
+										"comment": "kernel-tools is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -1102,12 +1102,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089019",
-										"comment": "kernel-zfcpdump-modules-core is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162005",
+										"comment": "kernel-rt-debug-devel-matched is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089020",
-										"comment": "kernel-zfcpdump-modules-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162006",
+										"comment": "kernel-rt-debug-devel-matched is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -1115,12 +1115,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162005",
-										"comment": "kernel-rt-debug-devel-matched is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201916089019",
+										"comment": "kernel-zfcpdump-modules-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162006",
-										"comment": "kernel-rt-debug-devel-matched is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201916089020",
+										"comment": "kernel-zfcpdump-modules-core is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -1206,12 +1206,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089007",
-										"comment": "kernel-cross-headers is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162067",
+										"comment": "kernel-rt-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201916089008",
-										"comment": "kernel-cross-headers is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162068",
+										"comment": "kernel-rt-core is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -1219,12 +1219,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162067",
-										"comment": "kernel-rt-core is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201916089007",
+										"comment": "kernel-cross-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162068",
-										"comment": "kernel-rt-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201916089008",
+										"comment": "kernel-cross-headers is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},

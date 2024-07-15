@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "kernel: isdn: mISDN: Fix sleeping function called from invalid context (moderate)",
+		"title": "kernel: isdn: mISDN: Fix sleeping function called from invalid context (low)",
 		"reference": [
 			{
 				"ref_id": "CVE-2021-47468",
@@ -14,16 +14,17 @@
 		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nisdn: mISDN: Fix sleeping function called from invalid context\n\nThe driver can call card->isac.release() function from an atomic\ncontext.\n\nFix this by calling this function after releasing the lock.\n\nThe following log reveals it:\n\n[   44.168226 ] BUG: sleeping function called from invalid context at kernel/workqueue.c:3018\n[   44.168941 ] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 5475, name: modprobe\n[   44.169574 ] INFO: lockdep is turned off.\n[   44.169899 ] irq event stamp: 0\n[   44.170160 ] hardirqs last  enabled at (0): [<0000000000000000>] 0x0\n[   44.170627 ] hardirqs last disabled at (0): [<ffffffff814209ed>] copy_process+0x132d/0x3e00\n[   44.171240 ] softirqs last  enabled at (0): [<ffffffff81420a1a>] copy_process+0x135a/0x3e00\n[   44.171852 ] softirqs last disabled at (0): [<0000000000000000>] 0x0\n[   44.172318 ] Preemption disabled at:\n[   44.172320 ] [<ffffffffa009b0a9>] nj_release+0x69/0x500 [netjet]\n[   44.174441 ] Call Trace:\n[   44.174630 ]  dump_stack_lvl+0xa8/0xd1\n[   44.174912 ]  dump_stack+0x15/0x17\n[   44.175166 ]  ___might_sleep+0x3a2/0x510\n[   44.175459 ]  ? nj_release+0x69/0x500 [netjet]\n[   44.175791 ]  __might_sleep+0x82/0xe0\n[   44.176063 ]  ? start_flush_work+0x20/0x7b0\n[   44.176375 ]  start_flush_work+0x33/0x7b0\n[   44.176672 ]  ? trace_irq_enable_rcuidle+0x85/0x170\n[   44.177034 ]  ? kasan_quarantine_put+0xaa/0x1f0\n[   44.177372 ]  ? kasan_quarantine_put+0xaa/0x1f0\n[   44.177711 ]  __flush_work+0x11a/0x1a0\n[   44.177991 ]  ? flush_work+0x20/0x20\n[   44.178257 ]  ? lock_release+0x13c/0x8f0\n[   44.178550 ]  ? __kasan_check_write+0x14/0x20\n[   44.178872 ]  ? do_raw_spin_lock+0x148/0x360\n[   44.179187 ]  ? read_lock_is_recursive+0x20/0x20\n[   44.179530 ]  ? __kasan_check_read+0x11/0x20\n[   44.179846 ]  ? do_raw_spin_unlock+0x55/0x900\n[   44.180168 ]  ? ____kasan_slab_free+0x116/0x140\n[   44.180505 ]  ? _raw_spin_unlock_irqrestore+0x41/0x60\n[   44.180878 ]  ? skb_queue_purge+0x1a3/0x1c0\n[   44.181189 ]  ? kfree+0x13e/0x290\n[   44.181438 ]  flush_work+0x17/0x20\n[   44.181695 ]  mISDN_freedchannel+0xe8/0x100\n[   44.182006 ]  isac_release+0x210/0x260 [mISDNipac]\n[   44.182366 ]  nj_release+0xf6/0x500 [netjet]\n[   44.182685 ]  nj_remove+0x48/0x70 [netjet]\n[   44.182989 ]  pci_device_remove+0xa9/0x250",
 		"advisory": {
 			"from": "secalert@redhat.com",
-			"severity": "Moderate",
+			"severity": "Low",
 			"updated": {
-				"date": "2024-07-05"
+				"date": "2024-07-14"
 			},
 			"cve": [
 				{
 					"text": "CVE-2021-47468",
-					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"cvss3": "4.4/CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H",
+					"cwe": "CWE-99",
 					"href": "https://access.redhat.com/security/cve/CVE-2021-47468",
-					"impact": "moderate",
+					"impact": "low",
 					"public": "20240522"
 				}
 			],
@@ -80,38 +81,38 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764015",
 										"comment": "kernel-devel is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764016",
 										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -132,64 +133,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764003",
 										"comment": "kernel-debug-devel is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764004",
 										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -210,6 +159,45 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764005",
 										"comment": "kernel-headers is installed"
 									},
@@ -223,12 +211,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764019",
-										"comment": "kernel-bootwrapper is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764020",
-										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -236,12 +224,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764001",
-										"comment": "kernel-kdump-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764002",
-										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

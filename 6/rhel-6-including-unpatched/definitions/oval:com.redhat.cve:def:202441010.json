@@ -1,0 +1,266 @@
+{
+	"id": "oval:com.redhat.cve:def:202441010",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "kernel: bpf: Fix too early release of tcx_entry (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2024-41010",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-41010",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nbpf: Fix too early release of tcx_entry\n\nPedro Pinto and later independently also Hyunwoo Kim and Wongi Lee reported\nan issue that the tcx_entry can be released too early leading to a use\nafter free (UAF) when an active old-style ingress or clsact qdisc with a\nshared tc block is later replaced by another ingress or clsact instance.\n\nEssentially, the sequence to trigger the UAF (one example) can be as follows:\n\n  1. A network namespace is created\n  2. An ingress qdisc is created. This allocates a tcx_entry, and\n     &tcx_entry->miniq is stored in the qdisc's miniqp->p_miniq. At the\n     same time, a tcf block with index 1 is created.\n  3. chain0 is attached to the tcf block. chain0 must be connected to\n     the block linked to the ingress qdisc to later reach the function\n     tcf_chain0_head_change_cb_del() which triggers the UAF.\n  4. Create and graft a clsact qdisc. This causes the ingress qdisc\n     created in step 1 to be removed, thus freeing the previously linked\n     tcx_entry:\n\n     rtnetlink_rcv_msg()\n       => tc_modify_qdisc()\n         => qdisc_create()\n           => clsact_init() [a]\n         => qdisc_graft()\n           => qdisc_destroy()\n             => __qdisc_destroy()\n               => ingress_destroy() [b]\n                 => tcx_entry_free()\n                   => kfree_rcu() // tcx_entry freed\n\n  5. Finally, the network namespace is closed. This registers the\n     cleanup_net worker, and during the process of releasing the\n     remaining clsact qdisc, it accesses the tcx_entry that was\n     already freed in step 4, causing the UAF to occur:\n\n     cleanup_net()\n       => ops_exit_list()\n         => default_device_exit_batch()\n           => unregister_netdevice_many()\n             => unregister_netdevice_many_notify()\n               => dev_shutdown()\n                 => qdisc_put()\n                   => clsact_destroy() [c]\n                     => tcf_block_put_ext()\n                       => tcf_chain0_head_change_cb_del()\n                         => tcf_chain_head_change_item()\n                           => clsact_chain_head_change()\n                             => mini_qdisc_pair_swap() // UAF\n\nThere are also other variants, the gist is to add an ingress (or clsact)\nqdisc with a specific shared block, then to replace that qdisc, waiting\nfor the tcx_entry kfree_rcu() to be executed and subsequently accessing\nthe current active qdisc's miniq one way or another.\n\nThe correct fix is to turn the miniq_active boolean into a counter. What\ncan be observed, at step 2 above, the counter transitions from 0->1, at\nstep [a] from 1->2 (in order for the miniq object to remain active during\nthe replacement), then in [b] from 2->1 and finally [c] 1->0 with the\neventual release. The reference counter in general ranges from [0,2] and\nit does not need to be atomic since all access to the counter is protected\nby the rtnl mutex. With this in place, there is no longer a UAF happening\nand the tcx_entry is freed at the correct time.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2024-07-17"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-41010",
+					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-41010",
+					"impact": "moderate",
+					"public": "20240717"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Out of support scope",
+						"component": [
+							"kernel",
+							"kernel-abi-whitelists",
+							"kernel-bootwrapper",
+							"kernel-debug",
+							"kernel-debug-devel",
+							"kernel-devel",
+							"kernel-doc",
+							"kernel-firmware",
+							"kernel-headers",
+							"kernel-kdump",
+							"kernel-kdump-devel",
+							"perf",
+							"python-perf"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras:6",
+					"cpe:/a:redhat:rhel_extras_hpn:6",
+					"cpe:/a:redhat:rhel_extras_oracle_java:6",
+					"cpe:/a:redhat:rhel_extras_sap:6",
+					"cpe:/a:redhat:rhel_extras_sap_hana:6",
+					"cpe:/o:redhat:enterprise_linux:6",
+					"cpe:/o:redhat:enterprise_linux:6::client",
+					"cpe:/o:redhat:enterprise_linux:6::computenode",
+					"cpe:/o:redhat:enterprise_linux:6::server",
+					"cpe:/o:redhat:enterprise_linux:6::workstation"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20022439069",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20022439070",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

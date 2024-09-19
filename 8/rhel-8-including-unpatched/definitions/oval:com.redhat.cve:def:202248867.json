@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "kernel: dmaengine: idxd: Prevent use after free on completion memory (important)",
+		"title": "kernel: dmaengine: idxd: Prevent use after free on completion memory (moderate)",
 		"reference": [
 			{
 				"ref_id": "CVE-2022-48867",
@@ -14,16 +14,17 @@
 		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\ndmaengine: idxd: Prevent use after free on completion memory\n\nOn driver unload any pending descriptors are flushed at the\ntime the interrupt is freed:\nidxd_dmaengine_drv_remove() ->\n\tdrv_disable_wq() ->\n\t\tidxd_wq_free_irq() ->\n\t\t\tidxd_flush_pending_descs().\n\nIf there are any descriptors present that need to be flushed this\nflow triggers a \"not present\" page fault as below:\n\n BUG: unable to handle page fault for address: ff391c97c70c9040\n #PF: supervisor read access in kernel mode\n #PF: error_code(0x0000) - not-present page\n\nThe address that triggers the fault is the address of the\ndescriptor that was freed moments earlier via:\ndrv_disable_wq()->idxd_wq_free_resources()\n\nFix the use after free by freeing the descriptors after any possible\nusage. This is done after idxd_wq_reset() to ensure that the memory\nremains accessible during possible completion writes by the device.",
 		"advisory": {
 			"from": "secalert@redhat.com",
-			"severity": "Important",
+			"severity": "Moderate",
 			"updated": {
-				"date": "2024-09-17"
+				"date": "2024-09-19"
 			},
 			"cve": [
 				{
 					"text": "CVE-2022-48867",
-					"cvss3": "7.8/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+					"cvss3": "6.7/CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
+					"cwe": "CWE-416",
 					"href": "https://access.redhat.com/security/cve/CVE-2022-48867",
-					"impact": "important",
+					"impact": "moderate",
 					"public": "20240821"
 				}
 			],

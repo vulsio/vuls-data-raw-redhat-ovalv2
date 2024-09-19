@@ -11,7 +11,7 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\ndrm: Fix use-after-free read in drm_getunique()\n\nThere is a time-of-check-to-time-of-use error in drm_getunique() due\nto retrieving file_priv->master prior to locking the device's master\nmutex.\n\nAn example can be seen in the crash report of the use-after-free error\nfound by Syzbot:\nhttps://syzkaller.appspot.com/bug?id=148d2f1dfac64af52ffd27b661981a540724f803\n\nIn the report, the master pointer was used after being freed. This is\nbecause another process had acquired the device's master mutex in\ndrm_setmaster_ioctl(), then overwrote fpriv->master in\ndrm_new_set_master(). The old value of fpriv->master was subsequently\nfreed before the mutex was unlocked.\n\nTo fix this, we lock the device's master mutex before retrieving the\npointer from from fpriv->master. This patch passes the Syzbot\nreproducer test. \n            STATEMENT: This vulnerability is rated as a moderate severity because the risk of crash and instability in the system requires specific conditions related to concurrent access to the device's resources.\n            MITIGATION: Red Hat has investigated whether a possible mitigation exists for this issue, and has not been able to identify a practical example. Please update the affected package as soon as possible.",
+		"description": "DOCUMENTATION: A vulnerability was found in the Linux kernel's DRM, where the drm_getunique() function can read a pointer after it has been freed. This occurs because the function retrieves a pointer without properly locking the device's master mutex, leading to a potential crash if another process modifies the pointer first. \n            STATEMENT: This vulnerability is rated as a moderate severity because the risk of crash and instability in the system requires specific conditions related to concurrent access to the device's resources.\n            MITIGATION: Red Hat has investigated whether a possible mitigation exists for this issue, and has not been able to identify a practical example. Please update the affected package as soon as possible.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
@@ -81,12 +81,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -120,12 +120,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764019",
-										"comment": "kernel-bootwrapper is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764020",
-										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -146,32 +159,6 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764005",
 										"comment": "kernel-headers is installed"
 									},
@@ -185,12 +172,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -224,12 +211,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -237,12 +224,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

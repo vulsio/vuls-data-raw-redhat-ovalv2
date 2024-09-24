@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nvhost: fix hung thread due to erroneous iotlb entries\n\nIn vhost_iotlb_add_range_ctx(), range size can overflow to 0 when\nstart is 0 and last is ULONG_MAX. One instance where it can happen\nis when userspace sends an IOTLB message with iova=size=uaddr=0\n(vhost_process_iotlb_msg). So, an entry with size = 0, start = 0,\nlast = ULONG_MAX ends up in the iotlb. Next time a packet is sent,\niotlb_access_ok() loops indefinitely due to that erroneous entry.\n\n\tCall Trace:\n\t <TASK>\n\t iotlb_access_ok+0x21b/0x3e0 drivers/vhost/vhost.c:1340\n\t vq_meta_prefetch+0xbc/0x280 drivers/vhost/vhost.c:1366\n\t vhost_transport_do_send_pkt+0xe0/0xfd0 drivers/vhost/vsock.c:104\n\t vhost_worker+0x23d/0x3d0 drivers/vhost/vhost.c:372\n\t kthread+0x2e9/0x3a0 kernel/kthread.c:377\n\t ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295\n\t </TASK>\n\nReported by syzbot at:\n\thttps://syzkaller.appspot.com/bug?extid=0abd373e2e50d704db87\n\nTo fix this, do two things:\n\n1. Return -EINVAL in vhost_chr_write_iter() when userspace asks to map\n   a range with size 0.\n2. Fix vhost_iotlb_add_range_ctx() to handle the range [0, ULONG_MAX]\n   by splitting it into two entries.",
+		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nvhost: fix hung thread due to erroneous iotlb entries\n\nIn vhost_iotlb_add_range_ctx(), range size can overflow to 0 when\nstart is 0 and last is ULONG_MAX. One instance where it can happen\nis when userspace sends an IOTLB message with iova=size=uaddr=0\n(vhost_process_iotlb_msg). So, an entry with size = 0, start = 0,\nlast = ULONG_MAX ends up in the iotlb. Next time a packet is sent,\niotlb_access_ok() loops indefinitely due to that erroneous entry.\n\n\tCall Trace:\n\t <TASK>\n\t iotlb_access_ok+0x21b/0x3e0 drivers/vhost/vhost.c:1340\n\t vq_meta_prefetch+0xbc/0x280 drivers/vhost/vhost.c:1366\n\t vhost_transport_do_send_pkt+0xe0/0xfd0 drivers/vhost/vsock.c:104\n\t vhost_worker+0x23d/0x3d0 drivers/vhost/vhost.c:372\n\t kthread+0x2e9/0x3a0 kernel/kthread.c:377\n\t ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295\n\t </TASK>\n\nReported by syzbot at:\n\thttps://syzkaller.appspot.com/bug?extid=0abd373e2e50d704db87\n\nTo fix this, do two things:\n\n1. Return -EINVAL in vhost_chr_write_iter() when userspace asks to map\n   a range with size 0.\n2. Fix vhost_iotlb_add_range_ctx() to handle the range [0, ULONG_MAX]\n   by splitting it into two entries. \n            \n            MITIGATION: Mitigation for this issue is either not available or the currently available options do not meet the Red Hat Product Security criteria comprising ease of use and deployment, applicability to widespread installation base or stability.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-08-21"
+				"date": "2024-09-22"
 			},
 			"cve": [
 				{
@@ -81,103 +81,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764005",
-										"comment": "kernel-headers is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764006",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -191,19 +100,6 @@
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764024",
 										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -237,12 +133,116 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764015",
 										"comment": "kernel-devel is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764016",
 										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

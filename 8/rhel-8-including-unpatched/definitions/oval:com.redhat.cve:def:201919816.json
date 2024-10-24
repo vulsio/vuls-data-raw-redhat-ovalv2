@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "out-of-bounds write in __btrfs_map_block in fs/btrfs/volumes.c (moderate)",
+		"title": "kernel: out-of-bounds write in __btrfs_map_block in fs/btrfs/volumes.c (moderate)",
 		"reference": [
 			{
 				"ref_id": "CVE-2019-19816",
@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: A flaw was found in the implementation of the BTRFS file system code in the Linux kernel. An attacker, who is able to mount a crafted BTRFS filesystem and perform common filesystem operations, can possibly cause an out-of-bounds write to memory. This could lead to memory corruption or privilege escalation. \n            STATEMENT: This flaw is rated as having Moderate impact, the attacker would require physical access to the system and also a local account to abuse the use-after-free.\n            MITIGATION: As the BTRFS module will be auto-loaded when required, its use can be disabled by preventing the module from loading with the following instructions:\n\n# echo \"install btrfs /bin/true\" >> /etc/modprobe.d/disable-btrfs.conf\n\nThe system will need to be restarted if the BTRFS modules are loaded, it may be possible to unload them. In most circumstances, the BTRFS kernel modules will be unable to be unloaded while any BTRFS filesystems are mounted or in use.\n\nIf the system requires this module to work correctly, this mitigation may not be suitable.\n\nIf you need further assistance, see KCS article https://access.redhat.com/solutions/41278 or contact Red Hat Global Support Services.",
+		"description": "DOCUMENTATION: A flaw was found in the implementation of the BTRFS file system code in the Linux kernel. An attacker, who is able to mount a crafted BTRFS filesystem and perform common filesystem operations, can possibly cause an out-of-bounds write to memory. This could lead to memory corruption or privilege escalation. \n            STATEMENT: The vulnerability is considered moderate rather than important because it requires specific conditions to be exploited. An attacker must have physical access to the system and be able to mount a crafted BTRFS filesystem, which limits the potential attack vectors and also a local account to abuse the use-after-free. Additionally, the flaw involves an out-of-bounds write when handling RAID56 metadata, which could lead to memory corruption, but exploitation for privilege escalation is not straightforward due to mitigations like kernel address space layout randomization (KASLR). As a result, the impact is more constrained, affecting system stability rather than directly allowing unauthorized access or significant data compromise.\n            MITIGATION: As the BTRFS module will be auto-loaded when required, its use can be disabled by preventing the module from loading with the following instructions:\n\n# echo \"install btrfs /bin/true\" >> /etc/modprobe.d/disable-btrfs.conf\n\nThe system will need to be restarted if the BTRFS modules are loaded, it may be possible to unload them. In most circumstances, the BTRFS kernel modules will be unable to be unloaded while any BTRFS filesystems are mounted or in use.\n\nIf the system requires this module to work correctly, this mitigation may not be suitable.\n\nIf you need further assistance, see KCS article https://access.redhat.com/solutions/41278 or contact Red Hat Global Support Services.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2023-09-26"
+				"date": "2024-10-24"
 			},
 			"cve": [
 				{
@@ -31,7 +31,7 @@
 			"affected": {
 				"resolution": [
 					{
-						"state": "Affected",
+						"state": "Will not fix",
 						"component": [
 							"kernel-rt",
 							"kernel-rt-core",
@@ -85,12 +85,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862009",
-										"comment": "kernel-rt-modules-internal is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201816862051",
+										"comment": "kernel-rt-modules is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862010",
-										"comment": "kernel-rt-modules-internal is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201816862052",
+										"comment": "kernel-rt-modules is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -98,12 +98,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862051",
-										"comment": "kernel-rt-modules is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201816862065",
+										"comment": "kernel-rt-debug-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862052",
-										"comment": "kernel-rt-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201816862066",
+										"comment": "kernel-rt-debug-core is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -124,12 +124,77 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862065",
-										"comment": "kernel-rt-debug-core is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201816862037",
+										"comment": "kernel-rt-selftests-internal is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862066",
-										"comment": "kernel-rt-debug-core is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201816862038",
+										"comment": "kernel-rt-selftests-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862003",
+										"comment": "kernel-rt-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862004",
+										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862035",
+										"comment": "kernel-rt-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862036",
+										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862047",
+										"comment": "kernel-rt-debug-modules-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862048",
+										"comment": "kernel-rt-debug-modules-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862069",
+										"comment": "kernel-rt-debug-kvm is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862070",
+										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862083",
+										"comment": "kernel-rt-modules-extra is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862084",
+										"comment": "kernel-rt-modules-extra is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -163,12 +228,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862083",
-										"comment": "kernel-rt-modules-extra is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201816862055",
+										"comment": "kernel-rt-debug-modules-extra is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862084",
-										"comment": "kernel-rt-modules-extra is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201816862056",
+										"comment": "kernel-rt-debug-modules-extra is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862009",
+										"comment": "kernel-rt-modules-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201816862010",
+										"comment": "kernel-rt-modules-internal is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -189,90 +267,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862003",
-										"comment": "kernel-rt-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862004",
-										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:201816862041",
 										"comment": "kernel-rt-core is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:201816862042",
 										"comment": "kernel-rt-core is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862047",
-										"comment": "kernel-rt-debug-modules-internal is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862048",
-										"comment": "kernel-rt-debug-modules-internal is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862055",
-										"comment": "kernel-rt-debug-modules-extra is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862056",
-										"comment": "kernel-rt-debug-modules-extra is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862035",
-										"comment": "kernel-rt-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862036",
-										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862037",
-										"comment": "kernel-rt-selftests-internal is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862038",
-										"comment": "kernel-rt-selftests-internal is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862069",
-										"comment": "kernel-rt-debug-kvm is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201816862070",
-										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

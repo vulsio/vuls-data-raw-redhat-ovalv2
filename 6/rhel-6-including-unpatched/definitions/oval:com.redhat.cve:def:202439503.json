@@ -11,17 +11,17 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nnetfilter: ipset: Fix race between namespace cleanup and gc in the list:set type\n\nLion Ackermann reported that there is a race condition between namespace cleanup\nin ipset and the garbage collection of the list:set type. The namespace\ncleanup can destroy the list:set type of sets while the gc of the set type is\nwaiting to run in rcu cleanup. The latter uses data from the destroyed set which\nthus leads use after free. The patch contains the following parts:\n\n- When destroying all sets, first remove the garbage collectors, then wait\n  if needed and then destroy the sets.\n- Fix the badly ordered \"wait then remove gc\" for the destroy a single set\n  case.\n- Fix the missing rcu locking in the list:set type in the userspace test\n  case.\n- Use proper RCU list handlings in the list:set type.\n\nThe patch depends on c1193d9bbbd3 (netfilter: ipset: Add list flush to cancel_gc).",
+		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nnetfilter: ipset: Fix race between namespace cleanup and gc in the list:set type\n\nLion Ackermann reported that there is a race condition between namespace cleanup\nin ipset and the garbage collection of the list:set type. The namespace\ncleanup can destroy the list:set type of sets while the gc of the set type is\nwaiting to run in rcu cleanup. The latter uses data from the destroyed set which\nthus leads use after free. The patch contains the following parts:\n\n- When destroying all sets, first remove the garbage collectors, then wait\n  if needed and then destroy the sets.\n- Fix the badly ordered \"wait then remove gc\" for the destroy a single set\n  case.\n- Fix the missing rcu locking in the list:set type in the userspace test\n  case.\n- Use proper RCU list handlings in the list:set type.\n\nThe patch depends on c1193d9bbbd3 (netfilter: ipset: Add list flush to cancel_gc). \n            STATEMENT: Only local users with `CAP_NET_ADMIN` capability (or root) can trigger this issue. \nOn Red Hat Enterprise Linux, local unprivileged users can exploit unprivileged user namespaces (CONFIG_USER_NS) to grant themselves this capability.\n\nThe OpenShift Container Platform (OCP) control planes or master machines are based on Red Hat Enterprise Linux CoreOS (RHCOS) that consists primarily of RHEL components, hence is also affected by this kernel vulnerability. Like it is mentioned earlier, the successful exploit needs necessary privileges (CAP_NET_ADMIN) and direct, local access . Local user in RHCOS is already a root with full permissions, hence existence of this vulnerability does not bring any value from the potential attacker perspective. From the OpenShift containers perspective, this vulnerability cannot be exploited as in OpenShift the cluster processes on the node are namespaced, which means that switching in the running OpenShift container the namespace will not bring necessary capabilities.\nThis means that for OpenShift, the impact of this vulnerability is Low.\nSimilar to CVE-2023-32233 vulnerability has been explained in the following blog post as an example of \"Container escape vulnerability\":\nhttps://www.redhat.com/en/blog/containers-vulnerability-risk-assessment\n            MITIGATION: 1. This flaw can be mitigated by preventing the affected netfilter (nf_tables) kernel module from being loaded. For instructions on how to blacklist a kernel module, please see https://access.redhat.com/solutions/41278.\n\n2. If the module cannot be disabled, on non-containerized deployments of Red Hat Enterprise Linux, the mitigation is to disable user namespaces:\n```\n# echo \"user.max_user_namespaces=0\" > /etc/sysctl.d/userns.conf\n# sysctl -p /etc/sysctl.d/userns.conf\n```\nOn containerized deployments, such as Red Hat OpenShift Container Platform, do not use the second mitigation (disabling user namespaces) as the functionality is needed to be enabled. The first mitigation (blacklisting nf_tables) is still viable for containerized deployments, providing the environment is not using netfilter.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-07-15"
+				"date": "2024-11-03"
 			},
 			"cve": [
 				{
 					"text": "CVE-2024-39503",
-					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"cvss3": "6.4/CVSS:3.1/AV:L/AC:H/PR:H/UI:N/S:U/C:H/I:H/A:H",
 					"href": "https://access.redhat.com/security/cve/CVE-2024-39503",
 					"impact": "moderate",
 					"public": "20240712"
@@ -80,129 +80,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764001",
-										"comment": "kernel-kdump-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764002",
-										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764009",
 										"comment": "kernel-debug is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764010",
 										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -223,6 +106,45 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764019",
 										"comment": "kernel-bootwrapper is installed"
 									},
@@ -236,12 +158,90 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764021",
 										"comment": "python-perf is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764022",
 										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

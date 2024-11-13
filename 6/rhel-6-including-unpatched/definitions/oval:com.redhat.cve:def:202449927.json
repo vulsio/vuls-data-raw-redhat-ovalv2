@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nx86/ioapic: Handle allocation failures gracefully\n\nBreno observed panics when using failslab under certain conditions during\nruntime:\n\n   can not alloc irq_pin_list (-1,0,20)\n   Kernel panic - not syncing: IO-APIC: failed to add irq-pin. Can not proceed\n\n   panic+0x4e9/0x590\n   mp_irqdomain_alloc+0x9ab/0xa80\n   irq_domain_alloc_irqs_locked+0x25d/0x8d0\n   __irq_domain_alloc_irqs+0x80/0x110\n   mp_map_pin_to_irq+0x645/0x890\n   acpi_register_gsi_ioapic+0xe6/0x150\n   hpet_open+0x313/0x480\n\nThat's a pointless panic which is a leftover of the historic IO/APIC code\nwhich panic'ed during early boot when the interrupt allocation failed.\n\nThe only place which might justify panic is the PIT/HPET timer_check() code\nwhich tries to figure out whether the timer interrupt is delivered through\nthe IO/APIC. But that code does not require to handle interrupt allocation\nfailures. If the interrupt cannot be allocated then timer delivery fails\nand it either panics due to that or falls back to legacy mode.\n\nCure this by removing the panic wrapper around __add_pin_to_irq_node() and\nmaking mp_irqdomain_alloc() aware of the failure condition and handle it as\nany other failure in this function gracefully.",
+		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nx86/ioapic: Handle allocation failures gracefully\n\nBreno observed panics when using failslab under certain conditions during\nruntime:\n\n   can not alloc irq_pin_list (-1,0,20)\n   Kernel panic - not syncing: IO-APIC: failed to add irq-pin. Can not proceed\n\n   panic+0x4e9/0x590\n   mp_irqdomain_alloc+0x9ab/0xa80\n   irq_domain_alloc_irqs_locked+0x25d/0x8d0\n   __irq_domain_alloc_irqs+0x80/0x110\n   mp_map_pin_to_irq+0x645/0x890\n   acpi_register_gsi_ioapic+0xe6/0x150\n   hpet_open+0x313/0x480\n\nThat's a pointless panic which is a leftover of the historic IO/APIC code\nwhich panic'ed during early boot when the interrupt allocation failed.\n\nThe only place which might justify panic is the PIT/HPET timer_check() code\nwhich tries to figure out whether the timer interrupt is delivered through\nthe IO/APIC. But that code does not require to handle interrupt allocation\nfailures. If the interrupt cannot be allocated then timer delivery fails\nand it either panics due to that or falls back to legacy mode.\n\nCure this by removing the panic wrapper around __add_pin_to_irq_node() and\nmaking mp_irqdomain_alloc() aware of the failure condition and handle it as\nany other failure in this function gracefully.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-10-23"
+				"date": "2024-11-13"
 			},
 			"cve": [
 				{
@@ -80,77 +80,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764009",
 										"comment": "kernel-debug is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764010",
 										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764019",
-										"comment": "kernel-bootwrapper is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764020",
-										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -171,38 +106,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764001",
 										"comment": "kernel-kdump-devel is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764002",
 										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -223,6 +132,32 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764023",
 										"comment": "kernel-firmware is installed"
 									},
@@ -236,12 +171,77 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

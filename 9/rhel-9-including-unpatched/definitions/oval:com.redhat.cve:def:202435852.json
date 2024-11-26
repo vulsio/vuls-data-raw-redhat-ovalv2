@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nmlxsw: spectrum_acl_tcam: Fix memory leak when canceling rehash work\n\nThe rehash delayed work is rescheduled with a delay if the number of\ncredits at end of the work is not negative as supposedly it means that\nthe migration ended. Otherwise, it is rescheduled immediately.\n\nAfter \"mlxsw: spectrum_acl_tcam: Fix possible use-after-free during\nrehash\" the above is no longer accurate as a non-negative number of\ncredits is no longer indicative of the migration being done. It can also\nhappen if the work encountered an error in which case the migration will\nresume the next time the work is scheduled.\n\nThe significance of the above is that it is possible for the work to be\npending and associated with hints that were allocated when the migration\nstarted. This leads to the hints being leaked [1] when the work is\ncanceled while pending as part of ACL region dismantle.\n\nFix by freeing the hints if hints are associated with a work that was\ncanceled while pending.\n\nBlame the original commit since the reliance on not having a pending\nwork associated with hints is fragile.\n\n[1]\nunreferenced object 0xffff88810e7c3000 (size 256):\n  comm \"kworker/0:16\", pid 176, jiffies 4295460353\n  hex dump (first 32 bytes):\n    00 30 95 11 81 88 ff ff 61 00 00 00 00 00 00 80  .0......a.......\n    00 00 61 00 40 00 00 00 00 00 00 00 04 00 00 00  ..a.@...........\n  backtrace (crc 2544ddb9):\n    [<00000000cf8cfab3>] kmalloc_trace+0x23f/0x2a0\n    [<000000004d9a1ad9>] objagg_hints_get+0x42/0x390\n    [<000000000b143cf3>] mlxsw_sp_acl_erp_rehash_hints_get+0xca/0x400\n    [<0000000059bdb60a>] mlxsw_sp_acl_tcam_vregion_rehash_work+0x868/0x1160\n    [<00000000e81fd734>] process_one_work+0x59c/0xf20\n    [<00000000ceee9e81>] worker_thread+0x799/0x12c0\n    [<00000000bda6fe39>] kthread+0x246/0x300\n    [<0000000070056d23>] ret_from_fork+0x34/0x70\n    [<00000000dea2b93e>] ret_from_fork_asm+0x1a/0x30",
+		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nmlxsw: spectrum_acl_tcam: Fix memory leak when canceling rehash work\n\nThe rehash delayed work is rescheduled with a delay if the number of\ncredits at end of the work is not negative as supposedly it means that\nthe migration ended. Otherwise, it is rescheduled immediately.\n\nAfter \"mlxsw: spectrum_acl_tcam: Fix possible use-after-free during\nrehash\" the above is no longer accurate as a non-negative number of\ncredits is no longer indicative of the migration being done. It can also\nhappen if the work encountered an error in which case the migration will\nresume the next time the work is scheduled.\n\nThe significance of the above is that it is possible for the work to be\npending and associated with hints that were allocated when the migration\nstarted. This leads to the hints being leaked [1] when the work is\ncanceled while pending as part of ACL region dismantle.\n\nFix by freeing the hints if hints are associated with a work that was\ncanceled while pending.\n\nBlame the original commit since the reliance on not having a pending\nwork associated with hints is fragile.\n\n[1]\nunreferenced object 0xffff88810e7c3000 (size 256):\n  comm \"kworker/0:16\", pid 176, jiffies 4295460353\n  hex dump (first 32 bytes):\n    00 30 95 11 81 88 ff ff 61 00 00 00 00 00 00 80  .0......a.......\n    00 00 61 00 40 00 00 00 00 00 00 00 04 00 00 00  ..a.@...........\n  backtrace (crc 2544ddb9):\n    [<00000000cf8cfab3>] kmalloc_trace+0x23f/0x2a0\n    [<000000004d9a1ad9>] objagg_hints_get+0x42/0x390\n    [<000000000b143cf3>] mlxsw_sp_acl_erp_rehash_hints_get+0xca/0x400\n    [<0000000059bdb60a>] mlxsw_sp_acl_tcam_vregion_rehash_work+0x868/0x1160\n    [<00000000e81fd734>] process_one_work+0x59c/0xf20\n    [<00000000ceee9e81>] worker_thread+0x799/0x12c0\n    [<00000000bda6fe39>] kthread+0x246/0x300\n    [<0000000070056d23>] ret_from_fork+0x34/0x70\n    [<00000000dea2b93e>] ret_from_fork_asm+0x1a/0x30",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-10-28"
+				"date": "2024-11-14"
 			},
 			"cve": [
 				{
@@ -90,12 +90,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162049",
-										"comment": "kernel-rt-modules is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162023",
+										"comment": "kernel-rt-modules-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162050",
-										"comment": "kernel-rt-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162024",
+										"comment": "kernel-rt-modules-core is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -103,38 +103,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162163",
-										"comment": "kernel-rt-modules-extra is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162065",
+										"comment": "kernel-rt-modules-partner is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162164",
-										"comment": "kernel-rt-modules-extra is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162067",
-										"comment": "kernel-rt-core is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162068",
-										"comment": "kernel-rt-core is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162119",
-										"comment": "kernel-rt-debug-modules is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162120",
-										"comment": "kernel-rt-debug-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162066",
+										"comment": "kernel-rt-modules-partner is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -155,168 +129,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162095",
-										"comment": "kernel-rt-debug-core is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162096",
-										"comment": "kernel-rt-debug-core is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162001",
-										"comment": "kernel-rt-selftests-internal is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162002",
-										"comment": "kernel-rt-selftests-internal is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162099",
-										"comment": "kernel-rt-debug-modules-internal is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162100",
-										"comment": "kernel-rt-debug-modules-internal is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162083",
-										"comment": "kernel-rt is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162084",
-										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162157",
-										"comment": "kernel-rt-debug-modules-partner is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162158",
-										"comment": "kernel-rt-debug-modules-partner is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162149",
-										"comment": "kernel-rt-debug-kvm is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162150",
-										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162023",
-										"comment": "kernel-rt-modules-core is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162024",
-										"comment": "kernel-rt-modules-core is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:201925162073",
 										"comment": "kernel-rt-modules-internal is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:201925162074",
 										"comment": "kernel-rt-modules-internal is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162131",
-										"comment": "kernel-rt-debug-modules-core is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162132",
-										"comment": "kernel-rt-debug-modules-core is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162109",
-										"comment": "kernel-rt-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162110",
-										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162085",
-										"comment": "kernel-rt-debug-modules-extra is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162086",
-										"comment": "kernel-rt-debug-modules-extra is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162041",
-										"comment": "kernel-rt-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162042",
-										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162065",
-										"comment": "kernel-rt-modules-partner is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162066",
-										"comment": "kernel-rt-modules-partner is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -350,12 +168,194 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162119",
+										"comment": "kernel-rt-debug-modules is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162120",
+										"comment": "kernel-rt-debug-modules is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162041",
+										"comment": "kernel-rt-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162042",
+										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162099",
+										"comment": "kernel-rt-debug-modules-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162100",
+										"comment": "kernel-rt-debug-modules-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162131",
+										"comment": "kernel-rt-debug-modules-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162132",
+										"comment": "kernel-rt-debug-modules-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:201925162057",
 										"comment": "kernel-rt-devel is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:201925162058",
 										"comment": "kernel-rt-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162095",
+										"comment": "kernel-rt-debug-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162096",
+										"comment": "kernel-rt-debug-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162083",
+										"comment": "kernel-rt is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162084",
+										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162001",
+										"comment": "kernel-rt-selftests-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162002",
+										"comment": "kernel-rt-selftests-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162157",
+										"comment": "kernel-rt-debug-modules-partner is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162158",
+										"comment": "kernel-rt-debug-modules-partner is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162163",
+										"comment": "kernel-rt-modules-extra is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162164",
+										"comment": "kernel-rt-modules-extra is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162149",
+										"comment": "kernel-rt-debug-kvm is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162150",
+										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162085",
+										"comment": "kernel-rt-debug-modules-extra is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162086",
+										"comment": "kernel-rt-debug-modules-extra is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162049",
+										"comment": "kernel-rt-modules is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162050",
+										"comment": "kernel-rt-modules is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162109",
+										"comment": "kernel-rt-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162110",
+										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162067",
+										"comment": "kernel-rt-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162068",
+										"comment": "kernel-rt-core is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

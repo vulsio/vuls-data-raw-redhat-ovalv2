@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nnetfilter: bridge: confirm multicast packets before passing them up the stack\n\nconntrack nf_confirm logic cannot handle cloned skbs referencing\nthe same nf_conn entry, which will happen for multicast (broadcast)\nframes on bridges.\n\n Example:\n    macvlan0\n       |\n      br0\n     /  \\\n  ethX    ethY\n\n ethX (or Y) receives a L2 multicast or broadcast packet containing\n an IP packet, flow is not yet in conntrack table.\n\n 1. skb passes through bridge and fake-ip (br_netfilter)Prerouting.\n    -> skb->_nfct now references a unconfirmed entry\n 2. skb is broad/mcast packet. bridge now passes clones out on each bridge\n    interface.\n 3. skb gets passed up the stack.\n 4. In macvlan case, macvlan driver retains clone(s) of the mcast skb\n    and schedules a work queue to send them out on the lower devices.\n\n    The clone skb->_nfct is not a copy, it is the same entry as the\n    original skb.  The macvlan rx handler then returns RX_HANDLER_PASS.\n 5. Normal conntrack hooks (in NF_INET_LOCAL_IN) confirm the orig skb.\n\nThe Macvlan broadcast worker and normal confirm path will race.\n\nThis race will not happen if step 2 already confirmed a clone. In that\ncase later steps perform skb_clone() with skb->_nfct already confirmed (in\nhash table).  This works fine.\n\nBut such confirmation won't happen when eb/ip/nftables rules dropped the\npackets before they reached the nf_confirm step in postrouting.\n\nPablo points out that nf_conntrack_bridge doesn't allow use of stateful\nnat, so we can safely discard the nf_conn entry and let inet call\nconntrack again.\n\nThis doesn't work for bridge netfilter: skb could have a nat\ntransformation. Also bridge nf prevents re-invocation of inet prerouting\nvia 'sabotage_in' hook.\n\nWork around this problem by explicit confirmation of the entry at LOCAL_IN\ntime, before upper layer has a chance to clone the unconfirmed entry.\n\nThe downside is that this disables NAT and conntrack helpers.\n\nAlternative fix would be to add locking to all code parts that deal with\nunconfirmed packets, but even if that could be done in a sane way this\nopens up other problems, for example:\n\n-m physdev --physdev-out eth0 -j SNAT --snat-to 1.2.3.4\n-m physdev --physdev-out eth1 -j SNAT --snat-to 1.2.3.5\n\nFor multicast case, only one of such conflicting mappings will be\ncreated, conntrack only handles 1:1 NAT mappings.\n\nUsers should set create a setup that explicitly marks such traffic\nNOTRACK (conntrack bypass) to avoid this, but we cannot auto-bypass\nthem, ruleset might have accept rules for untracked traffic already,\nso user-visible behaviour would change.",
+		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nnetfilter: bridge: confirm multicast packets before passing them up the stack\n\nconntrack nf_confirm logic cannot handle cloned skbs referencing\nthe same nf_conn entry, which will happen for multicast (broadcast)\nframes on bridges.\n\n Example:\n    macvlan0\n       |\n      br0\n     /  \\\n  ethX    ethY\n\n ethX (or Y) receives a L2 multicast or broadcast packet containing\n an IP packet, flow is not yet in conntrack table.\n\n 1. skb passes through bridge and fake-ip (br_netfilter)Prerouting.\n    -> skb->_nfct now references a unconfirmed entry\n 2. skb is broad/mcast packet. bridge now passes clones out on each bridge\n    interface.\n 3. skb gets passed up the stack.\n 4. In macvlan case, macvlan driver retains clone(s) of the mcast skb\n    and schedules a work queue to send them out on the lower devices.\n\n    The clone skb->_nfct is not a copy, it is the same entry as the\n    original skb.  The macvlan rx handler then returns RX_HANDLER_PASS.\n 5. Normal conntrack hooks (in NF_INET_LOCAL_IN) confirm the orig skb.\n\nThe Macvlan broadcast worker and normal confirm path will race.\n\nThis race will not happen if step 2 already confirmed a clone. In that\ncase later steps perform skb_clone() with skb->_nfct already confirmed (in\nhash table).  This works fine.\n\nBut such confirmation won't happen when eb/ip/nftables rules dropped the\npackets before they reached the nf_confirm step in postrouting.\n\nPablo points out that nf_conntrack_bridge doesn't allow use of stateful\nnat, so we can safely discard the nf_conn entry and let inet call\nconntrack again.\n\nThis doesn't work for bridge netfilter: skb could have a nat\ntransformation. Also bridge nf prevents re-invocation of inet prerouting\nvia 'sabotage_in' hook.\n\nWork around this problem by explicit confirmation of the entry at LOCAL_IN\ntime, before upper layer has a chance to clone the unconfirmed entry.\n\nThe downside is that this disables NAT and conntrack helpers.\n\nAlternative fix would be to add locking to all code parts that deal with\nunconfirmed packets, but even if that could be done in a sane way this\nopens up other problems, for example:\n\n-m physdev --physdev-out eth0 -j SNAT --snat-to 1.2.3.4\n-m physdev --physdev-out eth1 -j SNAT --snat-to 1.2.3.5\n\nFor multicast case, only one of such conflicting mappings will be\ncreated, conntrack only handles 1:1 NAT mappings.\n\nUsers should set create a setup that explicitly marks such traffic\nNOTRACK (conntrack bypass) to avoid this, but we cannot auto-bypass\nthem, ruleset might have accept rules for untracked traffic already,\nso user-visible behaviour would change.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-10-28"
+				"date": "2024-11-21"
 			},
 			"cve": [
 				{
@@ -90,12 +90,103 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162049",
-										"comment": "kernel-rt-modules is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162041",
+										"comment": "kernel-rt-debug is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162050",
-										"comment": "kernel-rt-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162042",
+										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162107",
+										"comment": "kernel-rt-devel-matched is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162108",
+										"comment": "kernel-rt-devel-matched is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162095",
+										"comment": "kernel-rt-debug-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162096",
+										"comment": "kernel-rt-debug-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162023",
+										"comment": "kernel-rt-modules-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162024",
+										"comment": "kernel-rt-modules-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162099",
+										"comment": "kernel-rt-debug-modules-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162100",
+										"comment": "kernel-rt-debug-modules-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162005",
+										"comment": "kernel-rt-debug-devel-matched is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162006",
+										"comment": "kernel-rt-debug-devel-matched is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162085",
+										"comment": "kernel-rt-debug-modules-extra is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162086",
+										"comment": "kernel-rt-debug-modules-extra is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162073",
+										"comment": "kernel-rt-modules-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162074",
+										"comment": "kernel-rt-modules-internal is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -129,12 +220,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162119",
-										"comment": "kernel-rt-debug-modules is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162109",
+										"comment": "kernel-rt-debug-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162120",
-										"comment": "kernel-rt-debug-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162110",
+										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -142,64 +233,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162005",
-										"comment": "kernel-rt-debug-devel-matched is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162049",
+										"comment": "kernel-rt-modules is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162006",
-										"comment": "kernel-rt-debug-devel-matched is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162095",
-										"comment": "kernel-rt-debug-core is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162096",
-										"comment": "kernel-rt-debug-core is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162001",
-										"comment": "kernel-rt-selftests-internal is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162002",
-										"comment": "kernel-rt-selftests-internal is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162099",
-										"comment": "kernel-rt-debug-modules-internal is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162100",
-										"comment": "kernel-rt-debug-modules-internal is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162083",
-										"comment": "kernel-rt is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162084",
-										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162050",
+										"comment": "kernel-rt-modules is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -220,38 +259,64 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162065",
+										"comment": "kernel-rt-modules-partner is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162066",
+										"comment": "kernel-rt-modules-partner is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162001",
+										"comment": "kernel-rt-selftests-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162002",
+										"comment": "kernel-rt-selftests-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162083",
+										"comment": "kernel-rt is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162084",
+										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162057",
+										"comment": "kernel-rt-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162058",
+										"comment": "kernel-rt-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:201925162149",
 										"comment": "kernel-rt-debug-kvm is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:201925162150",
 										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162023",
-										"comment": "kernel-rt-modules-core is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162024",
-										"comment": "kernel-rt-modules-core is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162073",
-										"comment": "kernel-rt-modules-internal is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162074",
-										"comment": "kernel-rt-modules-internal is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -272,71 +337,6 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162109",
-										"comment": "kernel-rt-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162110",
-										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162085",
-										"comment": "kernel-rt-debug-modules-extra is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162086",
-										"comment": "kernel-rt-debug-modules-extra is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162041",
-										"comment": "kernel-rt-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162042",
-										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162065",
-										"comment": "kernel-rt-modules-partner is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162066",
-										"comment": "kernel-rt-modules-partner is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162107",
-										"comment": "kernel-rt-devel-matched is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162108",
-										"comment": "kernel-rt-devel-matched is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:201925162155",
 										"comment": "kernel-rt-kvm is installed"
 									},
@@ -350,12 +350,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162057",
-										"comment": "kernel-rt-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162119",
+										"comment": "kernel-rt-debug-modules is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162058",
-										"comment": "kernel-rt-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162120",
+										"comment": "kernel-rt-debug-modules is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

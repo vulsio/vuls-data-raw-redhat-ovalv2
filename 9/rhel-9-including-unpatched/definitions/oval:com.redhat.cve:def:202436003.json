@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nice: fix LAG and VF lock dependency in ice_reset_vf()\n\n9f74a3dfcf83 (\"ice: Fix VF Reset paths when interface in a failed over\naggregate\"), the ice driver has acquired the LAG mutex in ice_reset_vf().\nThe commit placed this lock acquisition just prior to the acquisition of\nthe VF configuration lock.\n\nIf ice_reset_vf() acquires the configuration lock via the ICE_VF_RESET_LOCK\nflag, this could deadlock with ice_vc_cfg_qs_msg() because it always\nacquires the locks in the order of the VF configuration lock and then the\nLAG mutex.\n\nLockdep reports this violation almost immediately on creating and then\nremoving 2 VF:\n\n======================================================\nWARNING: possible circular locking dependency detected\n6.8.0-rc6 #54 Tainted: G        W  O\n------------------------------------------------------\nkworker/60:3/6771 is trying to acquire lock:\nff40d43e099380a0 (&vf->cfg_lock){+.+.}-{3:3}, at: ice_reset_vf+0x22f/0x4d0 [ice]\n\nbut task is already holding lock:\nff40d43ea1961210 (&pf->lag_mutex){+.+.}-{3:3}, at: ice_reset_vf+0xb7/0x4d0 [ice]\n\nwhich lock already depends on the new lock.\n\nthe existing dependency chain (in reverse order) is:\n\n-> #1 (&pf->lag_mutex){+.+.}-{3:3}:\n       __lock_acquire+0x4f8/0xb40\n       lock_acquire+0xd4/0x2d0\n       __mutex_lock+0x9b/0xbf0\n       ice_vc_cfg_qs_msg+0x45/0x690 [ice]\n       ice_vc_process_vf_msg+0x4f5/0x870 [ice]\n       __ice_clean_ctrlq+0x2b5/0x600 [ice]\n       ice_service_task+0x2c9/0x480 [ice]\n       process_one_work+0x1e9/0x4d0\n       worker_thread+0x1e1/0x3d0\n       kthread+0x104/0x140\n       ret_from_fork+0x31/0x50\n       ret_from_fork_asm+0x1b/0x30\n\n-> #0 (&vf->cfg_lock){+.+.}-{3:3}:\n       check_prev_add+0xe2/0xc50\n       validate_chain+0x558/0x800\n       __lock_acquire+0x4f8/0xb40\n       lock_acquire+0xd4/0x2d0\n       __mutex_lock+0x9b/0xbf0\n       ice_reset_vf+0x22f/0x4d0 [ice]\n       ice_process_vflr_event+0x98/0xd0 [ice]\n       ice_service_task+0x1cc/0x480 [ice]\n       process_one_work+0x1e9/0x4d0\n       worker_thread+0x1e1/0x3d0\n       kthread+0x104/0x140\n       ret_from_fork+0x31/0x50\n       ret_from_fork_asm+0x1b/0x30\n\nother info that might help us debug this:\n Possible unsafe locking scenario:\n       CPU0                    CPU1\n       ----                    ----\n  lock(&pf->lag_mutex);\n                               lock(&vf->cfg_lock);\n                               lock(&pf->lag_mutex);\n  lock(&vf->cfg_lock);\n\n *** DEADLOCK ***\n4 locks held by kworker/60:3/6771:\n #0: ff40d43e05428b38 ((wq_completion)ice){+.+.}-{0:0}, at: process_one_work+0x176/0x4d0\n #1: ff50d06e05197e58 ((work_completion)(&pf->serv_task)){+.+.}-{0:0}, at: process_one_work+0x176/0x4d0\n #2: ff40d43ea1960e50 (&pf->vfs.table_lock){+.+.}-{3:3}, at: ice_process_vflr_event+0x48/0xd0 [ice]\n #3: ff40d43ea1961210 (&pf->lag_mutex){+.+.}-{3:3}, at: ice_reset_vf+0xb7/0x4d0 [ice]\n\nstack backtrace:\nCPU: 60 PID: 6771 Comm: kworker/60:3 Tainted: G        W  O       6.8.0-rc6 #54\nHardware name:\nWorkqueue: ice ice_service_task [ice]\nCall Trace:\n <TASK>\n dump_stack_lvl+0x4a/0x80\n check_noncircular+0x12d/0x150\n check_prev_add+0xe2/0xc50\n ? save_trace+0x59/0x230\n ? add_chain_cache+0x109/0x450\n validate_chain+0x558/0x800\n __lock_acquire+0x4f8/0xb40\n ? lockdep_hardirqs_on+0x7d/0x100\n lock_acquire+0xd4/0x2d0\n ? ice_reset_vf+0x22f/0x4d0 [ice]\n ? lock_is_held_type+0xc7/0x120\n __mutex_lock+0x9b/0xbf0\n ? ice_reset_vf+0x22f/0x4d0 [ice]\n ? ice_reset_vf+0x22f/0x4d0 [ice]\n ? rcu_is_watching+0x11/0x50\n ? ice_reset_vf+0x22f/0x4d0 [ice]\n ice_reset_vf+0x22f/0x4d0 [ice]\n ? process_one_work+0x176/0x4d0\n ice_process_vflr_event+0x98/0xd0 [ice]\n ice_service_task+0x1cc/0x480 [ice]\n process_one_work+0x1e9/0x4d0\n worker_thread+0x1e1/0x3d0\n ? __pfx_worker_thread+0x10/0x10\n kthread+0x104/0x140\n ? __pfx_kthread+0x10/0x10\n ret_from_fork+0x31/0x50\n ? __pfx_kthread+0x10/0x10\n ret_from_fork_asm+0x1b/0x30\n </TASK>\n\nTo avoid deadlock, we must acquire the LAG \n---truncated---",
+		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nice: fix LAG and VF lock dependency in ice_reset_vf()\n\n9f74a3dfcf83 (\"ice: Fix VF Reset paths when interface in a failed over\naggregate\"), the ice driver has acquired the LAG mutex in ice_reset_vf().\nThe commit placed this lock acquisition just prior to the acquisition of\nthe VF configuration lock.\n\nIf ice_reset_vf() acquires the configuration lock via the ICE_VF_RESET_LOCK\nflag, this could deadlock with ice_vc_cfg_qs_msg() because it always\nacquires the locks in the order of the VF configuration lock and then the\nLAG mutex.\n\nLockdep reports this violation almost immediately on creating and then\nremoving 2 VF:\n\n======================================================\nWARNING: possible circular locking dependency detected\n6.8.0-rc6 #54 Tainted: G        W  O\n------------------------------------------------------\nkworker/60:3/6771 is trying to acquire lock:\nff40d43e099380a0 (&vf->cfg_lock){+.+.}-{3:3}, at: ice_reset_vf+0x22f/0x4d0 [ice]\n\nbut task is already holding lock:\nff40d43ea1961210 (&pf->lag_mutex){+.+.}-{3:3}, at: ice_reset_vf+0xb7/0x4d0 [ice]\n\nwhich lock already depends on the new lock.\n\nthe existing dependency chain (in reverse order) is:\n\n-> #1 (&pf->lag_mutex){+.+.}-{3:3}:\n       __lock_acquire+0x4f8/0xb40\n       lock_acquire+0xd4/0x2d0\n       __mutex_lock+0x9b/0xbf0\n       ice_vc_cfg_qs_msg+0x45/0x690 [ice]\n       ice_vc_process_vf_msg+0x4f5/0x870 [ice]\n       __ice_clean_ctrlq+0x2b5/0x600 [ice]\n       ice_service_task+0x2c9/0x480 [ice]\n       process_one_work+0x1e9/0x4d0\n       worker_thread+0x1e1/0x3d0\n       kthread+0x104/0x140\n       ret_from_fork+0x31/0x50\n       ret_from_fork_asm+0x1b/0x30\n\n-> #0 (&vf->cfg_lock){+.+.}-{3:3}:\n       check_prev_add+0xe2/0xc50\n       validate_chain+0x558/0x800\n       __lock_acquire+0x4f8/0xb40\n       lock_acquire+0xd4/0x2d0\n       __mutex_lock+0x9b/0xbf0\n       ice_reset_vf+0x22f/0x4d0 [ice]\n       ice_process_vflr_event+0x98/0xd0 [ice]\n       ice_service_task+0x1cc/0x480 [ice]\n       process_one_work+0x1e9/0x4d0\n       worker_thread+0x1e1/0x3d0\n       kthread+0x104/0x140\n       ret_from_fork+0x31/0x50\n       ret_from_fork_asm+0x1b/0x30\n\nother info that might help us debug this:\n Possible unsafe locking scenario:\n       CPU0                    CPU1\n       ----                    ----\n  lock(&pf->lag_mutex);\n                               lock(&vf->cfg_lock);\n                               lock(&pf->lag_mutex);\n  lock(&vf->cfg_lock);\n\n *** DEADLOCK ***\n4 locks held by kworker/60:3/6771:\n #0: ff40d43e05428b38 ((wq_completion)ice){+.+.}-{0:0}, at: process_one_work+0x176/0x4d0\n #1: ff50d06e05197e58 ((work_completion)(&pf->serv_task)){+.+.}-{0:0}, at: process_one_work+0x176/0x4d0\n #2: ff40d43ea1960e50 (&pf->vfs.table_lock){+.+.}-{3:3}, at: ice_process_vflr_event+0x48/0xd0 [ice]\n #3: ff40d43ea1961210 (&pf->lag_mutex){+.+.}-{3:3}, at: ice_reset_vf+0xb7/0x4d0 [ice]\n\nstack backtrace:\nCPU: 60 PID: 6771 Comm: kworker/60:3 Tainted: G        W  O       6.8.0-rc6 #54\nHardware name:\nWorkqueue: ice ice_service_task [ice]\nCall Trace:\n <TASK>\n dump_stack_lvl+0x4a/0x80\n check_noncircular+0x12d/0x150\n check_prev_add+0xe2/0xc50\n ? save_trace+0x59/0x230\n ? add_chain_cache+0x109/0x450\n validate_chain+0x558/0x800\n __lock_acquire+0x4f8/0xb40\n ? lockdep_hardirqs_on+0x7d/0x100\n lock_acquire+0xd4/0x2d0\n ? ice_reset_vf+0x22f/0x4d0 [ice]\n ? lock_is_held_type+0xc7/0x120\n __mutex_lock+0x9b/0xbf0\n ? ice_reset_vf+0x22f/0x4d0 [ice]\n ? ice_reset_vf+0x22f/0x4d0 [ice]\n ? rcu_is_watching+0x11/0x50\n ? ice_reset_vf+0x22f/0x4d0 [ice]\n ice_reset_vf+0x22f/0x4d0 [ice]\n ? process_one_work+0x176/0x4d0\n ice_process_vflr_event+0x98/0xd0 [ice]\n ice_service_task+0x1cc/0x480 [ice]\n process_one_work+0x1e9/0x4d0\n worker_thread+0x1e1/0x3d0\n ? __pfx_worker_thread+0x10/0x10\n kthread+0x104/0x140\n ? __pfx_kthread+0x10/0x10\n ret_from_fork+0x31/0x50\n ? __pfx_kthread+0x10/0x10\n ret_from_fork_asm+0x1b/0x30\n </TASK>\n\nTo avoid deadlock, we must acquire the LAG \n---truncated---",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-10-28"
+				"date": "2024-11-14"
 			},
 			"cve": [
 				{
@@ -90,12 +90,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162049",
-										"comment": "kernel-rt-modules is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162023",
+										"comment": "kernel-rt-modules-core is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162050",
-										"comment": "kernel-rt-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162024",
+										"comment": "kernel-rt-modules-core is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -103,38 +103,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162163",
-										"comment": "kernel-rt-modules-extra is installed"
+										"test_ref": "oval:com.redhat.cve:tst:201925162065",
+										"comment": "kernel-rt-modules-partner is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162164",
-										"comment": "kernel-rt-modules-extra is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162067",
-										"comment": "kernel-rt-core is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162068",
-										"comment": "kernel-rt-core is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162119",
-										"comment": "kernel-rt-debug-modules is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162120",
-										"comment": "kernel-rt-debug-modules is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:201925162066",
+										"comment": "kernel-rt-modules-partner is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -155,168 +129,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162095",
-										"comment": "kernel-rt-debug-core is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162096",
-										"comment": "kernel-rt-debug-core is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162001",
-										"comment": "kernel-rt-selftests-internal is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162002",
-										"comment": "kernel-rt-selftests-internal is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162099",
-										"comment": "kernel-rt-debug-modules-internal is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162100",
-										"comment": "kernel-rt-debug-modules-internal is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162083",
-										"comment": "kernel-rt is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162084",
-										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162157",
-										"comment": "kernel-rt-debug-modules-partner is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162158",
-										"comment": "kernel-rt-debug-modules-partner is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162149",
-										"comment": "kernel-rt-debug-kvm is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162150",
-										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162023",
-										"comment": "kernel-rt-modules-core is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162024",
-										"comment": "kernel-rt-modules-core is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:201925162073",
 										"comment": "kernel-rt-modules-internal is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:201925162074",
 										"comment": "kernel-rt-modules-internal is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162131",
-										"comment": "kernel-rt-debug-modules-core is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162132",
-										"comment": "kernel-rt-debug-modules-core is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162109",
-										"comment": "kernel-rt-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162110",
-										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162085",
-										"comment": "kernel-rt-debug-modules-extra is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162086",
-										"comment": "kernel-rt-debug-modules-extra is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162041",
-										"comment": "kernel-rt-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162042",
-										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162065",
-										"comment": "kernel-rt-modules-partner is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:201925162066",
-										"comment": "kernel-rt-modules-partner is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -350,12 +168,194 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162119",
+										"comment": "kernel-rt-debug-modules is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162120",
+										"comment": "kernel-rt-debug-modules is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162041",
+										"comment": "kernel-rt-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162042",
+										"comment": "kernel-rt-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162099",
+										"comment": "kernel-rt-debug-modules-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162100",
+										"comment": "kernel-rt-debug-modules-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162131",
+										"comment": "kernel-rt-debug-modules-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162132",
+										"comment": "kernel-rt-debug-modules-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:201925162057",
 										"comment": "kernel-rt-devel is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:201925162058",
 										"comment": "kernel-rt-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162095",
+										"comment": "kernel-rt-debug-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162096",
+										"comment": "kernel-rt-debug-core is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162083",
+										"comment": "kernel-rt is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162084",
+										"comment": "kernel-rt is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162001",
+										"comment": "kernel-rt-selftests-internal is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162002",
+										"comment": "kernel-rt-selftests-internal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162157",
+										"comment": "kernel-rt-debug-modules-partner is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162158",
+										"comment": "kernel-rt-debug-modules-partner is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162163",
+										"comment": "kernel-rt-modules-extra is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162164",
+										"comment": "kernel-rt-modules-extra is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162149",
+										"comment": "kernel-rt-debug-kvm is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162150",
+										"comment": "kernel-rt-debug-kvm is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162085",
+										"comment": "kernel-rt-debug-modules-extra is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162086",
+										"comment": "kernel-rt-debug-modules-extra is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162049",
+										"comment": "kernel-rt-modules is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162050",
+										"comment": "kernel-rt-modules is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162109",
+										"comment": "kernel-rt-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162110",
+										"comment": "kernel-rt-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162067",
+										"comment": "kernel-rt-core is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:201925162068",
+										"comment": "kernel-rt-core is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

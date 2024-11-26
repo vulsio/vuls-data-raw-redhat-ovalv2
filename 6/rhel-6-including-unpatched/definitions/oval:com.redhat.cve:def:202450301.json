@@ -1,0 +1,267 @@
+{
+	"id": "oval:com.redhat.cve:def:202450301",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "kernel: security/keys: fix slab-out-of-bounds in key_task_permission (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2024-50301",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-50301",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nsecurity/keys: fix slab-out-of-bounds in key_task_permission\n\nKASAN reports an out of bounds read:\nBUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uidgid.h:36\nBUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63 [inline]\nBUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410\nsecurity/keys/permission.c:54\nRead of size 4 at addr ffff88813c3ab618 by task stress-ng/4362\n\nCPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafbffd6c3ede #15\nCall Trace:\n __dump_stack lib/dump_stack.c:82 [inline]\n dump_stack+0x107/0x167 lib/dump_stack.c:123\n print_address_description.constprop.0+0x19/0x170 mm/kasan/report.c:400\n __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560\n kasan_report+0x3a/0x50 mm/kasan/report.c:585\n __kuid_val include/linux/uidgid.h:36 [inline]\n uid_eq include/linux/uidgid.h:63 [inline]\n key_task_permission+0x394/0x410 security/keys/permission.c:54\n search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793\n\nThis issue was also reported by syzbot.\n\nIt can be reproduced by following these steps(more details [1]):\n1. Obtain more than 32 inputs that have similar hashes, which ends with the\n   pattern '0xxxxxxxe6'.\n2. Reboot and add the keys obtained in step 1.\n\nThe reproducer demonstrates how this issue happened:\n1. In the search_nested_keyrings function, when it iterates through the\n   slots in a node(below tag ascend_to_node), if the slot pointer is meta\n   and node->back_pointer != NULL(it means a root), it will proceed to\n   descend_to_node. However, there is an exception. If node is the root,\n   and one of the slots points to a shortcut, it will be treated as a\n   keyring.\n2. Whether the ptr is keyring decided by keyring_ptr_is_keyring function.\n   However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as\n   ASSOC_ARRAY_PTR_SUBTYPE_MASK.\n3. When 32 keys with the similar hashes are added to the tree, the ROOT\n   has keys with hashes that are not similar (e.g. slot 0) and it splits\n   NODE A without using a shortcut. When NODE A is filled with keys that\n   all hashes are xxe6, the keys are similar, NODE A will split with a\n   shortcut. Finally, it forms the tree as shown below, where slot 6 points\n   to a shortcut.\n\n                      NODE A\n              +------>+---+\n      ROOT    |       | 0 | xxe6\n      +---+   |       +---+\n xxxx | 0 | shortcut  :   : xxe6\n      +---+   |       +---+\n xxe6 :   :   |       |   | xxe6\n      +---+   |       +---+\n      | 6 |---+       :   : xxe6\n      +---+           +---+\n xxe6 :   :           | f | xxe6\n      +---+           +---+\n xxe6 | f |\n      +---+\n\n4. As mentioned above, If a slot(slot 6) of the root points to a shortcut,\n   it may be mistakenly transferred to a key*, leading to a read\n   out-of-bounds read.\n\nTo fix this issue, one should jump to descend_to_node if the ptr is a\nshortcut, regardless of whether the node is root or not.\n\n[1] https://lore.kernel.org/linux-kernel/1cfa878e-8c7b-4570-8606-21daf5e13ce7@huaweicloud.com/\n\n[jarkko: tweaked the commit message a bit to have an appropriate closes\n tag.]",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2024-11-21"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-50301",
+					"cvss3": "7.1/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:H",
+					"cwe": "CWE-125",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-50301",
+					"impact": "moderate",
+					"public": "20241119"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Out of support scope",
+						"component": [
+							"kernel",
+							"kernel-abi-whitelists",
+							"kernel-bootwrapper",
+							"kernel-debug",
+							"kernel-debug-devel",
+							"kernel-devel",
+							"kernel-doc",
+							"kernel-firmware",
+							"kernel-headers",
+							"kernel-kdump",
+							"kernel-kdump-devel",
+							"perf",
+							"python-perf"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_extras:6",
+					"cpe:/a:redhat:rhel_extras_hpn:6",
+					"cpe:/a:redhat:rhel_extras_oracle_java:6",
+					"cpe:/a:redhat:rhel_extras_sap:6",
+					"cpe:/a:redhat:rhel_extras_sap_hana:6",
+					"cpe:/o:redhat:enterprise_linux:6",
+					"cpe:/o:redhat:enterprise_linux:6::client",
+					"cpe:/o:redhat:enterprise_linux:6::computenode",
+					"cpe:/o:redhat:enterprise_linux:6::server",
+					"cpe:/o:redhat:enterprise_linux:6::workstation"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764019",
+										"comment": "kernel-bootwrapper is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764020",
+										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20022439069",
+						"comment": "Red Hat Enterprise Linux 6 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20022439070",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nnet: veth: clear GRO when clearing XDP even when down\n\nveth sets NETIF_F_GRO automatically when XDP is enabled,\nbecause both features use the same NAPI machinery.\n\nThe logic to clear NETIF_F_GRO sits in veth_disable_xdp() which\nis called both on ndo_stop and when XDP is turned off.\nTo avoid the flag from being cleared when the device is brought\ndown, the clearing is skipped when IFF_UP is not set.\nBringing the device down should indeed not modify its features.\n\nUnfortunately, this means that clearing is also skipped when\nXDP is disabled _while_ the device is down. And there's nothing\non the open path to bring the device features back into sync.\nIOW if user enables XDP, disables it and then brings the device\nup we'll end up with a stray GRO flag set but no NAPI instances.\n\nWe don't depend on the GRO flag on the datapath, so the datapath\nwon't crash. We will crash (or hang), however, next time features\nare sync'ed (either by user via ethtool or peer changing its config).\nThe GRO flag will go away, and veth will try to disable the NAPIs.\nBut the open path never created them since XDP was off, the GRO flag\nwas a stray. If NAPI was initialized before we'll hang in napi_disable().\nIf it never was we'll crash trying to stop uninitialized hrtimer.\n\nMove the GRO flag updates to the XDP enable / disable paths,\ninstead of mixing them with the ndo_open / ndo_close paths.",
+		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\nnet: veth: clear GRO when clearing XDP even when down\n\nveth sets NETIF_F_GRO automatically when XDP is enabled,\nbecause both features use the same NAPI machinery.\n\nThe logic to clear NETIF_F_GRO sits in veth_disable_xdp() which\nis called both on ndo_stop and when XDP is turned off.\nTo avoid the flag from being cleared when the device is brought\ndown, the clearing is skipped when IFF_UP is not set.\nBringing the device down should indeed not modify its features.\n\nUnfortunately, this means that clearing is also skipped when\nXDP is disabled _while_ the device is down. And there's nothing\non the open path to bring the device features back into sync.\nIOW if user enables XDP, disables it and then brings the device\nup we'll end up with a stray GRO flag set but no NAPI instances.\n\nWe don't depend on the GRO flag on the datapath, so the datapath\nwon't crash. We will crash (or hang), however, next time features\nare sync'ed (either by user via ethtool or peer changing its config).\nThe GRO flag will go away, and veth will try to disable the NAPIs.\nBut the open path never created them since XDP was off, the GRO flag\nwas a stray. If NAPI was initialized before we'll hang in napi_disable().\nIf it never was we'll crash trying to stop uninitialized hrtimer.\n\nMove the GRO flag updates to the XDP enable / disable paths,\ninstead of mixing them with the ndo_open / ndo_close paths.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Low",
 			"updated": {
-				"date": "2024-10-28"
+				"date": "2024-12-12"
 			},
 			"cve": [
 				{
@@ -80,51 +80,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764001",
-										"comment": "kernel-kdump-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764002",
-										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -145,12 +106,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -158,12 +119,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764001",
+										"comment": "kernel-kdump-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764002",
+										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -197,25 +171,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -236,12 +197,51 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764005",
 										"comment": "kernel-headers is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764006",
 										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

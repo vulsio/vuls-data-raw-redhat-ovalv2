@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "kernel: powerpc/fadump: Move fadump_cma_init to setup_arch() after initmem_init() (important)",
+		"title": "kernel: powerpc/fadump: Move fadump_cma_init to setup_arch() after initmem_init() (moderate)",
 		"reference": [
 			{
 				"ref_id": "CVE-2024-56677",
@@ -11,19 +11,19 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\npowerpc/fadump: Move fadump_cma_init to setup_arch() after initmem_init()\n\nDuring early init CMA_MIN_ALIGNMENT_BYTES can be PAGE_SIZE,\nsince pageblock_order is still zero and it gets initialized\nlater during initmem_init() e.g.\nsetup_arch() -> initmem_init() -> sparse_init() -> set_pageblock_order()\n\nOne such use case where this causes issue is -\nearly_setup() -> early_init_devtree() -> fadump_reserve_mem() -> fadump_cma_init()\n\nThis causes CMA memory alignment check to be bypassed in\ncma_init_reserved_mem(). Then later cma_activate_area() can hit\na VM_BUG_ON_PAGE(pfn & ((1 << order) - 1)) if the reserved memory\narea was not pageblock_order aligned.\n\nFix it by moving the fadump_cma_init() after initmem_init(),\nwhere other such cma reservations also gets called.\n\n<stack trace>\n==============\npage: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10010\nflags: 0x13ffff800000000(node=1|zone=0|lastcpupid=0x7ffff) CMA\nraw: 013ffff800000000 5deadbeef0000100 5deadbeef0000122 0000000000000000\nraw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000\npage dumped because: VM_BUG_ON_PAGE(pfn & ((1 << order) - 1))\n------------[ cut here ]------------\nkernel BUG at mm/page_alloc.c:778!\n\nCall Trace:\n__free_one_page+0x57c/0x7b0 (unreliable)\nfree_pcppages_bulk+0x1a8/0x2c8\nfree_unref_page_commit+0x3d4/0x4e4\nfree_unref_page+0x458/0x6d0\ninit_cma_reserved_pageblock+0x114/0x198\ncma_init_reserved_areas+0x270/0x3e0\ndo_one_initcall+0x80/0x2f8\nkernel_init_freeable+0x33c/0x530\nkernel_init+0x34/0x26c\nret_from_kernel_user_thread+0x14/0x1c",
+		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\npowerpc/fadump: Move fadump_cma_init to setup_arch() after initmem_init()\n\nDuring early init CMA_MIN_ALIGNMENT_BYTES can be PAGE_SIZE,\nsince pageblock_order is still zero and it gets initialized\nlater during initmem_init() e.g.\nsetup_arch() -> initmem_init() -> sparse_init() -> set_pageblock_order()\n\nOne such use case where this causes issue is -\nearly_setup() -> early_init_devtree() -> fadump_reserve_mem() -> fadump_cma_init()\n\nThis causes CMA memory alignment check to be bypassed in\ncma_init_reserved_mem(). Then later cma_activate_area() can hit\na VM_BUG_ON_PAGE(pfn & ((1 << order) - 1)) if the reserved memory\narea was not pageblock_order aligned.\n\nFix it by moving the fadump_cma_init() after initmem_init(),\nwhere other such cma reservations also gets called.\n\n<stack trace>\n==============\npage: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10010\nflags: 0x13ffff800000000(node=1|zone=0|lastcpupid=0x7ffff) CMA\nraw: 013ffff800000000 5deadbeef0000100 5deadbeef0000122 0000000000000000\nraw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000\npage dumped because: VM_BUG_ON_PAGE(pfn & ((1 << order) - 1))\n------------[ cut here ]------------\nkernel BUG at mm/page_alloc.c:778!\n\nCall Trace:\n__free_one_page+0x57c/0x7b0 (unreliable)\nfree_pcppages_bulk+0x1a8/0x2c8\nfree_unref_page_commit+0x3d4/0x4e4\nfree_unref_page+0x458/0x6d0\ninit_cma_reserved_pageblock+0x114/0x198\ncma_init_reserved_areas+0x270/0x3e0\ndo_one_initcall+0x80/0x2f8\nkernel_init_freeable+0x33c/0x530\nkernel_init+0x34/0x26c\nret_from_kernel_user_thread+0x14/0x1c \n            STATEMENT: The bug is specific for PowerPC platform and can happen during initialization (ex. during boot time). The security impact is limited, because bug detected by VM_BUG_ON_PAGE correctly.",
 		"advisory": {
 			"from": "secalert@redhat.com",
-			"severity": "Important",
+			"severity": "Moderate",
 			"updated": {
-				"date": "2024-12-29"
+				"date": "2024-12-31"
 			},
 			"cve": [
 				{
 					"text": "CVE-2024-56677",
-					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"cvss3": "4.7/CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H",
 					"href": "https://access.redhat.com/security/cve/CVE-2024-56677",
-					"impact": "important",
+					"impact": "moderate",
 					"public": "20241228"
 				}
 			],
@@ -80,12 +80,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -106,51 +106,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764005",
-										"comment": "kernel-headers is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764006",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -184,12 +145,64 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764003",
 										"comment": "kernel-debug-devel is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764004",
 										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -210,38 +223,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764019",
 										"comment": "kernel-bootwrapper is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764020",
 										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

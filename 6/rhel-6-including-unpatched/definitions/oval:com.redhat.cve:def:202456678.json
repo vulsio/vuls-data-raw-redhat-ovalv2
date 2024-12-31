@@ -3,7 +3,7 @@
 	"version": "636",
 	"class": "vulnerability",
 	"metadata": {
-		"title": "kernel: powerpc/mm/fault: Fix kfence page fault reporting (important)",
+		"title": "kernel: powerpc/mm/fault: Fix kfence page fault reporting (moderate)",
 		"reference": [
 			{
 				"ref_id": "CVE-2024-56678",
@@ -11,19 +11,19 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\npowerpc/mm/fault: Fix kfence page fault reporting\n\ncopy_from_kernel_nofault() can be called when doing read of /proc/kcore.\n/proc/kcore can have some unmapped kfence objects which when read via\ncopy_from_kernel_nofault() can cause page faults. Since *_nofault()\nfunctions define their own fixup table for handling fault, use that\ninstead of asking kfence to handle such faults.\n\nHence we search the exception tables for the nip which generated the\nfault. If there is an entry then we let the fixup table handler handle the\npage fault by returning an error from within ___do_page_fault().\n\nThis can be easily triggered if someone tries to do dd from /proc/kcore.\neg. dd if=/proc/kcore of=/dev/null bs=1M\n\nSome example false negatives:\n\n  ===============================\n  BUG: KFENCE: invalid read in copy_from_kernel_nofault+0x9c/0x1a0\n  Invalid read at 0xc0000000fdff0000:\n   copy_from_kernel_nofault+0x9c/0x1a0\n   0xc00000000665f950\n   read_kcore_iter+0x57c/0xa04\n   proc_reg_read_iter+0xe4/0x16c\n   vfs_read+0x320/0x3ec\n   ksys_read+0x90/0x154\n   system_call_exception+0x120/0x310\n   system_call_vectored_common+0x15c/0x2ec\n\n  BUG: KFENCE: use-after-free read in copy_from_kernel_nofault+0x9c/0x1a0\n  Use-after-free read at 0xc0000000fe050000 (in kfence-#2):\n   copy_from_kernel_nofault+0x9c/0x1a0\n   0xc00000000665f950\n   read_kcore_iter+0x57c/0xa04\n   proc_reg_read_iter+0xe4/0x16c\n   vfs_read+0x320/0x3ec\n   ksys_read+0x90/0x154\n   system_call_exception+0x120/0x310\n   system_call_vectored_common+0x15c/0x2ec",
+		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\npowerpc/mm/fault: Fix kfence page fault reporting\n\ncopy_from_kernel_nofault() can be called when doing read of /proc/kcore.\n/proc/kcore can have some unmapped kfence objects which when read via\ncopy_from_kernel_nofault() can cause page faults. Since *_nofault()\nfunctions define their own fixup table for handling fault, use that\ninstead of asking kfence to handle such faults.\n\nHence we search the exception tables for the nip which generated the\nfault. If there is an entry then we let the fixup table handler handle the\npage fault by returning an error from within ___do_page_fault().\n\nThis can be easily triggered if someone tries to do dd from /proc/kcore.\neg. dd if=/proc/kcore of=/dev/null bs=1M\n\nSome example false negatives:\n\n  ===============================\n  BUG: KFENCE: invalid read in copy_from_kernel_nofault+0x9c/0x1a0\n  Invalid read at 0xc0000000fdff0000:\n   copy_from_kernel_nofault+0x9c/0x1a0\n   0xc00000000665f950\n   read_kcore_iter+0x57c/0xa04\n   proc_reg_read_iter+0xe4/0x16c\n   vfs_read+0x320/0x3ec\n   ksys_read+0x90/0x154\n   system_call_exception+0x120/0x310\n   system_call_vectored_common+0x15c/0x2ec\n\n  BUG: KFENCE: use-after-free read in copy_from_kernel_nofault+0x9c/0x1a0\n  Use-after-free read at 0xc0000000fe050000 (in kfence-#2):\n   copy_from_kernel_nofault+0x9c/0x1a0\n   0xc00000000665f950\n   read_kcore_iter+0x57c/0xa04\n   proc_reg_read_iter+0xe4/0x16c\n   vfs_read+0x320/0x3ec\n   ksys_read+0x90/0x154\n   system_call_exception+0x120/0x310\n   system_call_vectored_common+0x15c/0x2ec \n            STATEMENT: Only privileged local user can trigger this bug, so the security impact is limited.",
 		"advisory": {
 			"from": "secalert@redhat.com",
-			"severity": "Important",
+			"severity": "Moderate",
 			"updated": {
-				"date": "2024-12-29"
+				"date": "2024-12-31"
 			},
 			"cve": [
 				{
 					"text": "CVE-2024-56678",
-					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+					"cvss3": "6.7/CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
 					"href": "https://access.redhat.com/security/cve/CVE-2024-56678",
-					"impact": "important",
+					"impact": "moderate",
 					"public": "20241228"
 				}
 			],
@@ -80,12 +80,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764005",
+										"comment": "kernel-headers is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764006",
+										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -106,51 +106,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764005",
-										"comment": "kernel-headers is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764006",
-										"comment": "kernel-headers is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -184,12 +145,64 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764003",
 										"comment": "kernel-debug-devel is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764004",
 										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -210,38 +223,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764019",
 										"comment": "kernel-bootwrapper is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764020",
 										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

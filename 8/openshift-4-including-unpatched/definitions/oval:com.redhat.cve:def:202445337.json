@@ -1,0 +1,105 @@
+{
+	"id": "oval:com.redhat.cve:def:202445337",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "golang.org/x/crypto/ssh: Misuse of ServerConfig.PublicKeyCallback may cause authorization bypass in golang.org/x/crypto (important)",
+		"reference": [
+			{
+				"ref_id": "CVE-2024-45337",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-45337",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: A flaw was found in the x/crypto/ssh go library. Applications and libraries that misuse the ServerConfig.PublicKeyCallback callback may be susceptible to an authorization bypass. For example, an attacker may send public keys A and B and authenticate with A. PublicKeyCallback would be called only twice, first with A and then with B. A vulnerable application may then make authorization decisions based on key B, for which the attacker does not control the private key. The misuse of ServerConfig.PublicKeyCallback may cause an authorization bypass. \n            STATEMENT: This vulnerability is classified as important rather than critical because it does not directly enable unauthorized access but rather introduces a risk of authorization bypass if the application or library misuses the PublicKeyCallback API. The vulnerability relies on incorrect assumptions made by the application when handling the sequence or state of keys provided during SSH authentication. Properly implemented systems that use the Permissions field or avoid relying on external state remain unaffected. Additionally, the vulnerability does not allow direct exploitation to gain control over a system without the presence of insecure logic in the application's handling of authentication attempts.\n\n\nRed Hat Enterprise Linux(RHEL) 8 and 9 marked as not affected as it was determined that the problem function `ServerConfig.PublicKeyCallback`, as noted in the CVE-2024-45337 issue, is not called by Podman, Buildah, containers-common, or the gvisor-tap-vsock projects.\n            MITIGATION: Mitigation for this issue is either not available or the currently available options do not meet the Red Hat Product Security criteria comprising ease of use and deployment, applicability to widespread installation base or stability.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Important",
+			"updated": {
+				"date": "2024-12-26"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-45337",
+					"cvss3": "8.2/CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:N",
+					"cwe": "CWE-285",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-45337",
+					"impact": "important",
+					"public": "20241211:1855"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Affected",
+						"component": [
+							"buildah",
+							"openshift"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:openshift:4.18",
+					"cpe:/a:redhat:openshift:4.18::el8"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181002101001",
+										"comment": "openshift is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20181002101002",
+										"comment": "openshift is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202120206003",
+										"comment": "buildah is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:202120206004",
+										"comment": "buildah is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:201714623003",
+						"comment": "Red Hat Enterprise Linux 8 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:201714623004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

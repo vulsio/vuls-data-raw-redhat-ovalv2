@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\naoe: avoid potential deadlock at set_capacity\n\nMove set_capacity() outside of the section procected by (&d->lock).\nTo avoid possible interrupt unsafe locking scenario:\n\n        CPU0                    CPU1\n        ----                    ----\n[1] lock(&bdev->bd_size_lock);\n                                local_irq_disable();\n                            [2] lock(&d->lock);\n                            [3] lock(&bdev->bd_size_lock);\n   <Interrupt>\n[4]  lock(&d->lock);\n\n  *** DEADLOCK ***\n\nWhere [1](&bdev->bd_size_lock) hold by zram_add()->set_capacity().\n[2]lock(&d->lock) hold by aoeblk_gdalloc(). And aoeblk_gdalloc()\nis trying to acquire [3](&bdev->bd_size_lock) at set_capacity() call.\nIn this situation an attempt to acquire [4]lock(&d->lock) from\naoecmd_cfg_rsp() will lead to deadlock.\n\nSo the simplest solution is breaking lock dependency\n[2](&d->lock) -> [3](&bdev->bd_size_lock) by moving set_capacity()\noutside.",
+		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\naoe: avoid potential deadlock at set_capacity\n\nMove set_capacity() outside of the section procected by (&d->lock).\nTo avoid possible interrupt unsafe locking scenario:\n\n        CPU0                    CPU1\n        ----                    ----\n[1] lock(&bdev->bd_size_lock);\n                                local_irq_disable();\n                            [2] lock(&d->lock);\n                            [3] lock(&bdev->bd_size_lock);\n   <Interrupt>\n[4]  lock(&d->lock);\n\n  *** DEADLOCK ***\n\nWhere [1](&bdev->bd_size_lock) hold by zram_add()->set_capacity().\n[2]lock(&d->lock) hold by aoeblk_gdalloc(). And aoeblk_gdalloc()\nis trying to acquire [3](&bdev->bd_size_lock) at set_capacity() call.\nIn this situation an attempt to acquire [4]lock(&d->lock) from\naoecmd_cfg_rsp() will lead to deadlock.\n\nSo the simplest solution is breaking lock dependency\n[2](&d->lock) -> [3](&bdev->bd_size_lock) by moving set_capacity()\noutside.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Low",
 			"updated": {
-				"date": "2024-07-05"
+				"date": "2025-01-07"
 			},
 			"cve": [
 				{
@@ -81,129 +81,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764013",
 										"comment": "kernel-kdump is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764014",
 										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764021",
-										"comment": "python-perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764022",
-										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764023",
-										"comment": "kernel-firmware is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764024",
-										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764011",
-										"comment": "kernel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764012",
-										"comment": "kernel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -237,12 +120,129 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764021",
+										"comment": "python-perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764022",
+										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764001",
 										"comment": "kernel-kdump-devel is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764002",
 										"comment": "kernel-kdump-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764023",
+										"comment": "kernel-firmware is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764024",
+										"comment": "kernel-firmware is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764011",
+										"comment": "kernel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764012",
+										"comment": "kernel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

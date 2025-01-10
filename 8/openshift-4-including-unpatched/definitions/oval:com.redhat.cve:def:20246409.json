@@ -1,0 +1,79 @@
+{
+	"id": "oval:com.redhat.cve:def:20246409",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "openssh: Possible remote code execution due to a race condition in signal handling affecting Red Hat Enterprise Linux 9 (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2024-6409",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-6409",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: A race condition vulnerability was discovered in how signals are handled by OpenSSH's server (sshd). If a remote attacker does not authenticate within a set time period, then sshd's SIGALRM handler is called asynchronously. However, this signal handler calls various functions that are not async-signal-safe, for example, syslog(). As a consequence of a successful attack, in the worst case scenario, an attacker may be able to perform a remote code execution (RCE) as an unprivileged user running the sshd server. \n            STATEMENT: Red Hat rates the severity of this flaw as Moderate for both Red Hat Enterprise Linux (RHEL) and OpenShift Container Platform (OCP). While there are many similarities to CVE-2024-6387, the important difference is that any possible remote code execution is limited to an unprivileged child of the SSHD server. This additional restriction on access reduces the overall security impact.\n\nThis vulnerability only affects the versions of OpenSSH shipped with Red Hat Enterprise Linux 9. Upstream versions of sshd are not impacted by this flaw.\n\nThe affected versions of OCP are 4.13, 4.14, 4.15, and 4.16 while 4.12 and earlier versions of OCP are not affected.\n            MITIGATION: The process is identical to CVE-2024-6387, by disabling LoginGraceTime. See that CVE page for additional details.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2024-08-05"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-6409",
+					"cvss3": "7.0/CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:H",
+					"cwe": "CWE-364",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-6409",
+					"impact": "moderate",
+					"public": "20240708:1745"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Affected",
+						"component": [
+							"rhcos"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:openshift:4.18",
+					"cpe:/a:redhat:openshift:4.18::el8"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:201714623003",
+						"comment": "Red Hat Enterprise Linux 8 is installed"
+					},
+					{
+						"test_ref": "oval:com.redhat.cve:tst:202242919001",
+						"comment": "rhcos is installed"
+					},
+					{
+						"test_ref": "oval:com.redhat.cve:tst:202242919002",
+						"comment": "rhcos is signed with Red Hat redhatrelease2 key"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:201714623004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

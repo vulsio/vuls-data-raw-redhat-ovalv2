@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: DHCP can add routes to a client’s routing table via the classless static route option (121). VPN-based security solutions that rely on routes to redirect traffic can be forced to leak traffic over the physical interface. An attacker on the same local network can read, disrupt, or possibly modify network traffic expected to be protected by the VPN.",
+		"description": "DOCUMENTATION: DHCP can add routes to a client’s routing table via the classless static route option (121). VPN-based security solutions that rely on routes to redirect traffic can be forced to leak traffic over the physical interface. An attacker on the same local network can read, disrupt, or possibly modify network traffic expected to be protected by the VPN. \n            STATEMENT: This issue affects only VPN network connections running along with DHCP enabled interface.\n\nIPSec VPN (ipsec-interface and vti-interface are set to no or undefined) is not vulnerable to this issue.\n            MITIGATION: This issue can be mitigated by placing the VPN routes in a dedicated routing table with a low priority.\n\n1. Assign the VPN routes to a dedicated routing table. By default, RHEL does not use the routing tables 1-252, and you can use one of them. If you configured the system to use some of these tables, identify a free routing table number.\n\n# nmcli connection modify <VPN_connection_profile> ipv4.route-table <routing_table_number>\n\nExample:\n# nmcli connection modify \"Company VPN\" ipv4.route-table 111\n\n2. Set a low priority for the table you used in the previous command. The priority value can be any value between 1 and 32766 but, the higher the value, the lower the priority!\n\n# nmcli connection modify <VPN_connection_profile> ipv4.routing-rules \"priority <low_priority_value> from all table <routing_table_number>\"\n\nExample:\n# nmcli connection modify \"Company VPN\" ipv4.routing-rules \"priority 32345 from all table 111\"\n\n3. Reconnect the VPN.\n\n# nmcli connection down <VPN_connection_profile>\n# nmcli connection up <VPN_connection_profile>",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-11-29"
+				"date": "2025-01-09"
 			},
 			"cve": [
 				{
@@ -31,7 +31,7 @@
 			"affected": {
 				"resolution": [
 					{
-						"state": "Affected",
+						"state": "Will not fix",
 						"component": [
 							"NetworkManager",
 							"NetworkManager-devel",
@@ -73,12 +73,25 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20067246003",
-										"comment": "NetworkManager-devel is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20067246001",
+										"comment": "NetworkManager is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20067246004",
-										"comment": "NetworkManager-devel is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20067246002",
+										"comment": "NetworkManager is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20067246007",
+										"comment": "NetworkManager-glib is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20067246008",
+										"comment": "NetworkManager-glib is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -99,19 +112,6 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20067246001",
-										"comment": "NetworkManager is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20067246002",
-										"comment": "NetworkManager is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20067246009",
 										"comment": "NetworkManager-gnome is installed"
 									},
@@ -125,12 +125,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20067246007",
-										"comment": "NetworkManager-glib is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20067246003",
+										"comment": "NetworkManager-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20067246008",
-										"comment": "NetworkManager-glib is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20067246004",
+										"comment": "NetworkManager-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							}

@@ -1,0 +1,79 @@
+{
+	"id": "oval:com.redhat.cve:def:202412085",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "rsync: Info Leak via Uninitialized Stack Contents (important)",
+		"reference": [
+			{
+				"ref_id": "CVE-2024-12085",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2024-12085",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: A flaw was found in the rsync daemon which could be triggered when rsync compares file checksums. This flaw allows an attacker to manipulate the checksum length (s2length) to cause a comparison between a checksum and uninitialized memory and leak one byte of uninitialized stack data at a time. \n            STATEMENT: This vulnerability is rated as having Important impact as it helps bypass Address Space Layout Randomization (ASLR). ASLR is a memory protection system which makes the exploitation of memory corruption vulnerabilities more difficult.\n            MITIGATION: Seeing as this vulnerability relies on information leakage coming from the presence of data in the uninitialized memory of the `sum2` buffer, a potential mitigation involves compiling rsync with the `-ftrivial-auto-var-init=zero` option set. This mitigates the issue because it initializes the `sum2` variable's memory with zeroes to prevent uninitialized memory disclosure.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Important",
+			"updated": {
+				"date": "2025-01-14"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-12085",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+					"cwe": "CWE-119",
+					"href": "https://access.redhat.com/security/cve/CVE-2024-12085",
+					"impact": "important",
+					"public": "20250114:1506"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Affected",
+						"component": [
+							"rhcos"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:openshift:4.18",
+					"cpe:/a:redhat:openshift:4.18::el9"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:201714623003",
+						"comment": "Red Hat Enterprise Linux 9 is installed"
+					},
+					{
+						"test_ref": "oval:com.redhat.cve:tst:202242919001",
+						"comment": "rhcos is installed"
+					},
+					{
+						"test_ref": "oval:com.redhat.cve:tst:202242919002",
+						"comment": "rhcos is signed with Red Hat redhatrelease2 key"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:201714623004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

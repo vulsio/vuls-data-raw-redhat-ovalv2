@@ -11,12 +11,12 @@
 				"source": "CVE"
 			}
 		],
-		"description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\ngpiolib: cdev: Fix use after free in lineinfo_changed_notify\n\nThe use-after-free issue occurs as follows: when the GPIO chip device file\nis being closed by invoking gpio_chrdev_release(), watched_lines is freed\nby bitmap_free(), but the unregistration of lineinfo_changed_nb notifier\nchain failed due to waiting write rwsem. Additionally, one of the GPIO\nchip's lines is also in the release process and holds the notifier chain's\nread rwsem. Consequently, a race condition leads to the use-after-free of\nwatched_lines.\n\nHere is the typical stack when issue happened:\n\n[free]\ngpio_chrdev_release()\n  --> bitmap_free(cdev->watched_lines)                  <-- freed\n  --> blocking_notifier_chain_unregister()\n    --> down_write(&nh->rwsem)                          <-- waiting rwsem\n          --> __down_write_common()\n            --> rwsem_down_write_slowpath()\n                  --> schedule_preempt_disabled()\n                    --> schedule()\n\n[use]\nst54spi_gpio_dev_release()\n  --> gpio_free()\n    --> gpiod_free()\n      --> gpiod_free_commit()\n        --> gpiod_line_state_notify()\n          --> blocking_notifier_call_chain()\n            --> down_read(&nh->rwsem);                  <-- held rwsem\n            --> notifier_call_chain()\n              --> lineinfo_changed_notify()\n                --> test_bit(xxxx, cdev->watched_lines) <-- use after free\n\nThe side effect of the use-after-free issue is that a GPIO line event is\nbeing generated for userspace where it shouldn't. However, since the chrdev\nis being closed, userspace won't have the chance to read that event anyway.\n\nTo fix the issue, call the bitmap_free() function after the unregistration\nof lineinfo_changed_nb notifier chain.",
+		"description": "DOCUMENTATION: The CVE program describes this issue as: In the Linux kernel, the following vulnerability has been resolved:\n\ngpiolib: cdev: Fix use after free in lineinfo_changed_notify\n\nThe use-after-free issue occurs as follows: when the GPIO chip device file\nis being closed by invoking gpio_chrdev_release(), watched_lines is freed\nby bitmap_free(), but the unregistration of lineinfo_changed_nb notifier\nchain failed due to waiting write rwsem. Additionally, one of the GPIO\nchip's lines is also in the release process and holds the notifier chain's\nread rwsem. Consequently, a race condition leads to the use-after-free of\nwatched_lines.\n\nHere is the typical stack when issue happened:\n\n[free]\ngpio_chrdev_release()\n  --> bitmap_free(cdev->watched_lines)                  <-- freed\n  --> blocking_notifier_chain_unregister()\n    --> down_write(&nh->rwsem)                          <-- waiting rwsem\n          --> __down_write_common()\n            --> rwsem_down_write_slowpath()\n                  --> schedule_preempt_disabled()\n                    --> schedule()\n\n[use]\nst54spi_gpio_dev_release()\n  --> gpio_free()\n    --> gpiod_free()\n      --> gpiod_free_commit()\n        --> gpiod_line_state_notify()\n          --> blocking_notifier_call_chain()\n            --> down_read(&nh->rwsem);                  <-- held rwsem\n            --> notifier_call_chain()\n              --> lineinfo_changed_notify()\n                --> test_bit(xxxx, cdev->watched_lines) <-- use after free\n\nThe side effect of the use-after-free issue is that a GPIO line event is\nbeing generated for userspace where it shouldn't. However, since the chrdev\nis being closed, userspace won't have the chance to read that event anyway.\n\nTo fix the issue, call the bitmap_free() function after the unregistration\nof lineinfo_changed_nb notifier chain.",
 		"advisory": {
 			"from": "secalert@redhat.com",
 			"severity": "Moderate",
 			"updated": {
-				"date": "2024-06-17"
+				"date": "2025-01-14"
 			},
 			"cve": [
 				{
@@ -81,90 +81,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764015",
-										"comment": "kernel-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764016",
-										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764007",
-										"comment": "kernel-abi-whitelists is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764008",
-										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764025",
-										"comment": "perf is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764026",
-										"comment": "perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764013",
-										"comment": "kernel-kdump is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764014",
-										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764017",
-										"comment": "kernel-doc is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764018",
-										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764021",
 										"comment": "python-perf is installed"
 									},
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764022",
 										"comment": "python-perf is signed with Red Hat redhatrelease2 key"
-									}
-								]
-							},
-							{
-								"operator": "AND",
-								"criterions": [
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764003",
-										"comment": "kernel-debug-devel is installed"
-									},
-									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764004",
-										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -185,6 +107,19 @@
 								"operator": "AND",
 								"criterions": [
 									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764009",
+										"comment": "kernel-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764010",
+										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764011",
 										"comment": "kernel is installed"
 									},
@@ -198,12 +133,12 @@
 								"operator": "AND",
 								"criterions": [
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764009",
-										"comment": "kernel-debug is installed"
+										"test_ref": "oval:com.redhat.cve:tst:20072764003",
+										"comment": "kernel-debug-devel is installed"
 									},
 									{
-										"test_ref": "oval:com.redhat.cve:tst:20072764010",
-										"comment": "kernel-debug is signed with Red Hat redhatrelease2 key"
+										"test_ref": "oval:com.redhat.cve:tst:20072764004",
+										"comment": "kernel-debug-devel is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
@@ -230,6 +165,71 @@
 									{
 										"test_ref": "oval:com.redhat.cve:tst:20072764020",
 										"comment": "kernel-bootwrapper is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764013",
+										"comment": "kernel-kdump is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764014",
+										"comment": "kernel-kdump is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764015",
+										"comment": "kernel-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764016",
+										"comment": "kernel-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764025",
+										"comment": "perf is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764026",
+										"comment": "perf is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764007",
+										"comment": "kernel-abi-whitelists is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764008",
+										"comment": "kernel-abi-whitelists is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764017",
+										"comment": "kernel-doc is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20072764018",
+										"comment": "kernel-doc is signed with Red Hat redhatrelease2 key"
 									}
 								]
 							},
